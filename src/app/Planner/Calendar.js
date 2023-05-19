@@ -1,26 +1,143 @@
-import React from 'react';
+'use client'
+import React, { useState, Fragment, useEffect } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { useSwipeable } from "react-swipeable";
 
-function Calendar() {
-  const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'] ;
-  const dates = Array.from({ length: 30 }, (_, i) => i + 1); // for a 30 day month
+
+
+const DayComponent = ({ day, isWeekend, isDifferentMonth }) => {
+  let classNames = "ease relative h-30 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31";
+
+  if (isWeekend) classNames += " bg-gray-200";
+  if (isDifferentMonth) classNames += " text-gray-500";
 
   return (
-    <div className="flex flex-col items-center sm:p-4 ">
-      <h2 className="text-xl text-black font-bold mb-4">May 2023</h2>
-      <div className="grid grid-cols-7 text-black w-full">
-        {days.map((day, index) => (
-          <div key={index} className="text-center font-bold">
-            {day}
-          </div>
-        ))}
-        {dates.map((date, index) => (
-          <div key={index} className="text-center w-full h-28 mx-auto border rounded p-2">
-            {date}
-          </div>
-        ))}
-      </div>
-    </div>
+    <td className={classNames}>
+      <span className="font-medium text-black dark:text-white">{day}</span>
+    </td>
   );
-}
+};
+
+const Calendar = () => {
+  const [direction, setDirection] = useState(0);
+  const [isFirstRender, setIsFirstRender] = useState(true);
+  const [prevDate, setPrevDate] = useState();
+
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth(); // month is zero-based index
+
+  // Calculate the number of days in the current month
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  
+  // Calculate the day of the week the month starts on
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+
+  const nextMonth = () => {
+    setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1));
+    setDirection(1);
+  };
+  
+  const prevMonth = () => {
+    setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1));
+    setDirection(-1);
+  };
+  
+
+  const renderDayHeaders = () =>
+    daysOfWeek.map((day, index) => (
+      <th
+        key={index}
+        className="flex h-15 items-center justify-center rounded-tl-sm p-1 text-xs font-semibold sm:text-base xl:p-5"
+      >
+        <span className="hidden lg:block">{day}</span>
+        <span className="block lg:hidden">{day.substring(0, 3)}</span>
+      </th>
+    ));
+
+  const renderDaysOfMonth = () => {
+    let days = [];
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(<DayComponent key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
+    }
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} />);
+    }
+    return days;
+  };
+  const handlers = useSwipeable({
+    onSwipedLeft: () => nextMonth(),
+    onSwipedRight: () => prevMonth(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true
+  });
+  const variants = {
+    enter: (direction) => {
+      return {
+        x: direction > 0 ? 1000 : -1000,
+        opacity: 0
+      };
+    },
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction) => {
+      return {
+        zIndex: 0,
+        x: direction < 0 ? 1000 : -1000,
+        opacity: 0,
+      
+      };
+    }
+  };
+  useEffect(() => {
+    if (isFirstRender) {
+      setIsFirstRender(false);
+    }
+  }, []);
+
+  
+  return (
+    <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-4/5"
+    {...handlers} >
+    <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <div className="flex justify-between items-center px-6 py-4 hidden lg:flex">
+        <button onClick={prevMonth}>{"<"}</button>
+        <h2>{`${monthNames[currentMonth]}, ${currentYear}`}</h2>
+        <button onClick={nextMonth}>{">"}</button>
+      </div>
+      <table className="w-full">
+        <thead>
+          <tr className="grid grid-cols-7 rounded-t-sm bg-primary text-white">{renderDayHeaders()}</tr>
+        </thead>
+        <tbody>
+        <Fragment key={direction}>
+    <AnimatePresence mode='wait' >
+          <motion.tr 
+          key={currentMonth}
+          custom={direction}
+          variants={variants}
+          initial={isFirstRender ? false : "enter"}
+          animate="center"
+          exit="exit"
+          transition={{
+            x: { type: "spring", stiffness: 300, damping: 30 },
+            opacity: { duration: 0.2 }
+          }}
+className="grid grid-cols-7">{renderDaysOfMonth()}</motion.tr>
+    </AnimatePresence>
+    </Fragment>
+        </tbody>
+      </table>
+    </div>
+    </div>
+    
+  );
+};
 
 export default Calendar;

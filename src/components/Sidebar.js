@@ -226,7 +226,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
              version="1.1" 
              id="Capa_1" 
              xmlns="http://www.w3.org/2000/svg"  
-             viewBox="0 0 31.371 31.371"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M24.26,20.34c0,3.42-2.423,6.342-6.845,7.111v3.92h-3.768v-3.648c-2.578-0.117-5.076-0.811-6.537-1.654l1.154-4.5 c1.615,0.886,3.883,1.693,6.383,1.693c2.191,0,3.691-0.848,3.691-2.385c0-1.461-1.23-2.389-4.077-3.348 c-4.112-1.385-6.921-3.306-6.921-7.033c0-3.386,2.385-6.035,6.499-6.845V0h3.767v3.383c2.576,0.115,4.309,0.652,5.576,1.268 l-1.115,4.348C21.07,8.575,19.3,7.688,16.531,7.688c-2.5,0-3.307,1.076-3.307,2.154c0,1.268,1.346,2.074,4.613,3.307 C22.416,14.762,24.26,16.877,24.26,20.34z"></path> </g> </g></svg>
+             viewBox="0 0 31.371 31.371"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M24.26,20.34c0,3.42-2.423,6.342-6.845,7.111v3.92h-3.768v-3.648c-2.578-0.117-5.076-0.811-6.537-1.654l1.154-4.5 c1.615,0.886,3.883,1.693,6.383,1.693c2.191,0,3.691-0.848,3.691-2.385c0-1.461-1.23-2.389-4.077-3.348 c-4.112-1.385-6.921-3.306-6.921-7.033c0-3.386,2.385-6.035,6.499-6.845V0h3.767v3.383c2.576,0.115,4.309,0.652,5.576,1.268 l-1.115,4.348C21.07,8.575,19.3,7.688,16.531,7.688c-2.5,0-3.307,1.076-3.307,2.154c0,1.268,1.346,2.074,4.613,3.307 C22.416,14.762,24.26,16.877,24.26,20.34z"></path> </g> </g></svg>
                   Finance
                 </Link>
               </li>
@@ -300,8 +300,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   viewBox="4 4 24 24" 
   version="1.1" 
   xmlns="http://www.w3.org/2000/svg">
-  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+  <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+  <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
   <g id="SVGRepo_iconCarrier"> 
     <title>stats</title> 
     <path d="M5.998 5h-0.987v23h20v-0.963l-18.996-0.049-0.017-21.988zM8.011 25h5v-10.875l-5 5v5.875zM14.011 25h5v-9.875l-2 2-3-3v10.875zM20.011 25h5v-15.187l-5 5v10.187zM13.387 11.067l3.62 3.6 7.148-7.112 1.834 1.844-0.044-4.399-4.415 0.023 1.717 1.722-6.242 6.26-3.689-3.703-5.623 5.604 0.939 0.912 4.755-4.751z"></path> 
@@ -326,7 +326,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     <React.Fragment>
                       <Link
                         href="/"
-                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4${
                           pathname === '/auth'  &&
                           'bg-graydark dark:bg-meta-4'
                         }`}
@@ -338,7 +338,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         }}
                       >
                         <svg
-                          className="fill-current"
+                          className="fill-current ml-[-2px]"
                           width="18"
                           height="19"
                           viewBox="0 0 18 19"
@@ -395,10 +395,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <li>
                             <Link
                               href="/auth/signin"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
+                            className='group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white'
                             >
                               Sign In
                             </Link>
@@ -406,11 +403,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <li>
                             <Link
                               href="/auth/signup"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
+                              className='group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white'
+                              >
                               Sign Up
                             </Link>
                           </li>
