@@ -5,24 +5,13 @@ import { useSwipeable } from "react-swipeable";
 
 
 
-const DayComponent = ({ day, isWeekend, isDifferentMonth }) => {
-  let classNames = "ease relative h-30 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31";
 
-  if (isWeekend) classNames += " bg-gray-200";
-  if (isDifferentMonth) classNames += " text-gray-500";
-
-  return (
-    <td className={classNames}>
-      <span className="font-medium text-black dark:text-white">{day}</span>
-    </td>
-  );
-};
 
 const Calendar = () => {
   const [direction, setDirection] = useState(0);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevDate, setPrevDate] = useState();
-
+  
   const [currentDate, setCurrentDate] = useState(new Date());
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -36,6 +25,26 @@ const Calendar = () => {
   // Calculate the day of the week the month starts on
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
+  const isToday = (day) => {
+    const today = new Date();
+    return day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+  };
+  const DayComponent = ({ day, isWeekend, isDifferentMonth }) => {
+    let tdClassNames = "ease relative h-30 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31";
+    let spanClassNames = "font-medium text-black dark:text-white";
+  
+    if (isWeekend) tdClassNames += " bg-gray-200";
+    if (isDifferentMonth) tdClassNames += " text-gray-500";
+    if (isToday(day)) spanClassNames += "  bg-primary rounded-full text-white p-2 m-[-0.5rem]";
+  
+    return (
+      <td className={tdClassNames}>
+        <span className={spanClassNames}>{day}</span>
+      </td>
+    );
+  };
+  
+  
   const nextMonth = () => {
     setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1));
     setDirection(1);
@@ -48,15 +57,16 @@ const Calendar = () => {
   
 
   const renderDayHeaders = () =>
-    daysOfWeek.map((day, index) => (
-      <th
-        key={index}
-        className="flex h-15 items-center justify-center rounded-tl-sm p-1 text-xs font-semibold sm:text-base xl:p-5"
-      >
-        <span className="hidden lg:block">{day}</span>
-        <span className="block lg:hidden">{day.substring(0, 3)}</span>
-      </th>
-    ));
+  daysOfWeek.map((day, index) => (
+    <th
+      key={index}
+      className="flex h-15 items-center justify-center rounded-tl-sm p-1 text-xs font-semibold sm:text-base xl:p-5 sticky top-0 z-99999" 
+    >
+      <span className="hidden lg:block">{day}</span>
+      <span className="block lg:hidden">{day.substring(0, 3)}</span>
+    </th>
+  ));
+
 
   const renderDaysOfMonth = () => {
     let days = [];
@@ -65,7 +75,7 @@ const Calendar = () => {
     }
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} />);
-    }
+    }  
     return days;
   };
   const handlers = useSwipeable({
@@ -103,8 +113,7 @@ const Calendar = () => {
 
   
   return (
-    <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-4/5"
-    {...handlers} >
+    <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} >
     <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex justify-between items-center px-6 py-4 hidden lg:flex">
         <button onClick={prevMonth}>{"<"}</button>
@@ -113,7 +122,7 @@ const Calendar = () => {
       </div>
       <table className="w-full">
         <thead>
-          <tr className="grid grid-cols-7 rounded-t-sm bg-primary text-white">{renderDayHeaders()}</tr>
+          <tr className="grid grid-cols-7 rounded-t-sm bg-primary text-white sticky">{renderDayHeaders()}</tr>
         </thead>
         <tbody>
         <Fragment key={direction}>
