@@ -3,7 +3,7 @@ import Calendar from './Calendar'
 
 function page() {
   return (
-    <div className="flex justify-center md:items-center min-h-screen sm:p-4 md:p-0">
+    <div className="flex justify-center min-h-screen overflow-hidden">
     
     <Calendar />
   </div>

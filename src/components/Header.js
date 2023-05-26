@@ -1,9 +1,6 @@
 import Link from 'next/link';
-// import Logo from '../images/logo/logo-icon.svg';
+
 import DarkModeSwitcher from './DarkModeSwitch';
-// import DropdownMessage from './DropdownMessage';
-// import DropdownNotification from './DropdownNotification';
-// import DropdownUser from './DropdownUser';
 
 const Header = (props) => {
 

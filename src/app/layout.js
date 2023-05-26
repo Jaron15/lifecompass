@@ -37,7 +37,9 @@ export default function RootLayout({ children }) {
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
+          <div  className=' overflow-hidden'>
         {children}
+        </div>
          {/* <!-- ===== Main Content End ===== --> */}
          </div>
         {/* <!-- ===== Content Area End ===== --> */}
