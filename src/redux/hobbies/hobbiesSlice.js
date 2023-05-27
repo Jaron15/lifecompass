@@ -20,11 +20,11 @@ const hobbiesSlice = createSlice({
     },
     deleteHobby: (state,action) => {
         const index = state.findIndex((h) => h.id === action.payload.id);
-        if (index === -1) {
+        if (index !== -1) {
             state.splice(index, 1)
         }
-    }
-  },
+    },
+
   updateHobby: (state, action) => {
     // Find the index of the hobby with the given id
     const index = state.findIndex(hobby => hobby.id === action.payload.id);
@@ -66,12 +66,11 @@ const hobbiesSlice = createSlice({
       }
     }
   },
-  
-  
+}
   
   
 });
 
-export const { addHobby, logPractice } = hobbiesSlice.actions;
+export const { addHobby, updateHobby, deleteHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;
