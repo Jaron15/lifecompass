@@ -7,9 +7,6 @@ import { addHobby } from '../../redux/hobbies/hobbiesSlice';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 
-
-
-
 const Calendar = () => {
   // test area //
   const dispatch =useDispatch()
@@ -20,8 +17,22 @@ const Calendar = () => {
     daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
     practiceLog: []
   };
+  const newHobby1 = {
+    id: '2',
+    hobbyName: 'Guitar',
+    practiceTimeGoal: 60,
+    daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
+    practiceLog: []
+  };
+  const newHobby2 = {
+    id: '3',
+    hobbyName: 'drums',
+    practiceTimeGoal: 60,
+    daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
+    practiceLog: []
+  };
 const addingAHobby = () => {
-  dispatch(addHobby(newHobby))
+  dispatch(addHobby(newHobby2))
   console.log('button clicked');
 }
 const hobbies = useSelector(state => state.hobbies);
@@ -45,13 +56,20 @@ const hobbies = useSelector(state => state.hobbies);
     const handleScroll = () => {
       const maxScrollTop = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const opacity = 1 - document.documentElement.scrollTop / maxScrollTop;
-
+  
       setButtonOpacity(opacity < 0 ? 0 : opacity);
     };
-
+  
+    // Attach event listener
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  
+    // Cleanup function
+    return () => {
+      // Remove event listener
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
+  
 
   
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -73,9 +91,11 @@ const hobbies = useSelector(state => state.hobbies);
     return day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
   };
 
-  const DayComponent = ({ day, isWeekend, isDifferentMonth }) => {
-    let tdClassNames = "ease relative  cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:p-6 xl:h-31";
-    let spanClassNames = "font-medium text-black dark:text-white";
+
+  const DayComponent = ({ day, isWeekend, isDifferentMonth, events}) => {
+    let tdClassNames = "ease relative  cursor-pointer border border-stroke sm:p-1 p-[5px] transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:p-3 xl:h-31 overflow-clip text-center sm:text-start";
+    let spanClassNames = "font-medium text-black dark:text-white ";
+    
   
     if (isWeekend) tdClassNames += " bg-gray-200";
     if (isDifferentMonth) tdClassNames += " text-gray-500";
@@ -87,11 +107,21 @@ const hobbies = useSelector(state => state.hobbies);
         height: `calc(100vh / 7.38) `,
       }}
       className={tdClassNames}>
-        <span className={spanClassNames}>{day}</span>
+        <span className={spanClassNames}>{day}
+     {events && events.length > 0 && events.map((event, i) => (
+          <div 
+          key={i} 
+          className="bg-green-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]"
+        >
+            {event}
+          </div>
+        ))} 
+        </span>
       </td>
     );
   };
   
+
   //functions to change month 
   const nextMonth = () => {
     setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1));
@@ -122,14 +152,26 @@ const hobbies = useSelector(state => state.hobbies);
       days.push(<DayComponent key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
     }
     for (let day = 1; day <= daysInMonth; day++) {
-      days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} />);
+      // Get the name of the current day of the week
+      const currentDayName = daysOfWeek[(firstDayOfMonth + day - 1) % 7];
+  
+      // Create a list of all hobby practice events that should occur on this day
+      const events = [];
+      hobbies.forEach(hobby => {
+        if (hobby.daysOfWeek.includes(currentDayName)) {
+          events.push(`Practice ${hobby.hobbyName} for ${hobby.practiceTimeGoal} minutes`);
+        }
+      });
+  
+      days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={events} />);
     }
     // fill the remaining days to make total 42
     for (let i = days.length; i < 42; i++) {
       days.push(<DayComponent key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
     }
     return days;
-  };
+};
+
   
   //for changing month on mobile
   const handlers = useSwipeable({
