@@ -6,6 +6,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { addHobby } from '../../redux/hobbies/hobbiesSlice';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
+import {addEvent} from '../../redux/events/eventsSlice'
 
 const Calendar = () => {
   // test area //
@@ -31,8 +32,14 @@ const Calendar = () => {
     daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
     practiceLog: []
   };
+  const newEvent = {
+    eventName: 'Birthday Party',
+    eventTime: '16:00',
+    eventDate: '2023-06-04'
+  };
+
 const addingAHobby = () => {
-  dispatch(addHobby(newHobby2))
+  dispatch(addHobby(newHobby))
   console.log('button clicked');
 }
 const hobbies = useSelector(state => state.hobbies);
@@ -212,7 +219,7 @@ const hobbies = useSelector(state => state.hobbies);
   return (
     <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} >
     <div className="w-full max-w-full  rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ">
-      <div className="flex justify-between items-center px-6 py-4 hidden lg:flex">
+      <div className="justify-between items-center px-6 py-4 hidden lg:flex">
         <button onClick={prevMonth}>{"<"}</button>
         <h2>{`${monthNames[currentMonth]}, ${currentYear}`}</h2>
         <button onClick={nextMonth}>{">"}</button>
