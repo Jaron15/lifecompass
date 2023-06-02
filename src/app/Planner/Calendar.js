@@ -6,7 +6,8 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { addHobby } from '../../redux/hobbies/hobbiesSlice';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import {addEvent} from '../../redux/events/eventsSlice'
+import {createEvent} from '../../redux/events/eventsSlice'
+
 
 const Calendar = () => {
   // test area //
@@ -35,18 +36,24 @@ const Calendar = () => {
   const newEvent = {
     eventName: 'Birthday Party',
     eventTime: '16:00',
-    eventDate: '2023-06-04'
+    eventDate: '2023-6-5'
   };
 
 const addingAHobby = () => {
   dispatch(addHobby(newHobby))
   console.log('button clicked');
 }
+const addingAnEvent = () => {
+  dispatch(createEvent(newEvent))
+  console.log('button clicked');
+}
 const hobbies = useSelector(state => state.hobbies);
+const events = useSelector(state => state.events);
 
     useEffect(() => {
         console.log(hobbies);
-    }, [hobbies]); // This effect runs whenever 'hobbies' changes
+        console.log(events);
+    }, [hobbies, events]); // This effect runs whenever 'hobbies' changes
 
 
 //test area end //
@@ -99,7 +106,7 @@ const hobbies = useSelector(state => state.hobbies);
   };
 
 
-  const DayComponent = ({ day, isWeekend, isDifferentMonth, events}) => {
+  const DayComponent = ({ day, isWeekend, isDifferentMonth, events, hobbies}) => {
     let tdClassNames = "ease relative  cursor-pointer border border-stroke sm:p-1 p-[5px] transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:p-3 xl:h-31 overflow-clip text-center sm:text-start";
     let spanClassNames = "font-medium text-black dark:text-white ";
     
@@ -110,21 +117,22 @@ const hobbies = useSelector(state => state.hobbies);
   
     return (
       <td 
-      style={{
-        height: `calc(100vh / 7.38) `,
-      }}
-      className={tdClassNames}>
-        <span className={spanClassNames}>{day}
-     {events && events.length > 0 && events.map((event, i) => (
-          <div 
-          key={i} 
-          className="bg-green-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]"
-        >
-            {event}
-          </div>
-        ))} 
-        </span>
-      </td>
+    style={{
+      height: `calc(100vh / 7.38) `,
+    }}
+    className={tdClassNames}>
+      <span className={spanClassNames}>{day}</span>
+      {hobbies && hobbies.length > 0 && hobbies.map((hobby, i) => (
+        <div key={i} className="bg-green-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
+          {hobby}
+        </div>
+      ))}
+      {events && events.length > 0 && events.map((event, i) => (
+        <div key={i} className="bg-blue-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
+          {event}
+        </div>
+      ))}
+    </td>
     );
   };
   
@@ -159,18 +167,34 @@ const hobbies = useSelector(state => state.hobbies);
       days.push(<DayComponent key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
     }
     for (let day = 1; day <= daysInMonth; day++) {
+      //----------events------------------
+      const dayEvents = [];
+      // Calculate the date of the current day
+      const currentDateStr = `${currentYear}-${currentMonth + 1}-${day}`; // month is 1-based here
+      console.log(currentDateStr);
+      // Filter events that are scheduled for this day
+      const scheduledEvents = events.filter(event => event.eventDate === currentDateStr);
+      
+      // Add the scheduled events to the `events` array
+      scheduledEvents.forEach(event => {
+        dayEvents.push(`${event.eventName} at ${event.eventTime}`);
+        console.log(events);
+      });
+      //----------events------------------
+      
       // Get the name of the current day of the week
       const currentDayName = daysOfWeek[(firstDayOfMonth + day - 1) % 7];
   
       // Create a list of all hobby practice events that should occur on this day
-      const events = [];
+      const hobbyEvents = [];
       hobbies.forEach(hobby => {
         if (hobby.daysOfWeek.includes(currentDayName)) {
-          events.push(`Practice ${hobby.hobbyName} for ${hobby.practiceTimeGoal} minutes`);
+          hobbyEvents.push(`Practice ${hobby.hobbyName} for ${hobby.practiceTimeGoal} minutes`);
+          console.log(hobbyEvents);
         }
       });
   
-      days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={events} />);
+      days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} />);
     }
     // fill the remaining days to make total 42
     for (let i = days.length; i < 42; i++) {
@@ -255,7 +279,7 @@ className="grid grid-cols-7">{renderDaysOfMonth()}
       <button 
         style={{opacity: buttonOpacity}}
         className="absolute sm:bottom-5 sm:right-10 lg:right-30 bottom-20 right-5 bg-primary p-2 rounded-full text-white shadow-lg" 
-        onClick={addingAHobby} 
+        onClick={addingAnEvent} 
       >
         <IoIosAddCircleOutline size={60} />
       </button>
