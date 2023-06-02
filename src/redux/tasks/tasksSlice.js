@@ -1,19 +1,31 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, nanoid } from '@reduxjs/toolkit';
 
-const tasksSlice = createSlice({
+
+const taskSlice = createSlice({
   name: 'tasks',
   initialState: [],
   reducers: {
     addTask: (state, action) => {
-      state.push(action.payload)
+      state.push({
+        id:nanoid(),
+        name: action.payload.name,
+        isCompleted: false,
+        recurringDay: action.payload.recurringDay,
+        dueDate: action.payload.dueDate
+      });
     },
-    removeTask: (state, action) => {
-      return state.filter(task => task.id !== action.payload)
+    deleteTask: (state, action) => {
+      return state.filter((task) => task.id !== action.payload);
     },
-    // other task-related reducers...
+    completeTask: (state, action) => {
+      const task = state.find((task) => task.id === action.payload);
+      if (task) {
+        task.isCompleted = true;
+      }
+    },
   },
-})
+});
 
-export const { addTask, removeTask } = tasksSlice.actions
+export const { addTask, deleteTask, completeTask } = taskSlice.actions;
 
-export default tasksSlice.reducer
+export default taskSlice.reducer;
