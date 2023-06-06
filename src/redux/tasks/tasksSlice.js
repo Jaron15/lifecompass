@@ -6,14 +6,16 @@ const taskSlice = createSlice({
   initialState: [],
   reducers: {
     addTask: (state, action) => {
-      state.push({
-        id:nanoid(),
-        name: action.payload.name,
-        isCompleted: false,
-        recurringDay: action.payload.recurringDay,
-        dueDate: action.payload.dueDate
-      });
-    },
+        const { type, name, schedule } = action.payload;
+        state.push({
+          id: nanoid(),
+          name,
+          isCompleted: false,
+          recurringDay: type === 'recurring' ? schedule : null,
+          dueDate: type === 'singular' ? schedule : null
+        });
+      },
+  
     deleteTask: (state, action) => {
       return state.filter((task) => task.id !== action.payload);
     },

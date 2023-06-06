@@ -3,10 +3,11 @@ import React, { useState, Fragment, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSwipeable } from "react-swipeable";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { addHobby } from '../../redux/hobbies/hobbiesSlice';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import {createEvent} from '../../redux/events/eventsSlice'
+import { addHobby } from '../../redux/hobbies/hobbiesSlice';
+import {createEvent} from '../../redux/events/eventsSlice';
+import {addTask} from '../../redux/tasks/tasksSlice';
 
 
 const Calendar = () => {
@@ -38,6 +39,10 @@ const Calendar = () => {
     eventTime: '16:00',
     eventDate: '2023-6-5'
   };
+  const newTask = {
+    name: 'clean house',
+    recurringDay: 'friday'
+  }
 
 const addingAHobby = () => {
   dispatch(addHobby(newHobby))
@@ -113,7 +118,7 @@ const events = useSelector(state => state.events);
   
     if (isWeekend) tdClassNames += " bg-gray-200";
     if (isDifferentMonth) tdClassNames += " text-gray-500";
-    if (isToday(day)) spanClassNames += "  bg-primary rounded-full text-white p-2 m-[-0.5rem]";
+    if (isToday(day)) spanClassNames += "  bg-primary rounded-full text-white px-1 sm:px-2 m-[-0.5rem]";
   
     return (
       <td 
