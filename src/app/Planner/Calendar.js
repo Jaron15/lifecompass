@@ -40,8 +40,14 @@ const Calendar = () => {
     eventDate: '2023-6-5'
   };
   const newTask = {
+    type: 'recurring',
     name: 'clean house',
-    recurringDay: 'friday'
+    schedule: ['Wednesday', 'Friday']
+  }
+  const newTask1 = {
+    type: 'singular',
+    name: 'clean house',
+    schedule: '2023-6-7'
   }
 
 const addingAHobby = () => {
@@ -52,13 +58,19 @@ const addingAnEvent = () => {
   dispatch(createEvent(newEvent))
   console.log('button clicked');
 }
+const addingATask = () => {
+  dispatch(addTask(newTask1))
+  console.log('button clicked');
+}
 const hobbies = useSelector(state => state.hobbies);
 const events = useSelector(state => state.events);
+const tasks = useSelector(state => state.tasks)
 
     useEffect(() => {
         console.log(hobbies);
         console.log(events);
-    }, [hobbies, events]); // This effect runs whenever 'hobbies' changes
+        console.log(tasks);
+    }, [hobbies, events, tasks]); // This effect runs whenever 'hobbies' changes
 
 
 //test area end //
@@ -111,7 +123,7 @@ const events = useSelector(state => state.events);
   };
 
 
-  const DayComponent = ({ day, isWeekend, isDifferentMonth, events, hobbies}) => {
+  const DayComponent = ({ day, isWeekend, isDifferentMonth, events, hobbies, tasks}) => {
     let tdClassNames = "ease relative  cursor-pointer border border-stroke sm:p-1 p-[5px] transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:p-3 xl:h-31 overflow-clip text-center sm:text-start";
     let spanClassNames = "font-medium text-black dark:text-white ";
     
@@ -137,6 +149,12 @@ const events = useSelector(state => state.events);
           {event}
         </div>
       ))}
+      {tasks && tasks.length > 0 && tasks.map((task, i) => (
+  <div key={i} className="bg-yellow-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
+    {task}
+  </div>
+))}
+
     </td>
     );
   };
@@ -172,6 +190,9 @@ const events = useSelector(state => state.events);
       days.push(<DayComponent key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
     }
     for (let day = 1; day <= daysInMonth; day++) {
+      // Get the name of the current day of the week
+      const currentDayName = daysOfWeek[(firstDayOfMonth + day - 1) % 7];
+
       //----------events------------------
       const dayEvents = [];
       // Calculate the date of the current day
@@ -186,11 +207,10 @@ const events = useSelector(state => state.events);
         console.log(events);
       });
       //----------events------------------
-      
-      // Get the name of the current day of the week
-      const currentDayName = daysOfWeek[(firstDayOfMonth + day - 1) % 7];
   
+      //---------------hobbies----------------
       // Create a list of all hobby practice events that should occur on this day
+      console.log(currentDayName);
       const hobbyEvents = [];
       hobbies.forEach(hobby => {
         if (hobby.daysOfWeek.includes(currentDayName)) {
@@ -199,8 +219,26 @@ const events = useSelector(state => state.events);
         }
       });
   
-      days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} />);
-    }
+      //---------------hobbies----------------
+      
+      //--------------tasks-------------------
+      const taskEvents = [];
+      tasks.forEach(task => {
+        if (task.recurringDay && Array.isArray(task.recurringDay) && task.recurringDay.includes(currentDayName)) {
+            taskEvents.push(`${task.name}`);
+        }
+        else if (task.dueDate && task.dueDate.includes(currentDateStr)) {
+          taskEvents.push(`${task.name}`);
+        }
+    });
+    console.log(`Tasks for ${currentDayName}, ${currentDateStr}: `, taskEvents);
+
+      
+      
+      //--------------tasks-------------------
+        
+        days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} tasks={taskEvents} />);
+      }
     // fill the remaining days to make total 42
     for (let i = days.length; i < 42; i++) {
       days.push(<DayComponent key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
@@ -284,7 +322,7 @@ className="grid grid-cols-7">{renderDaysOfMonth()}
       <button 
         style={{opacity: buttonOpacity}}
         className="absolute sm:bottom-5 sm:right-10 lg:right-30 bottom-20 right-5 bg-primary p-2 rounded-full text-white shadow-lg" 
-        onClick={addingAnEvent} 
+        onClick={addingATask} 
       >
         <IoIosAddCircleOutline size={60} />
       </button>
