@@ -12,6 +12,9 @@ import React, {useState} from 'react'
     const { signUp } = useAuth();
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [nameError, setNameError] = useState('');
+    const [signupError, setSignupError] = useState('');
+
 
     const validateEmail = (event) => {
         const email = event.target.value;
@@ -27,11 +30,20 @@ import React, {useState} from 'react'
         const password = event.target.value;
         const regex = /^(?=.*\d).{6,}$/;
         if(!password || !regex.test(password)) {
-            setPasswordError('Password must contain at least six characters with at least one number');
+            setPasswordError('Password must be a minimum of six characters and include at least one number.');
         } else {
             setPasswordError('');
         }
     };
+    const validateName = (event) => {
+        const name = event.target.value;
+        if(!name.trim()) {
+            setNameError('Name field cannot be empty');
+        } else {
+            setNameError('');
+        }
+    };
+
 
 
   const handleSubmit = async (event) => {
@@ -49,8 +61,9 @@ import React, {useState} from 'react'
 
         console.log('successful!!')
       } catch (error) {
-        // Handle or display the error
+        setSignupError(error.message);
         console.log('error');
+        alert(signupError)
       }
 
   
@@ -90,11 +103,17 @@ import React, {useState} from 'react'
             <div className="flex -mx-3">
                 <div className="w-full px-3 mb-5">
                     <label for="" className="text-xs font-bold px-1 text-black dark:text-[#e9e9e8]">Name</label>
+                    {nameError && <p className='text-red-500 text-xs px-1'>{nameError}</p>}
                     <div className="flex">
                         <div className="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center">
                             <svg viewBox="0 0 24 24"  height='25' fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22" stroke="#292D32" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
                             </div>
-                        <input type="name" name="name" className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] focus:border-primary" placeholder="John" />
+                        <input 
+                        type="name" 
+                        name="name" 
+                        className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] ${nameError ? 'border-red-500' : 'focus:border-primary'}`}
+                        placeholder="John" 
+                        onBlur={validateName}/>
                     </div>
                 </div>
                 
