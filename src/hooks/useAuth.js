@@ -1,38 +1,58 @@
 'use client'
 import { useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { db } from '../utils/firebase'; 
+import {store} from '../redux/store';
+import { signInAsync, signUpAsync, userLoggedOut, userLoggedIn } from '../redux/user/userSlice';
+
+import { useSelector, useDispatch } from 'react-redux';
+
+
+
 
 
 export function useAuth() {
-  const [user, setUser] = useState(null);
+    const user = useSelector(state => state.user.user);
+  const dispatch = useDispatch();
   const auth = getAuth();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, setUser);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if(user) {
+        const { displayName, email, uid } = user;
+        const userForRedux = { displayName, email, uid };
+        dispatch(userLoggedIn(userForRedux)); 
+      } else {
+        dispatch(userLoggedOut()); 
+      }
+    });
     return () => unsubscribe();
-  }, [auth]);
+  }, [auth, dispatch]);  
+  
+
   
   const signUp = async (email, password, name) => {
     try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-        const user = userCredential.user;
-        setDoc(doc(db, 'users', user.uid), {
-            displayName: name,
-
-          });
-      
-      } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      }
+      await dispatch(signUpAsync({ email, password, name }));
+    } catch (error) {
+      console.error('Failed to sign up:', error);
+      throw error;
+    }
   };
 
   const signIn = async (email, password) => {
-
+    try {
+      await dispatch(signInAsync({ email, password }));
+    } catch (error) {
+      console.error('Failed to sign in:', error);
+      throw error;
+    }
   };
+  
+
+  
+
 
   const signOut = async () => {
  

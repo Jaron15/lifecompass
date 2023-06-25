@@ -3,9 +3,15 @@ import Image from 'next/image'
 import { getDocs, collection } from "firebase/firestore";
 import {db} from '../utils/firebase';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import {useSelector} from 'react-redux'
+
 
 export default function Home() {
   const [items, setItems] = useState([]);
+  const { user } = useSelector((state) => state.user);
+console.log(user);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +32,12 @@ export default function Home() {
       {items.map((item, index) => (
         <div key={index}>
           <p>{item.name}</p>
+          <h1>Welcome to Home!</h1>
+          {user ? (
+        <h2>Welcome back, {user.displayName}!</h2>
+      ) : (
+        <h2>You're not logged in.</h2>
+      )}
         </div>
       ))}
     </div>
