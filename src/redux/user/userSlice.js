@@ -35,12 +35,16 @@ export const signUpAsync = createAsyncThunk(
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
       // Setting the user's name
-      await updateProfile(userCredential.user, {displayName: name});
+      userCredential.user.updateProfile({
+        displayName: name
+      });
+
+
 
       return {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
-        displayName: userCredential.user.displayName,
+        displayName: name
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
