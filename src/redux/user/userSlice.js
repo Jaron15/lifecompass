@@ -12,19 +12,24 @@ const initialState = {
 
 export const signInAsync = createAsyncThunk(
   'user/signIn',
-  async ({email, password}, thunkAPI) => {
+  async ({email: inputEmail, password}, thunkAPI) => {
     const auth = getAuth();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, inputEmail, password);
       const firebaseUser = userCredential.user;
-      console.log(firebaseUser);
-      const { displayName, email,  uid } = firebaseUser;
-      return { displayName, email, uid };
+      const { displayName, email: firebaseEmail, uid } = firebaseUser;
+      
+      // Instead of dispatching the action, return the user object
+      return { displayName, email: firebaseEmail, uid };
     } catch (error) {
+      console.error('Error during signInAsync:', error);
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
 );
+
+
+
 
   
 export const signUpAsync = createAsyncThunk(
@@ -35,12 +40,9 @@ export const signUpAsync = createAsyncThunk(
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
       // Setting the user's name
-      userCredential.user.updateProfile({
-        displayName: name
-      });
+      await updateProfile(userCredential.user, { displayName: name });
 
-
-
+      // Return the user object instead of dispatching the action here
       return {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
@@ -59,12 +61,13 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     userLoggedIn: (state, action) => {
+      console.log('userLoggedIn', action.payload); 
       state.user = action.payload;
       state.status = 'loggedIn';
     },
     userLoggedOut: (state) => {
-      state.user = null;
-      state.status = 'loggedOut';
+      console.log('userLoggedOut'); 
+      return initialState
     },
   },
   extraReducers: (builder) => {
@@ -80,7 +83,14 @@ export const userSlice = createSlice({
       .addCase(signInAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
-      });
+      })
+      .addCase(signUpAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // Update the user state with the returned user object
+        state.user = action.payload;
+      })
+  
+      
   }
 });
 

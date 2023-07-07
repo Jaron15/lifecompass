@@ -5,6 +5,7 @@ import { setDoc, doc } from 'firebase/firestore';
 import { db } from '../utils/firebase'; 
 import {store} from '../redux/store';
 import { signInAsync, signUpAsync, userLoggedOut, userLoggedIn } from '../redux/user/userSlice';
+import { persistor } from '../redux/store';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -19,18 +20,26 @@ export function useAuth() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if(user) {
-        const { displayName, email, uid } = user;
-        const userForRedux = { displayName, email, uid };
-        dispatch(userLoggedIn(userForRedux)); 
-      } else {
-        dispatch(userLoggedOut()); 
+      console.log('onAuthStateChanged', user); 
+      if(!user) {
+        dispatch(userLoggedOut());
       }
     });
     return () => unsubscribe();
-  }, [auth, dispatch]);  
+  }, [auth, dispatch]);
+  
   
 
+  
+  
+  const signIn = async (email, password) => {
+    try {
+      await dispatch(signInAsync({ email, password }));
+    } catch (error) {
+      console.error('Failed to sign in:', error);
+      throw error;
+    }
+  };
   
   const signUp = async (email, password, name) => {
     try {
@@ -41,28 +50,26 @@ export function useAuth() {
     }
   };
 
-  const signIn = async (email, password) => {
+  
+
+
+  const signOutUser = async () => {
     try {
-      await dispatch(signInAsync({ email, password }));
+      await signOut(auth);
+      dispatch(userLoggedOut());
+      persistor.purge(); // this will clear the persisted state
+      console.log("User signed out");
     } catch (error) {
-      console.error('Failed to sign in:', error);
-      throw error;
+      console.error("Sign out Error", error);
     }
-  };
-  
+};
 
-  
-
-
-  const signOut = async () => {
- 
-  };
   
   
   return {
     user,
     signIn,
-    signOut,
+    signOutUser,
     signUp
   };
 }

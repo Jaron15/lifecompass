@@ -7,8 +7,10 @@ import { useAuth } from '../hooks/useAuth';
 import {useSelector} from 'react-redux'
 
 
+
 export default function Home() {
   const [items, setItems] = useState([]);
+  const {signOutUser} = useAuth();
   const { user } = useSelector((state) => state.user);
 console.log(user);
 
@@ -40,6 +42,7 @@ console.log(user);
       )}
         </div>
       ))}
+      <h1 className='cursor-pointer text-blue-500' onClick={signOutUser}>Logout</h1>
     </div>
   );
 }
