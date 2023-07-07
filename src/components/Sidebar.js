@@ -115,6 +115,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           (pathname === '/' ) &&
                           'bg-graydark dark:bg-meta-4'
                         }`}
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
                       >
                         <svg
                           className="fill-current"
@@ -159,6 +160,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     pathname === '/calendar' &&
                     'bg-graydark dark:bg-meta-4'
                   }`}
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
                   <svg
                     className="fill-current"
@@ -436,6 +438,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <Link
                               href="/signin"
                             className='group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white'
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
                             >
                               Sign In
                             </Link>
@@ -444,6 +447,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <Link
                               href="/signup"
                               className='group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white'
+                              onClick={() => setSidebarOpen(!sidebarOpen)}
                               >
                               Sign Up
                             </Link>
