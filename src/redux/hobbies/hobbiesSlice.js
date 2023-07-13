@@ -27,20 +27,9 @@ export const hobbiesSlice = createSlice({
     hobbies: [] 
   },  
   reducers: {
-    // addHobby: (state, action) => {
-    //     //safeguard to stop multiple hobbies with same id 
-    // const existingHobby = state.find(hobby => hobby.id === action.payload.id);
-
-    // if (!existingHobby) {
-    //   state.push({
-    //     id: action.payload.id,
-    //     hobbyName: action.payload.hobbyName,
-    //     practiceTimeGoal: action.payload.practiceTimeGoal,
-    //     daysOfWeek: action.payload.daysOfWeek,
-    //     practiceLog: [], // Will hold objects with fields like {date: "2023-01-01", timeSpent: 120}
-    //   });
-    // }
-    // },
+  setHobbies: (state, action) => {
+    state.hobbies = action.payload
+  },
     deleteHobby: (state,action) => {
         const index = state.findIndex((h) => h.id === action.payload.id);
         if (index !== -1) {
@@ -120,6 +109,6 @@ extraReducers: (builder) => {
 
 });
 
-export const {  updateHobby, deleteHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
+export const { setHobbies, updateHobby, deleteHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;

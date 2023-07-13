@@ -1,7 +1,6 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, addDoc } from "firebase/firestore";
+import { getFirestore, addDoc, getDocs, collection } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection } from "firebase/firestore";
 
 
 const firebaseConfig = {
@@ -26,6 +25,22 @@ const auth = getAuth(app);
 
 export function getUserHobbiesCollection(user) {
   return collection(db, 'users', user.uid, 'hobbies');
+}
+
+export async function getHobbiesFromFirestore(userId) {
+  try {
+    const hobbiesCollection = getUserHobbiesCollection(userId);
+    console.log(hobbiesCollection);
+    const snapshot = await getDocs(hobbiesCollection);
+  
+    // Transform the snapshot to an array of hobbies
+    const hobbies = snapshot.docs.map(doc => doc.data());
+  
+    return hobbies;
+  } catch (error) {
+    console.error('Error getting hobbies from Firestore:', error);
+    throw error;  // Re-throw the error so it can be handled upstream
+  }
 }
 
 export async function addHobbyToFirestore(user, hobby) {

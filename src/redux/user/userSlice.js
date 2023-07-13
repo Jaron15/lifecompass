@@ -2,7 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, getFirestore } from "firebase/firestore";
 import {db} from '../../utils/firebase'
-
+import { getHobbiesFromFirestore } from "../../utils/firebase";
+import { setHobbies } from "../hobbies/hobbiesSlice";
 
 const initialState = {
   user: null,
@@ -19,6 +20,9 @@ export const signInAsync = createAsyncThunk(
       const firebaseUser = userCredential.user;
       const { displayName, email: firebaseEmail, uid } = firebaseUser;
       
+      const hobbies = await getHobbiesFromFirestore(firebaseUser);
+
+      thunkAPI.dispatch(setHobbies(hobbies))
       // Instead of dispatching the action, return the user object
       return { displayName, email: firebaseEmail, uid };
     } catch (error) {
