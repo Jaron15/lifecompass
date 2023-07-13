@@ -88,17 +88,18 @@ extraReducers: (builder) => {
     }
   })
     .addCase(addHobby.pending, (state) => {
-      // state.status = 'loading';
+      state.status = 'loading';
+      console.log(state.status);
     })
     .addCase(addHobby.fulfilled, (state, action) => {
     
-      // state.status = 'idle';
+      state.status = 'idle';
       console.log('fulfilled payload: ',action.payload.hobby);
       console.log('-------this is the STATE ------', state)
       state.hobbies.push(action.payload.hobby);
     })
     .addCase(addHobby.rejected, (state, action) => {
-      // state.status = 'idle';
+      state.status = 'idle';
       if (action.payload) {
         state.error = action.payload.error;
       } else {
