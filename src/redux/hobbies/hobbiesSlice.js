@@ -1,23 +1,46 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { addHobbyToFirestore } from '../../utils/firebase';
 
-const hobbiesSlice = createSlice({
-  name: 'hobbies',
-  initialState: [],
-  reducers: {
-    addHobby: (state, action) => {
-        //safeguard to stop multiple hobbies with same id 
-    const existingHobby = state.find(hobby => hobby.id === action.payload.id);
-
-    if (!existingHobby) {
-      state.push({
-        id: action.payload.id,
-        hobbyName: action.payload.hobbyName,
-        practiceTimeGoal: action.payload.practiceTimeGoal,
-        daysOfWeek: action.payload.daysOfWeek,
-        practiceLog: [], // Will hold objects with fields like {date: "2023-01-01", timeSpent: 120}
-      });
+export const addHobby = createAsyncThunk(
+  'hobbies/addHobby',
+  async ({ user, hobby }, thunkAPI) => {
+    console.log("addHobby action called", user, hobby);
+    try {
+      console.log("Entering try block in addHobby");
+      const response = await addHobbyToFirestore(user, hobby);
+      console.log("Received response in addHobby", response);
+      return response;
+    } catch (error) {
+      console.error("Error caught in addHobby", error);
+      return thunkAPI.rejectWithValue(error.message);
     }
-    },
+  }
+);
+
+
+export const hobbiesSlice = createSlice({
+  name: 'hobbies',
+  initialState: { 
+    status: 'idle', 
+    error: null,
+    hobbies: [] 
+  },  
+  reducers: {
+    // addHobby: (state, action) => {
+    //     //safeguard to stop multiple hobbies with same id 
+    // const existingHobby = state.find(hobby => hobby.id === action.payload.id);
+
+    // if (!existingHobby) {
+    //   state.push({
+    //     id: action.payload.id,
+    //     hobbyName: action.payload.hobbyName,
+    //     practiceTimeGoal: action.payload.practiceTimeGoal,
+    //     daysOfWeek: action.payload.daysOfWeek,
+    //     practiceLog: [], // Will hold objects with fields like {date: "2023-01-01", timeSpent: 120}
+    //   });
+    // }
+    // },
     deleteHobby: (state,action) => {
         const index = state.findIndex((h) => h.id === action.payload.id);
         if (index !== -1) {
@@ -66,11 +89,37 @@ const hobbiesSlice = createSlice({
       }
     }
   },
+},
+extraReducers: (builder) => {
+  builder
+  .addCase('persist/REHYDRATE', (state, action) => {
+    // Initialize hobbies if it's undefined after rehydration
+    if (!state.hobbies) {
+      state.hobbies = [];
+    }
+  })
+    .addCase(addHobby.pending, (state) => {
+      // state.status = 'loading';
+    })
+    .addCase(addHobby.fulfilled, (state, action) => {
+    
+      // state.status = 'idle';
+      console.log('fulfilled payload: ',action.payload.hobby);
+      console.log('-------this is the STATE ------', state)
+      state.hobbies.push(action.payload.hobby);
+    })
+    .addCase(addHobby.rejected, (state, action) => {
+      // state.status = 'idle';
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    });
 }
-  
-  
+
 });
 
-export const { addHobby, updateHobby, deleteHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
+export const {  updateHobby, deleteHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;

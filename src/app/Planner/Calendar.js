@@ -10,8 +10,10 @@ import {createEvent} from '../../redux/events/eventsSlice';
 import {addTask} from '../../redux/tasks/tasksSlice';
 
 
+
 const Calendar = () => {
   // test area //
+  const user = useSelector((state) => state.user);
   const dispatch =useDispatch()
   const newHobby = {
     id: '1',
@@ -51,7 +53,12 @@ const Calendar = () => {
   }
 
 const addingAHobby = () => {
-  dispatch(addHobby(newHobby))
+  console.log("User in addingAHobby:", user.user);
+  console.log("Hobby in addingAHobby:", newHobby);
+
+  if (user) {
+  dispatch(addHobby({user: user.user, hobby: newHobby}))
+  }
   console.log('button clicked');
 }
 const addingAnEvent = () => {
@@ -70,8 +77,7 @@ const tasks = useSelector(state => state.tasks)
         console.log(hobbies);
         console.log(events);
         console.log(tasks);
-    }, [hobbies, events, tasks]); // This effect runs whenever 'hobbies' changes
-
+    }, [hobbies, events, tasks]); 
 
 //test area end //
 
@@ -322,7 +328,7 @@ className="grid grid-cols-7">{renderDaysOfMonth()}
       <button 
         style={{opacity: buttonOpacity}}
         className="absolute sm:bottom-5 sm:right-10 lg:right-30 bottom-20 right-5 bg-primary p-2 rounded-full text-white shadow-lg" 
-        onClick={addingATask} 
+        onClick={addingAHobby} 
       >
         <IoIosAddCircleOutline size={60} />
       </button>

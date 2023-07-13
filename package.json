@@ -17,6 +17,7 @@
     "eslint-config-next": "13.4.2",
     "firebase": "^9.22.2",
     "framer-motion": "^10.12.12",
+    "immer": "^10.0.2",
     "next": "13.4.2",
     "postcss": "8.4.23",
     "react": "18.2.0",

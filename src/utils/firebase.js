@@ -1,6 +1,8 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, addDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection } from "firebase/firestore";
+
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,6 +23,24 @@ if (!getApps().length) {
 // Initialize Firestore
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+export function getUserHobbiesCollection(user) {
+  return collection(db, 'users', user.uid, 'hobbies');
+}
+
+export async function addHobbyToFirestore(user, hobby) {
+  console.log('INSIDE addHobbyToFirestore', user);
+  const hobbiesCollection = getUserHobbiesCollection(user);
+  try {
+    await addDoc(hobbiesCollection, hobby);
+    return { user, hobby };  
+  } catch (error) {
+    // Handle or throw the error
+    console.error("Error adding document: ", error);
+    throw error; // Rethrow the error so it can be handled by your action
+  }
+}
+
 
 
 export { db, auth };
