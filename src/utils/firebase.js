@@ -1,6 +1,8 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, addDoc, getDocs, collection } from "firebase/firestore";
+import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+
+
 
 
 const firebaseConfig = {
@@ -34,7 +36,7 @@ export async function getHobbiesFromFirestore(userId) {
     const snapshot = await getDocs(hobbiesCollection);
   
     // Transform the snapshot to an array of hobbies
-    const hobbies = snapshot.docs.map(doc => doc.data());
+    const hobbies = snapshot.docs.map(doc => ({...doc.data(), firestoreId: doc.id}));
   
     return hobbies;
   } catch (error) {
@@ -53,6 +55,17 @@ export async function addHobbyToFirestore(user, hobby) {
     // Handle or throw the error
     console.error("Error adding document: ", error);
     throw error; // Rethrow the error so it can be handled by your action
+  }
+}
+
+export async function deleteHobbyFromFirestore(user, hobbyId) {
+  try {
+    console.log(hobbyId);
+    const selectedHobby = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+    await deleteDoc(selectedHobby);
+    console.log(`Hobby ${hobbyId} deleted successfully.`);
+  } catch (error) {
+    console.log('Error deleting hobby: ', error);
   }
 }
 

@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { addHobbyToFirestore } from '../../utils/firebase';
+import { deleteHobbyFromFirestore } from '../../utils/firebase';
 
 export const addHobby = createAsyncThunk(
   'hobbies/addHobby',
@@ -18,6 +19,18 @@ export const addHobby = createAsyncThunk(
   }
 );
 
+export const deleteHobby = createAsyncThunk(
+  'hobbies/deleteHobby',
+  async ({user, hobbyId}, thunkAPI) => {
+    try {
+      await deleteHobbyFromFirestore(user, hobbyId);
+      // If deleting hobby from Firestore was successful, return the hobbyId
+      return hobbyId;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 export const hobbiesSlice = createSlice({
   name: 'hobbies',
@@ -30,12 +43,12 @@ export const hobbiesSlice = createSlice({
   setHobbies: (state, action) => {
     state.hobbies = action.payload
   },
-    deleteHobby: (state,action) => {
-        const index = state.findIndex((h) => h.id === action.payload.id);
-        if (index !== -1) {
-            state.splice(index, 1)
-        }
-    },
+    // deleteHobby: (state,action) => {
+    //     const index = state.findIndex((h) => h.id === action.payload.id);
+    //     if (index !== -1) {
+    //         state.splice(index, 1)
+    //     }
+    // },
 
   updateHobby: (state, action) => {
     // Find the index of the hobby with the given id
@@ -81,6 +94,7 @@ export const hobbiesSlice = createSlice({
 },
 extraReducers: (builder) => {
   builder
+  //-------create--------
   .addCase('persist/REHYDRATE', (state, action) => {
     // Initialize hobbies if it's undefined after rehydration
     if (!state.hobbies) {
@@ -96,7 +110,7 @@ extraReducers: (builder) => {
       state.status = 'idle';
       console.log('fulfilled payload: ',action.payload.hobby);
       console.log('-------this is the STATE ------', state)
-      state.hobbies.push(action.payload.hobby);
+      state.hobbies.push({ ...action.payload.hobby, firestoreId: action.payload.id });
     })
     .addCase(addHobby.rejected, (state, action) => {
       state.status = 'idle';
@@ -105,11 +119,33 @@ extraReducers: (builder) => {
       } else {
         state.error = action.error;
       }
-    });
+    })
+    //-------create--------
+    //-------delete--------
+    .addCase(deleteHobby.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(deleteHobby.fulfilled, (state, action) => {
+      state.status = 'idle';
+      const index = state.hobbies.findIndex((h) => h.firestoreId  === action.payload);
+      if (index !== -1) {
+        state.hobbies.splice(index, 1);
+      }
+      console.log('delete successful (redux)');
+    })
+    .addCase(deleteHobby.rejected, (state, action) => {
+      state.status = 'idle';
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //-------delete--------
 }
 
 });
 
-export const { setHobbies, updateHobby, deleteHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
+export const { setHobbies, updateHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;

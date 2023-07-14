@@ -8,6 +8,7 @@ import {useSelector, useDispatch} from 'react-redux'
 
 //hobbies testing
 import { addHobby } from '../redux/hobbies/hobbiesSlice';
+import { deleteHobby } from '../redux/hobbies/hobbiesSlice';
 //hobbies testing 
 
 
@@ -29,7 +30,7 @@ const newHobby = {
 const [hobbyName, setHobbyName] = useState("");
   const dispatch = useDispatch();
 
-  const hobbies = useSelector(state => state.hobbies.hobbies); // This selects the hobbies from your Redux store
+  const hobbies = useSelector(state => state.hobbies.hobbies);
 
   const handleSubmit = async (event) => {
     console.log(hobbies);
@@ -38,6 +39,10 @@ const [hobbyName, setHobbyName] = useState("");
       dispatch(addHobby({user: user, hobby: newHobby}))
       }
   }
+  const deleteHobbyClick = async(user, hobbyFirestoreId) => {
+dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
+  }
+
   useEffect(() => {
     console.log(hobbies);
 
@@ -81,7 +86,7 @@ RIGHT HERE
       
       <ul>
         {hobbies && hobbies.map(hobby => (
-          <li key={hobby.id}>{hobby.hobbyName}</li>
+          <li className='cursor-pointer' onClick={() => deleteHobbyClick(user, hobby.firestoreId)} key={hobby.id}>{hobby.hobbyName}</li>
         ))}
       </ul>
     </div> :'' }
