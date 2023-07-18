@@ -43,12 +43,7 @@ export const hobbiesSlice = createSlice({
   setHobbies: (state, action) => {
     state.hobbies = action.payload
   },
-    // deleteHobby: (state,action) => {
-    //     const index = state.findIndex((h) => h.id === action.payload.id);
-    //     if (index !== -1) {
-    //         state.splice(index, 1)
-    //     }
-    // },
+
 
   updateHobby: (state, action) => {
     // Find the index of the hobby with the given id
