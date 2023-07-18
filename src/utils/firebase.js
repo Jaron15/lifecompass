@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc } from "firebase/firestore";
+import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 
@@ -25,6 +25,7 @@ if (!getApps().length) {
 const db = getFirestore(app);
 const auth = getAuth(app);
 
+//-----------hobbies-----------
 export function getUserHobbiesCollection(user) {
   return collection(db, 'users', user.uid, 'hobbies');
 }
@@ -49,9 +50,13 @@ export async function addHobbyToFirestore(user, hobby) {
   console.log('INSIDE addHobbyToFirestore', user);
   const hobbiesCollection = getUserHobbiesCollection(user);
   try {
-    await addDoc(hobbiesCollection, hobby);
-    return { user, hobby };  
+    const docRef = await addDoc(hobbiesCollection, hobby);
+    
+    const newHobby = { ...hobby, firestoreId: docRef.id };
+    
+    return { user, newHobby };
   } catch (error) {
+
     // Handle or throw the error
     console.error("Error adding document: ", error);
     throw error; // Rethrow the error so it can be handled by your action
@@ -69,6 +74,14 @@ export async function deleteHobbyFromFirestore(user, hobbyId) {
   }
 }
 
+export async function updateHobbyInFirestore(user, hobby) {
+  console.log('update hobbies firestore');
+  const hobbyRef = doc(db, 'users', user.uid, 'hobbies', hobby.firestoreId);
+  await updateDoc(hobbyRef, hobby);
+}
+
+
+//-----------hobbies-----------
 
 
 export { db, auth };

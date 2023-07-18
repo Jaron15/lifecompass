@@ -9,6 +9,7 @@ import {useSelector, useDispatch} from 'react-redux'
 //hobbies testing
 import { addHobby } from '../redux/hobbies/hobbiesSlice';
 import { deleteHobby } from '../redux/hobbies/hobbiesSlice';
+import { updateHobby } from '../redux/hobbies/hobbiesSlice';
 //hobbies testing 
 
 
@@ -40,7 +41,23 @@ const [hobbyName, setHobbyName] = useState("");
       }
   }
   const deleteHobbyClick = async(user, hobbyFirestoreId) => {
+    console.log('-------------right here --------------',hobbyFirestoreId);
 dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
+  }
+  const updateHobbyNameClick = (user, hobby) => {
+    console.log('button clicked');
+    const updatedHobby = {...hobby, hobbyName: 'Drums'};
+    dispatch(updateHobby({user: user, hobby: updatedHobby}));
+  }
+  const updateHobbyGoalClick = (user, hobby) => {
+    console.log('button clicked');
+    const updatedHobby = {...hobby, practiceTimeGoal: '30'};
+    dispatch(updateHobby({user: user, hobby: updatedHobby}));
+  }
+  const updateHobbyDaysClick = (user, hobby) => {
+    console.log('button clicked');
+    const updatedHobby = {...hobby, daysOfWeek: ['monday', 'tuesday', 'wednesday']};
+    dispatch(updateHobby({user: user, hobby: updatedHobby}));
   }
 
   useEffect(() => {
@@ -86,7 +103,22 @@ RIGHT HERE
       
       <ul>
         {hobbies && hobbies.map(hobby => (
-          <li className='cursor-pointer' onClick={() => deleteHobbyClick(user, hobby.firestoreId)} key={hobby.id}>{hobby.hobbyName}</li>
+          <div className='flex justify-center flex-col' key={hobby.id}>
+          <li className='cursor-pointer font-bold text-center text-lg underline' onClick={() => deleteHobbyClick(user, hobby.firestoreId)} key={hobby.id}>{hobby.hobbyName}</li>
+          <div className=' flex flex-row justify-center'>
+            {hobby.daysOfWeek.map((day, index) => (
+              <p className='mx-2' key={index}>{day}</p>
+            ))}
+          </div>
+          <div className='flex flex-row justify-center'>
+            {hobby.practiceTimeGoal} Minutes
+          </div>
+          <div className='flex flex-row justify-between'>
+          <button className='bg-sky-400 rounded w-1/4' onClick={() => updateHobbyNameClick(user, hobby)}>Update Name</button>
+          <button className='bg-sky-400 rounded w-1/4' onClick={() => updateHobbyGoalClick(user, hobby)}>Update Goal</button>
+          <button className='bg-sky-400 rounded w-1/4' onClick={() => updateHobbyDaysClick(user, hobby)}>Update Days</button>
+          </div>
+          </div>
         ))}
       </ul>
     </div> :'' }

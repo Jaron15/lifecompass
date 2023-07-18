@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { addHobbyToFirestore } from '../../utils/firebase';
 import { deleteHobbyFromFirestore } from '../../utils/firebase';
+import { updateHobbyInFirestore } from '../../utils/firebase';
 
 export const addHobby = createAsyncThunk(
   'hobbies/addHobby',
@@ -32,6 +33,20 @@ export const deleteHobby = createAsyncThunk(
   }
 );
 
+export const updateHobby = createAsyncThunk(
+  'hobbies/updateHobby',
+  async ({user, hobby}, thunkAPI) => {
+    try {
+      console.log('update hobbies slice: ', hobby);
+      await updateHobbyInFirestore(user, hobby);
+      return hobby;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+
 export const hobbiesSlice = createSlice({
   name: 'hobbies',
   initialState: { 
@@ -45,28 +60,28 @@ export const hobbiesSlice = createSlice({
   },
 
 
-  updateHobby: (state, action) => {
-    // Find the index of the hobby with the given id
-    const index = state.findIndex(hobby => hobby.id === action.payload.id);
+  // updateHobby: (state, action) => {
+  //   // Find the index of the hobby with the given id
+  //   const index = state.findIndex(hobby => hobby.id === action.payload.id);
   
-    // If the hobby is found, update it
-    if (index !== -1) {
-      if (action.payload.hobbyName !== undefined) {
-        state[index].hobbyName = action.payload.hobbyName;
-      }
-      if (action.payload.practiceTimeGoal !== undefined) {
-        state[index].practiceTimeGoal = action.payload.practiceTimeGoal;
-      }
-      if (action.payload.daysOfWeek !== undefined) {
-        state[index].daysOfWeek = action.payload.daysOfWeek;
-      }
-      // if (action.payload.practiceLog !== undefined) {
-      //   state[index].practiceLog = action.payload.practiceLog;
-      // }
-    } else {
-      console.log('Hobby with this id does not exist');
-    }
-  },
+  //   // If the hobby is found, update it
+  //   if (index !== -1) {
+  //     if (action.payload.hobbyName !== undefined) {
+  //       state[index].hobbyName = action.payload.hobbyName;
+  //     }
+  //     if (action.payload.practiceTimeGoal !== undefined) {
+  //       state[index].practiceTimeGoal = action.payload.practiceTimeGoal;
+  //     }
+  //     if (action.payload.daysOfWeek !== undefined) {
+  //       state[index].daysOfWeek = action.payload.daysOfWeek;
+  //     }
+  //     // if (action.payload.practiceLog !== undefined) {
+  //     //   state[index].practiceLog = action.payload.practiceLog;
+  //     // }
+  //   } else {
+  //     console.log('Hobby with this id does not exist');
+  //   }
+  // },
   logPractice: (state, action) => {
     const hobby = state.find((h) => h.id === action.payload.hobbyId);
     if (hobby) {
@@ -101,11 +116,10 @@ extraReducers: (builder) => {
       console.log(state.status);
     })
     .addCase(addHobby.fulfilled, (state, action) => {
-    
       state.status = 'idle';
-      console.log('fulfilled payload: ',action.payload.hobby);
+      console.log('fulfilled payload: ',action.payload.newHobby);
       console.log('-------this is the STATE ------', state)
-      state.hobbies.push({ ...action.payload.hobby, firestoreId: action.payload.id });
+      state.hobbies.push(action.payload.newHobby);
     })
     .addCase(addHobby.rejected, (state, action) => {
       state.status = 'idle';
@@ -137,10 +151,27 @@ extraReducers: (builder) => {
       }
     })
     //-------delete--------
+    //-------update--------
+    .addCase(updateHobby.fulfilled, (state, action) => {
+      const index = state.hobbies.findIndex((h) => h.firestoreId === action.payload.firestoreId);
+      if (index !== -1) {
+        state.hobbies[index] = action.payload;
+      }
+    })
+    .addCase(updateHobby.rejected, (state, action) => {
+      state.status = 'idle';
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //-------update--------
+
 }
 
 });
 
-export const { setHobbies, updateHobby, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
+export const { setHobbies, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;
