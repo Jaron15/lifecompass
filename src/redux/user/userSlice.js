@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, getFirestore } from "firebase/firestore";
 import {db} from '../../utils/firebase'
-import { getHobbiesFromFirestore } from "../../utils/firebase";
+import { getHobbiesFromFirestore } from "../../utils/hobbiesBase";
 import { setHobbies } from "../hobbies/hobbiesSlice";
 
 const initialState = {

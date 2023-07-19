@@ -126,6 +126,7 @@ dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
 RIGHT HERE
       </button>
       
+      {/* hobbies testing */}
       <ul>
         {hobbies && hobbies.map(hobby => (
           <div className='flex justify-center flex-col' key={hobby.id}>
@@ -159,6 +160,7 @@ RIGHT HERE
           </div>
         ))}
       </ul>
+       {/* hobbies testing */}
     </div> :'' }
     </div>
   );
