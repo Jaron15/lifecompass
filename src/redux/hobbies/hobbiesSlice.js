@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { addHobbyToFirestore, deletePracticeLogFromFirestore, logPracticeInFirestore } from '../../utils/firebase';
+import { addHobbyToFirestore, deletePracticeLogFromFirestore, logPracticeInFirestore, updatePracticeLogInFirestore } from '../../utils/firebase';
 import { deleteHobbyFromFirestore } from '../../utils/firebase';
 import { updateHobbyInFirestore } from '../../utils/firebase';
 
@@ -73,6 +73,20 @@ export const deletePracticeLog = createAsyncThunk(
   }
 );
 
+export const updatePracticeLog = createAsyncThunk(
+  'hobbies/updatePracticeLog',
+  async ({ user, hobbyId, logEntryId, newLogEntry }, thunkAPI) => {
+    try {
+      const response = await updatePracticeLogInFirestore(user, hobbyId, logEntryId, newLogEntry);
+      return { ...response, hobbyId }; // include the hobbyId in the response for the reducer to use
+    } catch (error) {
+      console.error("Error caught in updatePracticeLog", error);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+
 
 export const hobbiesSlice = createSlice({
   name: 'hobbies',
@@ -85,17 +99,6 @@ export const hobbiesSlice = createSlice({
   setHobbies: (state, action) => {
     state.hobbies = action.payload
   },
-
-  
-  // deletePracticeLogEntry: (state, action) => {
-  //   const hobby = state.find((h) => h.id === action.payload.hobbyId);
-  //   if (hobby) {
-  //     const logIndex = hobby.practiceLog.findIndex((log) => log.id === action.payload.logId);
-  //     if (logIndex !== -1) {
-  //       hobby.practiceLog.splice(logIndex, 1);
-  //     }
-  //   }
-  // },
 },
 extraReducers: (builder) => {
   builder
@@ -203,6 +206,16 @@ extraReducers: (builder) => {
         }
       }
     })
+    .addCase(updatePracticeLog.fulfilled, (state, action) => {
+      const hobbyIndex = state.hobbies.findIndex(hobby => hobby.firestoreId === action.payload.hobbyId);
+      if (hobbyIndex !== -1) {
+        const logIndex = state.hobbies[hobbyIndex].practiceLog.findIndex(log => log.id === action.payload.logEntryId);
+        if (logIndex !== -1) {
+          state.hobbies[hobbyIndex].practiceLog[logIndex] = action.payload.updatedLog;
+        }
+      }
+    })
+    
     //-------practicLog--------
 
 }

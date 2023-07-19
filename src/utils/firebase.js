@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
+import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc, updateDoc, getDoc, arrayUnion, setDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 
@@ -115,6 +115,29 @@ export async function deletePracticeLogFromFirestore(user, hobbyId, logEntryId) 
   }
 }
 
+export async function updatePracticeLogInFirestore(user, hobbyId, logEntryId, newLogEntry) {
+  const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+  const hobbySnap = await getDoc(hobbyDocRef);
+
+  if (hobbySnap.exists()) {
+    const hobbyData = hobbySnap.data();
+    const logIndex = hobbyData.practiceLog.findIndex(log => log.id === logEntryId);
+
+    if (logIndex !== -1) {
+      const updatedLogEntry = {...hobbyData.practiceLog[logIndex], ...newLogEntry};
+      hobbyData.practiceLog[logIndex] = updatedLogEntry;
+          
+      await setDoc(hobbyDocRef, hobbyData);
+      return { hobbyId, logEntryId, updatedLog: updatedLogEntry };
+    } else {
+      console.error(`No such log entry! ID: ${logEntryId}`);
+      throw new Error(`No such log entry! ID: ${logEntryId}`);
+    }
+  } else {
+    console.error(`No such document! ID: ${hobbyId}`);
+    throw new Error(`No such document! ID: ${hobbyId}`);
+  }
+}
 
 
 //-----------hobbies-----------

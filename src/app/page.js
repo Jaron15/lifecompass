@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import {useSelector, useDispatch} from 'react-redux'
 
 //hobbies testing
-import { addHobby, deletePracticeLog } from '../redux/hobbies/hobbiesSlice';
+import { addHobby, deletePracticeLog, updatePracticeLog } from '../redux/hobbies/hobbiesSlice';
 import { deleteHobby } from '../redux/hobbies/hobbiesSlice';
 import { updateHobby } from '../redux/hobbies/hobbiesSlice';
 import { logPractice } from '../redux/hobbies/hobbiesSlice';
@@ -30,6 +30,10 @@ const newHobby = {
   practiceLog: []
 };
 const practiceLog = {date: '2023-08-01', timeSpent: '60'}
+const newLogEntry = {
+  date: '2023-07-19',
+  timeSpent: '90'
+}
 const [hobbyName, setHobbyName] = useState("");
   const dispatch = useDispatch();
 
@@ -74,6 +78,10 @@ dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
   const deletePracticeLogClick = (user, hobbyId, logEntryId) => {
     console.log('delete log function clicked');
     dispatch(deletePracticeLog({user: user, hobbyId: hobbyId, logEntryId: logEntryId}));
+  }
+  
+  const updatePracticeLogClick = (user, hobbyId, logEntryId, newLogEntry) => {
+    dispatch(updatePracticeLog({user: user, hobbyId: hobbyId, logEntryId: logEntryId, newLogEntry: newLogEntry}));
   }
   
 
@@ -131,13 +139,22 @@ RIGHT HERE
             {hobby.practiceTimeGoal} Minutes
           </div>
           <div className='flex flex-row justify-center' >{hobby.practiceLog.map((log, index) => (
-            <p className='mx-2 cursor-pointer' key={log.id}  onClick={() => deletePracticeLogClick(user, hobby.firestoreId, log.id)} >{log.date}</p>
+            <div key={log.id}>
+            <p className='mx-2 cursor-pointer'  onClick={() => deletePracticeLogClick(user, hobby.firestoreId, log.id)} >{log.date}/{log.timeSpent}</p>
+            <button 
+      className='bg-primary rounded w-1/2' 
+      onClick={() => updatePracticeLogClick(user, hobby.firestoreId, log.id, { ...log, timeSpent: 90 })}
+    >
+      Update Log Entry
+    </button>
+  </div>
           ))}
           </div>
           <div className='flex flex-row justify-between'>
           <button className='bg-sky-400 rounded w-1/4' onClick={() => updateHobbyNameClick(user, hobby)}>Update Name</button>
           <button className='bg-sky-400 rounded w-1/4' onClick={() => updateHobbyGoalClick(user, hobby)}>Update Goal</button>
           <button className='bg-sky-400 rounded w-1/4' onClick={() => updateHobbyDaysClick(user, hobby)}>Update Days</button>
+        
           </div>
           </div>
         ))}
