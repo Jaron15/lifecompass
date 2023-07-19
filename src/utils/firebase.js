@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 
@@ -79,6 +79,26 @@ export async function updateHobbyInFirestore(user, hobby) {
   const hobbyRef = doc(db, 'users', user.uid, 'hobbies', hobby.firestoreId);
   await updateDoc(hobbyRef, hobby);
 }
+
+export async function logPracticeInFirestore(user, hobbyId, logEntry) {
+  const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+  const hobbySnap = await getDoc(hobbyDocRef);
+
+  if (hobbySnap.exists()) {
+    const hobbyData = hobbySnap.data();
+    const updatedHobby = { 
+      ...hobbyData, 
+      practiceLog: [...hobbyData.practiceLog, logEntry]
+    };
+
+    await setDoc(hobbyDocRef, updatedHobby);
+    return updatedHobby;
+  } else {
+    console.error(`No such document! ID: ${hobbyId}`);
+    throw new Error(`No such document! ID: ${hobbyId}`);
+  }
+}
+
 
 
 //-----------hobbies-----------

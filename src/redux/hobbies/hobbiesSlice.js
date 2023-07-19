@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { addHobbyToFirestore } from '../../utils/firebase';
+import { addHobbyToFirestore, logPracticeInFirestore } from '../../utils/firebase';
 import { deleteHobbyFromFirestore } from '../../utils/firebase';
 import { updateHobbyInFirestore } from '../../utils/firebase';
 
@@ -46,6 +46,24 @@ export const updateHobby = createAsyncThunk(
   }
 );
 
+export const logPractice = createAsyncThunk(
+  'hobbies/logPractice',
+  async ({ user, hobbyId, logEntry }, thunkAPI) => {
+    console.log("logPractice action called", user, hobbyId, logEntry);
+    try {
+      console.log("Entering try block in logPractice");
+
+      const updatedHobby = await logPracticeInFirestore(user, hobbyId, logEntry);
+
+      return { hobbyId, updatedHobby };
+
+    } catch (error) {
+      console.error("Error caught in logPractice", error);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 
 export const hobbiesSlice = createSlice({
   name: 'hobbies',
@@ -59,39 +77,7 @@ export const hobbiesSlice = createSlice({
     state.hobbies = action.payload
   },
 
-
-  // updateHobby: (state, action) => {
-  //   // Find the index of the hobby with the given id
-  //   const index = state.findIndex(hobby => hobby.id === action.payload.id);
   
-  //   // If the hobby is found, update it
-  //   if (index !== -1) {
-  //     if (action.payload.hobbyName !== undefined) {
-  //       state[index].hobbyName = action.payload.hobbyName;
-  //     }
-  //     if (action.payload.practiceTimeGoal !== undefined) {
-  //       state[index].practiceTimeGoal = action.payload.practiceTimeGoal;
-  //     }
-  //     if (action.payload.daysOfWeek !== undefined) {
-  //       state[index].daysOfWeek = action.payload.daysOfWeek;
-  //     }
-  //     // if (action.payload.practiceLog !== undefined) {
-  //     //   state[index].practiceLog = action.payload.practiceLog;
-  //     // }
-  //   } else {
-  //     console.log('Hobby with this id does not exist');
-  //   }
-  // },
-  logPractice: (state, action) => {
-    const hobby = state.find((h) => h.id === action.payload.hobbyId);
-    if (hobby) {
-      hobby.practiceLog.push({
-        id: `${hobby.id}_${Date.now()}`, // Creates a unique id based on the hobby id and the current timestamp
-        date: action.payload.date,
-        timeSpent: action.payload.timeSpent,
-      });
-    }
-  },
   deletePracticeLogEntry: (state, action) => {
     const hobby = state.find((h) => h.id === action.payload.hobbyId);
     if (hobby) {
@@ -152,6 +138,9 @@ extraReducers: (builder) => {
     })
     //-------delete--------
     //-------update--------
+    .addCase(updateHobby.pending, (state) => {
+      state.status = 'loading';
+    })
     .addCase(updateHobby.fulfilled, (state, action) => {
       const index = state.hobbies.findIndex((h) => h.firestoreId === action.payload.firestoreId);
       if (index !== -1) {
@@ -167,11 +156,31 @@ extraReducers: (builder) => {
       }
     })
     //-------update--------
+    //-------practicLog--------
+    .addCase(logPractice.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(logPractice.fulfilled, (state, action) => {
+      state.status = 'idle';
+      const index = state.hobbies.findIndex((hobby) => hobby.firestoreId === action.payload.hobbyId);
+      if (index !== -1) {
+        state.hobbies[index] = action.payload.updatedHobby;
+      }
+    })
+    .addCase(logPractice.rejected, (state, action) => {
+      state.status = 'idle';
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //-------practicLog--------
 
 }
 
 });
 
-export const { setHobbies, logPractice, deletePracticeLogEntry } = hobbiesSlice.actions;
+export const { setHobbies, deletePracticeLogEntry } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;

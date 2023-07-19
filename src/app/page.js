@@ -10,6 +10,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import { addHobby } from '../redux/hobbies/hobbiesSlice';
 import { deleteHobby } from '../redux/hobbies/hobbiesSlice';
 import { updateHobby } from '../redux/hobbies/hobbiesSlice';
+import { logPractice } from '../redux/hobbies/hobbiesSlice';
 //hobbies testing 
 
 
@@ -28,6 +29,7 @@ const newHobby = {
   daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
   practiceLog: []
 };
+const practiceLog = {date: '2023-08-01', timeSpent: '60'}
 const [hobbyName, setHobbyName] = useState("");
   const dispatch = useDispatch();
 
@@ -56,8 +58,20 @@ dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
   }
   const updateHobbyDaysClick = (user, hobby) => {
     console.log('button clicked');
-    const updatedHobby = {...hobby, daysOfWeek: ['monday', 'tuesday', 'wednesday']};
-    dispatch(updateHobby({user: user, hobby: updatedHobby}));
+    const newDay = 'Sunday';
+    if (!hobby.daysOfWeek.includes(newDay)) {
+      const updatedHobby = {...hobby, daysOfWeek: hobby.daysOfWeek.concat(newDay)};
+      dispatch(updateHobby({user: user, hobby: updatedHobby}));
+    } else {
+      console.log(`${newDay} is already in the days of week`);
+    };
+  }
+
+  const logPracticeClick = (user, hobbyId, logEntry) => {
+    console.log('Log practice button clicked');
+    
+    // Assume logEntry is an object like { date: '2023-08-01', timeSpent: 120 }
+    dispatch(logPractice({user: user, hobbyId: hobbyId, logEntry: logEntry}));
   }
 
   useEffect(() => {
@@ -110,7 +124,7 @@ RIGHT HERE
               <p className='mx-2' key={index}>{day}</p>
             ))}
           </div>
-          <div className='flex flex-row justify-center'>
+          <div className='flex flex-row justify-center' onClick={() => logPracticeClick(user, hobby.firestoreId, practiceLog)}>
             {hobby.practiceTimeGoal} Minutes
           </div>
           <div className='flex flex-row justify-between'>
