@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
+import { getFirestore, addDoc, getDocs, collection, deleteDoc, doc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 
@@ -82,20 +82,36 @@ export async function updateHobbyInFirestore(user, hobby) {
 
 export async function logPracticeInFirestore(user, hobbyId, logEntry) {
   const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
-  const hobbySnap = await getDoc(hobbyDocRef);
+  
+  // Generate unique logEntryId
+  const logEntryId = Date.now().toString();
+  
+  // Attach the unique ID to the log entry
+  const logEntryWithId = { ...logEntry, id: logEntryId };
 
-  if (hobbySnap.exists()) {
-    const hobbyData = hobbySnap.data();
-    const updatedHobby = { 
-      ...hobbyData, 
-      practiceLog: [...hobbyData.practiceLog, logEntry]
-    };
+  try {
+    await updateDoc(hobbyDocRef, {
+      practiceLog: arrayUnion(logEntryWithId),
+    });
 
-    await setDoc(hobbyDocRef, updatedHobby);
-    return updatedHobby;
+    // Return logEntryWithId for Redux to use
+    return logEntryWithId;
+  } catch (error) {
+    console.error('Error adding practice log to hobby in Firestore:', error);
+    throw error; 
+  }
+}
+
+export async function deletePracticeLogFromFirestore(user, hobbyId, logEntryId) {
+  const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+  const hobbyDocSnap = await getDoc(hobbyDocRef);
+  
+  if (hobbyDocSnap.exists()) {
+    let hobby = hobbyDocSnap.data();
+    hobby.practiceLog = hobby.practiceLog.filter(logEntry => logEntry.id !== logEntryId);
+    await updateDoc(hobbyDocRef, hobby);
   } else {
-    console.error(`No such document! ID: ${hobbyId}`);
-    throw new Error(`No such document! ID: ${hobbyId}`);
+    throw new Error(`No hobby found for id: ${hobbyId}`);
   }
 }
 

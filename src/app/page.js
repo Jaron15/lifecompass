@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import {useSelector, useDispatch} from 'react-redux'
 
 //hobbies testing
-import { addHobby } from '../redux/hobbies/hobbiesSlice';
+import { addHobby, deletePracticeLog } from '../redux/hobbies/hobbiesSlice';
 import { deleteHobby } from '../redux/hobbies/hobbiesSlice';
 import { updateHobby } from '../redux/hobbies/hobbiesSlice';
 import { logPractice } from '../redux/hobbies/hobbiesSlice';
@@ -69,10 +69,13 @@ dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
 
   const logPracticeClick = (user, hobbyId, logEntry) => {
     console.log('Log practice button clicked');
-    
-    // Assume logEntry is an object like { date: '2023-08-01', timeSpent: 120 }
     dispatch(logPractice({user: user, hobbyId: hobbyId, logEntry: logEntry}));
   }
+  const deletePracticeLogClick = (user, hobbyId, logEntryId) => {
+    console.log('delete log function clicked');
+    dispatch(deletePracticeLog({user: user, hobbyId: hobbyId, logEntryId: logEntryId}));
+  }
+  
 
   useEffect(() => {
     console.log(hobbies);
@@ -126,6 +129,10 @@ RIGHT HERE
           </div>
           <div className='flex flex-row justify-center' onClick={() => logPracticeClick(user, hobby.firestoreId, practiceLog)}>
             {hobby.practiceTimeGoal} Minutes
+          </div>
+          <div className='flex flex-row justify-center' >{hobby.practiceLog.map((log, index) => (
+            <p className='mx-2 cursor-pointer' key={log.id}  onClick={() => deletePracticeLogClick(user, hobby.firestoreId, log.id)} >{log.date}</p>
+          ))}
           </div>
           <div className='flex flex-row justify-between'>
           <button className='bg-sky-400 rounded w-1/4' onClick={() => updateHobbyNameClick(user, hobby)}>Update Name</button>

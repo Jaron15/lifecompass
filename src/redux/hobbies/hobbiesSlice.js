@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { addHobbyToFirestore, logPracticeInFirestore } from '../../utils/firebase';
+import { addHobbyToFirestore, deletePracticeLogFromFirestore, logPracticeInFirestore } from '../../utils/firebase';
 import { deleteHobbyFromFirestore } from '../../utils/firebase';
 import { updateHobbyInFirestore } from '../../utils/firebase';
 
@@ -49,16 +49,25 @@ export const updateHobby = createAsyncThunk(
 export const logPractice = createAsyncThunk(
   'hobbies/logPractice',
   async ({ user, hobbyId, logEntry }, thunkAPI) => {
-    console.log("logPractice action called", user, hobbyId, logEntry);
     try {
-      console.log("Entering try block in logPractice");
-
-      const updatedHobby = await logPracticeInFirestore(user, hobbyId, logEntry);
-
-      return { hobbyId, updatedHobby };
-
+      const updatedLogEntry = await logPracticeInFirestore(user, hobbyId, logEntry);
+      return { hobbyId, logEntry: updatedLogEntry };
     } catch (error) {
-      console.error("Error caught in logPractice", error);
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+
+
+export const deletePracticeLog = createAsyncThunk(
+  'hobbies/deletePracticeLog',
+  async ({user, hobbyId, logEntryId}, thunkAPI) => {
+    try {
+      console.log('IN REDUX ', logEntryId);
+      await deletePracticeLogFromFirestore(user, hobbyId, logEntryId);
+      return { user, hobbyId, logEntryId };
+    } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -78,15 +87,15 @@ export const hobbiesSlice = createSlice({
   },
 
   
-  deletePracticeLogEntry: (state, action) => {
-    const hobby = state.find((h) => h.id === action.payload.hobbyId);
-    if (hobby) {
-      const logIndex = hobby.practiceLog.findIndex((log) => log.id === action.payload.logId);
-      if (logIndex !== -1) {
-        hobby.practiceLog.splice(logIndex, 1);
-      }
-    }
-  },
+  // deletePracticeLogEntry: (state, action) => {
+  //   const hobby = state.find((h) => h.id === action.payload.hobbyId);
+  //   if (hobby) {
+  //     const logIndex = hobby.practiceLog.findIndex((log) => log.id === action.payload.logId);
+  //     if (logIndex !== -1) {
+  //       hobby.practiceLog.splice(logIndex, 1);
+  //     }
+  //   }
+  // },
 },
 extraReducers: (builder) => {
   builder
@@ -160,11 +169,13 @@ extraReducers: (builder) => {
     .addCase(logPractice.pending, (state) => {
       state.status = 'loading';
     })
-    .addCase(logPractice.fulfilled, (state, action) => {
-      state.status = 'idle';
-      const index = state.hobbies.findIndex((hobby) => hobby.firestoreId === action.payload.hobbyId);
-      if (index !== -1) {
-        state.hobbies[index] = action.payload.updatedHobby;
+    builder.addCase(logPractice.fulfilled, (state, action) => {
+      // Find the hobby
+      const hobby = state.hobbies.find(h => h.firestoreId === action.payload.hobbyId);
+    
+      // Update the practice log of the hobby
+      if (hobby) {
+        hobby.practiceLog.push(action.payload.logEntry);
       }
     })
     .addCase(logPractice.rejected, (state, action) => {
@@ -175,12 +186,29 @@ extraReducers: (builder) => {
         state.error = action.error;
       }
     })
+    .addCase(deletePracticeLog.fulfilled, (state, action) => {
+      console.log("Payload in deletePracticeLog: ", action.payload); // Let's see what we get
+
+      const hobbyIndex = state.hobbies.findIndex(hobby => hobby.firestoreId === action.payload.hobbyId);
+
+      console.log("HobbyIndex: ", hobbyIndex); // Let's confirm we find the hobby
+      
+      if (hobbyIndex !== -1) {
+        const logIndex = state.hobbies[hobbyIndex].practiceLog.findIndex(log => log.id === action.payload.logEntryId);
+
+        console.log("LogIndex: ", logIndex); // And the log entry
+
+        if (logIndex !== -1) {
+          state.hobbies[hobbyIndex].practiceLog.splice(logIndex, 1);
+        }
+      }
+    })
     //-------practicLog--------
 
 }
 
 });
 
-export const { setHobbies, deletePracticeLogEntry } = hobbiesSlice.actions;
+export const { setHobbies } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;
