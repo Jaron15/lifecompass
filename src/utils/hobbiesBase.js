@@ -78,6 +78,17 @@ export async function updateHobbyInFirestore(user, hobby) {
       throw new Error("No hobby found with this ID");
     }
   
+    // Validation
+    if (typeof hobby.hobbyName !== 'string' || 
+    !Array.isArray(hobby.daysOfWeek) || 
+    !Array.isArray(hobby.practiceLog) || 
+    typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal <= 0) {
+    throw new Error("Invalid hobby object");
+    }
+    
+    if (hobbyRef === hobby) {
+        throw new Error('No change identified')
+    }
     try {
       await updateDoc(hobbyRef, hobby);
     } catch (error) {
@@ -92,6 +103,17 @@ export async function updateHobbyInFirestore(user, hobby) {
   
   export async function logPracticeInFirestore(user, hobbyId, logEntry) {
     const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+
+    // Validate logEntry
+  if (typeof logEntry.date !== 'string' || !logEntry.date) {
+    throw new Error('Invalid or missing log entry date');
+  }
+  
+  if (typeof logEntry.timeSpent !== 'number' || !logEntry.timeSpent) {
+    throw new Error('Invalid or missing log entry time spent');
+  }
+
+
     
     // Generate unique logEntryId
     const logEntryId = Date.now().toString();
@@ -141,6 +163,15 @@ export async function updateHobbyInFirestore(user, hobby) {
   
   export async function updatePracticeLogInFirestore(user, hobbyId, logEntryId, newLogEntry) {
     const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+
+    if (typeof newLogEntry.date !== 'string' || !newLogEntry.date) {
+        throw new Error('Invalid or missing log entry date');
+      }
+      
+      if (typeof newLogEntry.timeSpent !== 'number' || !newLogEntry.timeSpent) {
+        throw new Error('Invalid or missing log entry time spent');
+      }
+
     const hobbySnap = await getDoc(hobbyDocRef);
   
     if (hobbySnap.exists()) {

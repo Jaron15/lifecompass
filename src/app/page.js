@@ -42,10 +42,10 @@ const newHobby = {
   daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
   practiceLog: []
 };
-const practiceLog = {date: '2023-08-01', timeSpent: '60'}
+const practiceLog = {date: '2023-08-01', timeSpent: 60}
 const newLogEntry = {
   date: '2023-07-19',
-  timeSpent: '90'
+  timeSpent: 90
 }
 const [hobbyName, setHobbyName] = useState("");
   const dispatch = useDispatch();
@@ -71,7 +71,7 @@ dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
   }
   const updateHobbyGoalClick = (user, hobby) => {
     console.log('button clicked');
-    const updatedHobby = {...hobby, practiceTimeGoal: '30'};
+    const updatedHobby = {...hobby, practiceTimeGoal: 30};
     dispatch(updateHobby({user: user, hobby: updatedHobby}));
   }
   const updateHobbyDaysClick = (user, hobby) => {
