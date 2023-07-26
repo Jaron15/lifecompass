@@ -17,7 +17,11 @@ export function getUserHobbiesCollection(user) {
       return hobbies;
     } catch (error) {
       console.error('Error getting hobbies from Firestore:', error);
-      throw error;  // Re-throw the error so it can be handled upstream
+      if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {
+        throw new Error('Network error occurred, please check your connection and try again');
+    } else {
+      throw error;
+      }  
     }
   }
   
@@ -31,7 +35,11 @@ export function getUserHobbiesCollection(user) {
       return { user, newHobby };
     } catch (error) {
       console.error("Error adding document: ", error);
+      if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {
+        throw new Error('Network error occurred, please check your connection and try again');
+    } else {
       throw error;
+      }  
     }
   }
   
@@ -47,7 +55,11 @@ export function getUserHobbiesCollection(user) {
     await deleteDoc(selectedHobby);
   } catch (error) {
     console.error('Error deleting hobby: ', error);
-    throw error;
+    if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {
+        throw new Error('Network error occurred, please check your connection and try again');
+    } else {
+      throw error;
+      }  
   }
 }
 
@@ -64,7 +76,11 @@ export async function updateHobbyInFirestore(user, hobby) {
       await updateDoc(hobbyRef, hobby);
     } catch (error) {
       console.error('Error updating hobby: ', error);
+      if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {
+        throw new Error('Network error occurred, please check your connection and try again');
+    } else {
       throw error;
+      }  
     }
   }
   
@@ -92,7 +108,11 @@ export async function updateHobbyInFirestore(user, hobby) {
     return logEntryWithId;
   } catch (error) {
     console.error('Error adding practice log to hobby in Firestore:', error);
-    throw error; 
+    if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {
+        throw new Error('Network error occurred, please check your connection and try again');
+    } else {
+      throw error;
+      }  
   }
 }
   
