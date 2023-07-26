@@ -10,7 +10,8 @@ export const addHobby = createAsyncThunk(
       return response;
     } catch (error) {
       console.error("Error caught in addHobby", error);
-      return thunkAPI.rejectWithValue(error.message);
+     return thunkAPI.rejectWithValue({ error: error.message });
+
     }
   }
 );
@@ -47,7 +48,7 @@ export const logPractice = createAsyncThunk(
       const updatedLogEntry = await logPracticeInFirestore(user, hobbyId, logEntry);
       return { hobbyId, logEntry: updatedLogEntry };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue({error: error.message});
     }
   }
 );
@@ -59,7 +60,8 @@ export const deletePracticeLog = createAsyncThunk(
       await deletePracticeLogFromFirestore(user, hobbyId, logEntryId);
       return { user, hobbyId, logEntryId };
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue({ error: error.message });
+
     }
   }
 );
@@ -72,7 +74,8 @@ export const updatePracticeLog = createAsyncThunk(
       return { ...response, hobbyId }; //response + the hobbyId so the reducer can use it 
     } catch (error) {
       console.error("Error caught in updatePracticeLog", error);
-      return thunkAPI.rejectWithValue(error.message);
+      return thunkAPI.rejectWithValue({ error: error.message });
+
     }
   }
 );
@@ -90,6 +93,10 @@ export const hobbiesSlice = createSlice({
   setHobbies: (state, action) => {
     state.hobbies = action.payload
   },
+  clearError: (state) => {
+    state.error = null;
+  },
+
 },
 extraReducers: (builder) => {
   builder
@@ -185,6 +192,14 @@ extraReducers: (builder) => {
         }
       }
     })
+    .addCase(deletePracticeLog.rejected, (state, action) => {
+      state.status = 'idle';
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
     .addCase(updatePracticeLog.fulfilled, (state, action) => {
       const hobbyIndex = state.hobbies.findIndex(hobby => hobby.firestoreId === action.payload.hobbyId);
       if (hobbyIndex !== -1) {
@@ -194,10 +209,19 @@ extraReducers: (builder) => {
         }
       }
     })
+    .addCase(updatePracticeLog.rejected, (state, action) => {
+      state.status = 'idle';
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    
     //-------practicLog--------
 }
 });
 
-export const { setHobbies } = hobbiesSlice.actions;
+export const { setHobbies, clearError } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;

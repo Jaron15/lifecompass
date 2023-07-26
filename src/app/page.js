@@ -5,12 +5,15 @@ import {db} from '../utils/firebase';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import {useSelector, useDispatch} from 'react-redux'
+import Modal from '../components/Modal'
 
 //hobbies testing
 import { addHobby, deletePracticeLog, updatePracticeLog } from '../redux/hobbies/hobbiesSlice';
 import { deleteHobby } from '../redux/hobbies/hobbiesSlice';
 import { updateHobby } from '../redux/hobbies/hobbiesSlice';
 import { logPractice } from '../redux/hobbies/hobbiesSlice';
+import { clearError } from '../redux/hobbies/hobbiesSlice';
+
 //hobbies testing 
 
 
@@ -19,9 +22,20 @@ export default function Home() {
   const [items, setItems] = useState([]);
   const {signOutUser} = useAuth();
   const { user } = useSelector((state) => state.user);
-console.log(user);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+  const handleClose = () => {
+    closeModal();
+    dispatch(clearError());
+  };
 
 //hobbies testing
+const { error } = useSelector((state) => state.hobbies); // Access the error state
+const state = useSelector((state) => state);
+console.log(state);
+
+const [modalMessage, setModalMessage] = useState(null);
 const newHobby = {
   id: Date.now().toString(),
   hobbyName: 'guitar',
@@ -46,8 +60,9 @@ const [hobbyName, setHobbyName] = useState("");
       dispatch(addHobby({user: user, hobby: newHobby}))
       }
   }
+  const dummyHobbyId = "thisHobbyDoesntExist";
+
   const deleteHobbyClick = async(user, hobbyFirestoreId) => {
-    console.log('-------------right here --------------',hobbyFirestoreId);
 dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
   }
   const updateHobbyNameClick = (user, hobby) => {
@@ -86,9 +101,13 @@ dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
   
 
   useEffect(() => {
-    console.log(hobbies);
-
-}, [hobbies]); 
+    console.log(isModalOpen);
+    if (error) {
+      console.log(error);
+      setModalMessage(error);
+      openModal();
+    }
+}, [hobbies, error, isModalOpen]); 
 
 
 //hobbies testing
@@ -108,7 +127,20 @@ dispatch(deleteHobby({user: user, hobbyId: hobbyFirestoreId}))
   }
 
   return (
+    
     <div>
+        <div>
+      {/* ... */}
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleClose}
+          title="Error"
+          message={modalMessage}
+        />
+      )}
+      {/* ... */}
+    </div>
       {items.map((item, index) => (
         <div key={index}>
           <p>{item.name}</p>

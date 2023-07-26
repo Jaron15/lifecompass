@@ -36,17 +36,36 @@ export function getUserHobbiesCollection(user) {
   }
   
   export async function deleteHobbyFromFirestore(user, hobbyId) {
-    try {
-      const selectedHobby = doc(db, 'users', user.uid, 'hobbies', hobbyId);
-      await deleteDoc(selectedHobby);
-    } catch (error) {
-      console.error('Error deleting hobby: ', error);
-    }
-  }
+    const selectedHobby = doc(db, 'users', user.uid, 'hobbies', hobbyId);
   
-  export async function updateHobbyInFirestore(user, hobby) {
+  const hobbySnapshot = await getDoc(selectedHobby);
+  if (!hobbySnapshot.exists()) {
+    throw new Error("Hobby not found");  
+  }
+
+  try {
+    await deleteDoc(selectedHobby);
+  } catch (error) {
+    console.error('Error deleting hobby: ', error);
+    throw error;
+  }
+}
+
+  
+export async function updateHobbyInFirestore(user, hobby) {
     const hobbyRef = doc(db, 'users', user.uid, 'hobbies', hobby.firestoreId);
-    await updateDoc(hobbyRef, hobby);
+    
+    const hobbySnapshot = await getDoc(hobbyRef);
+    if (!hobbySnapshot.exists()) {
+      throw new Error("No hobby found with this ID");
+    }
+  
+    try {
+      await updateDoc(hobbyRef, hobby);
+    } catch (error) {
+      console.error('Error updating hobby: ', error);
+      throw error;
+    }
   }
   
   export async function logPracticeInFirestore(user, hobbyId, logEntry) {
@@ -58,18 +77,24 @@ export function getUserHobbiesCollection(user) {
     // Attach the ID
     const logEntryWithId = { ...logEntry, id: logEntryId };
   
-    try {
-      await updateDoc(hobbyDocRef, {
-        practiceLog: arrayUnion(logEntryWithId),
-      });
-  
-      // Return logEntryWithId for Redux to use
-      return logEntryWithId;
-    } catch (error) {
-      console.error('Error adding practice log to hobby in Firestore:', error);
-      throw error; 
-    }
+    const hobbyDocSnap = await getDoc(hobbyDocRef);
+  if (!hobbyDocSnap.exists()) {
+    console.error(`No such document! ID: ${hobbyId}`);
+    throw new Error(`No hobby found with this ID`);
   }
+    
+  try {
+    await updateDoc(hobbyDocRef, {
+      practiceLog: arrayUnion(logEntryWithId),
+    });
+  
+    // Return logEntryWithId for Redux to use
+    return logEntryWithId;
+  } catch (error) {
+    console.error('Error adding practice log to hobby in Firestore:', error);
+    throw error; 
+  }
+}
   
   export async function deletePracticeLogFromFirestore(user, hobbyId, logEntryId) {
     const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
@@ -77,10 +102,14 @@ export function getUserHobbiesCollection(user) {
     
     if (hobbyDocSnap.exists()) {
       let hobby = hobbyDocSnap.data();
+      const logIndex = hobby.practiceLog.findIndex(logEntry => logEntry.id === logEntryId);
+      if(logIndex === -1) {
+        throw new Error(`Log entry not found!`);
+      }
       hobby.practiceLog = hobby.practiceLog.filter(logEntry => logEntry.id !== logEntryId);
       await updateDoc(hobbyDocRef, hobby);
     } else {
-      throw new Error(`No hobby found for id: ${hobbyId}`);
+      throw new Error(`No hobby found with this ID`);
     }
   }
   
@@ -100,11 +129,11 @@ export function getUserHobbiesCollection(user) {
         return { hobbyId, logEntryId, updatedLog: updatedLogEntry };
       } else {
         console.error(`No such log entry! ID: ${logEntryId}`);
-        throw new Error(`No such log entry! ID: ${logEntryId}`);
+        throw new Error(`Log entry not found!`);
       }
     } else {
-      console.error(`No such document! ID: ${hobbyId}`);
-      throw new Error(`No such document! ID: ${hobbyId}`);
+      console.error(`No hobby found with this ID`);
+      throw new Error(`No hobby found with this ID`);
     }
   }
   
