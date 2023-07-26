@@ -27,6 +27,12 @@ export function getUserHobbiesCollection(user) {
   
   export async function addHobbyToFirestore(user, hobby) {
     const hobbiesCollection = getUserHobbiesCollection(user);
+// data validation
+    if (!Array.isArray(hobby.daysOfWeek) || typeof hobby.hobbyName !== 'string' || 
+    !Array.isArray(hobby.practiceLog) || typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal < 0) {
+  throw new Error('Hobby validation failed');
+}
+
     try {
       const docRef = await addDoc(hobbiesCollection, hobby);
       

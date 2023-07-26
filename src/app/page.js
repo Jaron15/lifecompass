@@ -37,7 +37,6 @@ console.log(state);
 
 const [modalMessage, setModalMessage] = useState(null);
 const newHobby = {
-  id: Date.now().toString(),
   hobbyName: 'guitar',
   practiceTimeGoal: 60,
   daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
