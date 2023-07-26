@@ -5,6 +5,8 @@ import React, {useState} from 'react'
  import Image from 'next/image';
  import {motion} from 'framer-motion'
  import { useRouter } from 'next/navigation';
+ import { signInAsync } from '../../redux/user/userSlice';
+
 
 
  function page() {
@@ -12,24 +14,25 @@ import React, {useState} from 'react'
     const { signIn } = useAuth();
     const [signinError, setSigninError] = useState('');
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const email = event.target.elements.email.value;
-    const password = event.target.elements.password.value;
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const email = event.target.elements.email.value;
+        const password = event.target.elements.password.value;
+        
+        const action = await signIn(email, password);
+        
+        if (signInAsync.fulfilled.match(action)) {
+            router.push('./');
+            console.log('successful!!');
+        } else {
+            if (action.payload) {
+            setSigninError(action.payload.error);
+            } else {
+            console.log('An unknown error occurred.');
+            }
+        }
+        };
 
-    try {
-        await signIn(email, password);
-        router.push('./')
-
-        console.log('successful!!')
-      } catch (error) {
-        setSigninError(error.message);
-        console.log('error');
-        alert(signinError)
-      }
-
-  
-  }
   return (
     <div className="min-w-screen min-h-screen bg-[#E2E8F0] dark:bg-black flex items-center justify-center px-5 py-5">
     <div className="bg-boxdark text-gray-500 rounded-3xl shadow-xl w-full overflow-hidden border max-w-[1000px]">
@@ -101,6 +104,12 @@ import React, {useState} from 'react'
                         </div>
                     </div>
                 </div>
+                { signinError &&
+                <div className="flex -mx-3">
+                <div className="w-full mb-5">
+                    <p className='text-red-500 text-center'>{signinError}</p>
+                </div>
+                </div>}
                     <div className="flex -mx-3">
                         <div className="w-full px-3 mb-5">
                             <button type='submit' className="block w-full max-w-xs mx-auto bg-primary hover:bg-highlight focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold">SIGN IN NOW</button>

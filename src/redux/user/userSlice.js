@@ -27,13 +27,10 @@ export const signInAsync = createAsyncThunk(
       return { displayName, email: firebaseEmail, uid };
     } catch (error) {
       console.error('Error during signInAsync:', error);
-      return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: 'Invalid email or password. Please try again.' });
     }
   }
 );
-
-
-
 
   
 export const signUpAsync = createAsyncThunk(

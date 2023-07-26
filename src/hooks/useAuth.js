@@ -34,12 +34,13 @@ export function useAuth() {
   
   const signIn = async (email, password) => {
     try {
-      await dispatch(signInAsync({ email, password }));
+      return await dispatch(signInAsync({ email, password }));
     } catch (error) {
       console.error('Failed to sign in:', error);
       throw error;
     }
   };
+  
   
   const signUp = async (email, password, name) => {
     try {
