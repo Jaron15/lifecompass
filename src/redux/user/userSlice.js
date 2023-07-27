@@ -43,7 +43,7 @@ export const signUpAsync = createAsyncThunk(
       // Setting the user's name
       await updateProfile(userCredential.user, { displayName: name });
 
-      // Return the user object instead of dispatching the action here
+      // Return the user object instead of dispatching the action 
       return {
         uid: userCredential.user.uid,
         email: userCredential.user.email,

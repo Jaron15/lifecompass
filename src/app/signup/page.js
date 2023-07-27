@@ -1,5 +1,5 @@
 'use client'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
  import { useAuth} from '../../hooks/useAuth';
  import Link from 'next/link';  
  import Image from 'next/image';
@@ -10,14 +10,20 @@ import React, {useState} from 'react'
  function page() {
     const router = useRouter()
     const { signUp } = useAuth();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [nameError, setNameError] = useState('');
     const [signupError, setSignupError] = useState('');
+    const [buttonEnable, setButtonEnable] = useState(false);
+
 
 
     const validateEmail = (event) => {
         const email = event.target.value;
+        setEmail(email);  
         const regex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
         if(!email || !regex.test(email)) {
             setEmailError('Please enter a valid email');
@@ -28,6 +34,7 @@ import React, {useState} from 'react'
 
     const validatePassword = (event) => {
         const password = event.target.value;
+        setPassword(password);
         const regex = /^(?=.*\d).{6,}$/;
         if(!password || !regex.test(password)) {
             setPasswordError('Password must be a minimum of six characters and include at least one number.');
@@ -37,6 +44,7 @@ import React, {useState} from 'react'
     };
     const validateName = (event) => {
         const name = event.target.value;
+        setName(name)
         if(!name.trim()) {
             setNameError('Name field cannot be empty');
         } else {
@@ -51,7 +59,7 @@ import React, {useState} from 'react'
     const email = event.target.elements.email.value;
     const password = event.target.elements.password.value;
     const name = event.target.elements.name.value;
-    if (emailError || passwordError) {
+    if (emailError || passwordError || nameError) {
         return;
     }
 
@@ -65,9 +73,15 @@ import React, {useState} from 'react'
         console.log('error');
         alert(signupError)
       }
-
-  
   }
+
+  useEffect(() => {
+    if (!emailError && !passwordError && !nameError && email && password && name) {
+        setButtonEnable(true)
+    } else {
+        setButtonEnable(false)
+    }
+  }, [emailError, passwordError, nameError])
   return (
     <div className="min-w-screen min-h-screen bg-[#E2E8F0] dark:bg-black flex items-center justify-center px-5 py-5">
     <div className="bg-boxdark text-gray-500 rounded-3xl shadow-xl w-full overflow-hidden border max-w-[1000px]">
@@ -111,7 +125,7 @@ import React, {useState} from 'react'
                         <input 
                         type="name" 
                         name="name" 
-                        className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] ${nameError ? 'border-red-500' : 'focus:border-primary'}`}
+                        className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${nameError ? 'border-red-500' : 'focus:border-primary'}`}
                         placeholder="John" 
                         onBlur={validateName}/>
                     </div>
@@ -129,7 +143,7 @@ import React, {useState} from 'react'
                             <input 
                             type="email" 
                             name="email" 
-                            className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] ${emailError ? 'border-red-500' : 'focus:border-primary'}`} 
+                            className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${emailError ? 'border-red-500' : 'focus:border-primary'}`} 
                             placeholder="johnsmith@example.com"
                             onBlur={validateEmail} 
                         />
@@ -149,7 +163,7 @@ import React, {useState} from 'react'
                                     <input 
                                     type="password" 
                                     name="password" 
-                                    className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] ${passwordError ? 'border-red-500' : 'focus:border-primary'}`}
+                                    className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${passwordError ? 'border-red-500' : 'focus:border-primary'}`}
                                     placeholder="************"
                                     onBlur={validatePassword}
                                 />
@@ -158,7 +172,7 @@ import React, {useState} from 'react'
                     </div>
                     <div className="flex -mx-3">
                         <div className="w-full px-3 mb-5">
-                            <button type='submit' className="block w-full max-w-xs mx-auto bg-primary hover:bg-highlight focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold">SIGN UP NOW</button>
+                            <button type='submit' disabled={!buttonEnable} className="block w-full max-w-xs mx-auto bg-primary hover:bg-highlight focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold disabled:opacity-25">SIGN UP NOW</button>
                         </div>
                     </div>
                 </div>
