@@ -1,9 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
-import { setDoc, doc } from 'firebase/firestore';
-import { db } from '../utils/firebase'; 
-import {store} from '../redux/store';
 import { signInAsync, signUpAsync, userLoggedOut, userLoggedIn } from '../redux/user/userSlice';
 import { persistor } from '../redux/store';
 
