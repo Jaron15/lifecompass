@@ -81,7 +81,7 @@ import React, {useEffect, useState} from 'react'
     } else {
         setButtonEnable(false)
     }
-  }, [emailError, passwordError, nameError])
+  }, [emailError, passwordError, nameError, name, email, password])
   return (
     <div className="min-w-screen min-h-screen bg-[#E2E8F0] dark:bg-black flex items-center justify-center px-5 py-5">
     <div className="bg-boxdark text-gray-500 rounded-3xl shadow-xl w-full overflow-hidden border max-w-[1000px]">
