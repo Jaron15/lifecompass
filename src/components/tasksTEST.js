@@ -7,7 +7,8 @@ import {
   getCompletedTasks, 
   completeTask, 
   addCompletedTask,
-  deleteTask 
+  deleteTask,
+  markTaskAsCompleted 
 } from '../redux/tasks/tasksSlice';
 
 function TaskList() {
@@ -39,7 +40,12 @@ function TaskList() {
       )}
       {task.type === 'singular' && (
         <button
-          onClick={() => dispatch(completeTask(task.id))}
+        onClick={() => {
+          const currentDate = new Date();
+          const dateString = currentDate.toISOString().split('T')[0];
+          dispatch(markTaskAsCompleted({userId: userId, taskId: task.id, completedDate: dateString}))
+        }}
+    
           className="mt-2 p-2 bg-blue-500 text-white rounded-lg mx-4"
         >
           Complete task

@@ -1,7 +1,7 @@
 
 import { nanoid } from '@reduxjs/toolkit';
 import {db} from './firebase'
-import { doc, collection, getDocs, addDoc, deleteDoc } from "firebase/firestore"; 
+import { doc, collection, getDocs, addDoc, deleteDoc, updateDoc, getDoc } from "firebase/firestore"; 
 
 export async function getTasksFromFirestore(userId) {
     try {
@@ -25,8 +25,6 @@ export async function getTasksFromFirestore(userId) {
 
 
 export const addTaskToFirestore = async (userId, task) => {
-    console.log(userId);
-    console.log(task);
     try {
       // Validate task data
       if (!task.name || !task.type) {
@@ -48,7 +46,6 @@ export const addTaskToFirestore = async (userId, task) => {
       };
   
       const taskRef = await addDoc(collection(db, 'users', userId, 'tasks'), taskData);
-      console.log(taskRef.id, '---RIGHT HERE---');
 
     return { id: taskRef.id, ...taskData };
   } catch (error) {
@@ -67,16 +64,32 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
     }
   };
   
-export const markTaskAsCompletedInFirestore = async (userId, taskId, completedDate) => {
+  export const markTaskAsCompletedInFirestore = async (userId, taskId, completedDate) => {
     try {
-      const completedTask = {
-        taskId,
-        completedDate
-      };
-  
-      const completedTaskRef = await addDoc(collection(db, 'users', userId, 'completedTasks'), completedTask);
+      const taskDocRef = doc(db, 'users', userId, 'tasks', taskId);
+      const taskDocSnap = await getDoc(taskDocRef);
 
-      return { id: completedTaskRef.id, ...completedTask };
+      if (taskDocSnap.exists()) {
+        const task = taskDocSnap.data();
+
+        const completedTask = {
+          taskId,
+          completedDate
+        };
+    
+        const completedTaskRef = await addDoc(collection(db, 'users', userId, 'completedTasks'), completedTask);
+
+     
+        await updateDoc(taskDocRef, {
+          isComplete: true
+        });
+
+    
+        return { task: { id: taskDocRef.id, ...task, isComplete: true }, completedTask: { id: completedTaskRef.id, ...completedTask } };
+      } else {
+        throw new Error('Task not found');
+      }
+      
     } catch (error) {
       console.error('Error marking task as completed', error);
       throw error;

@@ -18,7 +18,6 @@ function TaskForm() {
       recurringDay: form.recurringDay.value,
       dueDate: form.dueDate.value,
     };
-    console.log(task, userId);
     dispatch(addTask({userId: userId, task: task}));
     form.reset();
   };

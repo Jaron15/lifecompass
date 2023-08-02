@@ -15,7 +15,6 @@ export const fetchTasks = createAsyncThunk('tasks/fetchTasks',
 export const addTask = createAsyncThunk(
   'tasks/addTask',
   async ({userId, task}, thunkAPI) => {
-    console.log(userId, task, 'this is in redux');
     try {
       const newTask = await addTaskToFirestore(userId, task);
       return newTask;
@@ -28,7 +27,6 @@ export const addTask = createAsyncThunk(
 
 export const deleteTask = createAsyncThunk('tasks/deleteTask', 
   async ({userId, taskId}, thunkAPI) => {
-    console.log(userId, taskId);
     try {
       await deleteTaskFromFirestore(userId, taskId);
       return taskId;
@@ -38,13 +36,17 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask',
   }
 );
 
-
+//=======================================================
 export const markTaskAsCompleted = createAsyncThunk('tasks/markTaskAsCompleted', 
   async ({userId, taskId, completedDate}, thunkAPI) => {
+    console.log('function entered ');
     try {
+      console.log('trying');
       const completedTask = await markTaskAsCompletedInFirestore(userId, taskId, completedDate);
+      console.log(completedTask);  
       return completedTask;
     } catch (error) {
+      console.log('error occured');
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
@@ -123,10 +125,17 @@ const taskSlice = createSlice({
     })
 
     .addCase(markTaskAsCompleted.fulfilled, (state, action) => {
-      const task = state.tasks.find((task) => task.id === action.payload);
+      console.log('action.payload.id:', action.payload.id);
+      state.tasks.forEach(task => console.log('task.id:', task.id));
+ 
+      const task = state.tasks.find((task) => task.id === action.payload.task.id);
+      const completedTask = {...action.payload.completedTask,name: task.name}
+      console.log(task);
       if (task) {
         task.isCompleted = true;
+        state.completedTasks.push(completedTask)
       }
+
     })
     .addCase(markTaskAsCompleted.rejected, (state, action) => {
       console.error("Failed to complete task:", action.error.message);
