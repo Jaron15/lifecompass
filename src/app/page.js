@@ -4,8 +4,10 @@ import {db} from '../utils/firebase';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import {useSelector, useDispatch} from 'react-redux'
+import TaskForm from "../components/TaskFormTEST";
 
 import HobbiesTEST from '../components/HobbiesTEST'
+import TaskList from "../components/tasksTEST";
 
 
 
@@ -16,7 +18,7 @@ export default function Home() {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const state = useSelector((state) => state);
-  console.log(state);
+  // console.log(state);
   
 
   useEffect(() => {
@@ -49,7 +51,12 @@ export default function Home() {
         </div>
       ))}
       <h1 className='cursor-pointer text-blue-500' onClick={signOutUser}>Logout</h1>
-     {user ? <HobbiesTEST /> :'' }
+     {/* {user ? <HobbiesTEST /> :'' } */}
+     {user ? <div>
+      <TaskForm />
+      <TaskList />
+      </div> :'' }
+
     </div>
   );
 }

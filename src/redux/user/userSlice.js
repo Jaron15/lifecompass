@@ -4,6 +4,8 @@ import { doc, setDoc, getFirestore } from "firebase/firestore";
 import {db} from '../../utils/firebase'
 import { getHobbiesFromFirestore } from "../../utils/hobbiesBase";
 import { setHobbies } from "../hobbies/hobbiesSlice";
+import { getCompletedTasksFromFirestore, getTasksFromFirestore } from "../../utils/tasksBase";
+import {setCompletedTasks, setTasks} from '../tasks/tasksSlice'
 
 const initialState = {
   user: null,
@@ -21,8 +23,11 @@ export const signInAsync = createAsyncThunk(
       const { displayName, email: firebaseEmail, uid } = firebaseUser;
       
       const hobbies = await getHobbiesFromFirestore(firebaseUser);
-
+      const tasks = await getTasksFromFirestore(firebaseUser.uid)
+      const completedTasks = await getCompletedTasksFromFirestore(firebaseUser.uid)
       thunkAPI.dispatch(setHobbies(hobbies))
+      thunkAPI.dispatch(setTasks(tasks))
+      thunkAPI.dispatch(setCompletedTasks(completedTasks))
       // Instead of dispatching the action, return the user object
       return { displayName, email: firebaseEmail, uid };
     } catch (error) {

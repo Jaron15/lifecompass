@@ -1,84 +1,152 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, completeTaskInFirestore } from '../../utils/tasksBase';
+import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore } from '../../utils/tasksBase';
 
+export const fetchTasks = createAsyncThunk('tasks/fetchTasks', 
+  async (userId, thunkAPI) => {
+    try {
+      const tasks = await getTasksFromFirestore(userId);
+      return tasks;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 export const addTask = createAsyncThunk(
   'tasks/addTask',
-  async ({task, user}, thunkAPI) => {
+  async ({userId, task}, thunkAPI) => {
+    console.log(userId, task, 'this is in redux');
     try {
-      await addTaskToFirestore(user,task);
-      return task
+      const newTask = await addTaskToFirestore(userId, task);
+      return newTask;
     } catch (error) {
-      console.error('failed to add task: ', error);
-      return thunkAPI.rejectWithValue({error: error.message})
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
 );
 
-export const deleteTask = createAsyncThunk(
-  'tasks/deleteTask',
-  async ({taskId, user}, thunkAPI) => {
+
+export const deleteTask = createAsyncThunk('tasks/deleteTask', 
+  async ({userId, taskId}, thunkAPI) => {
+    console.log(userId, taskId);
     try {
-      await deleteTaskFromFirestore(user, taskId);
-      return taskId
+      await deleteTaskFromFirestore(userId, taskId);
+      return taskId;
     } catch (error) {
-      console.error('Failed to delete task: ', error);
-      return thunkAPI.rejectWithValue({error: error.message})
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
 );
 
-export const completeTask = createAsyncThunk(
-  'tasks/completeTask',
-  async ({taskId, user}, thunkAPI) => {
+
+export const markTaskAsCompleted = createAsyncThunk('tasks/markTaskAsCompleted', 
+  async ({userId, taskId, completedDate}, thunkAPI) => {
     try {
-      await completeTaskInFirestore(user, taskId);
-      return taskId
+      const completedTask = await markTaskAsCompletedInFirestore(userId, taskId, completedDate);
+      return completedTask;
     } catch (error) {
-      console.error('failed to complete task: ', error );
-      return thunkAPI.rejectWithValue({error: error.message})
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
-)
+);
+
+export const addCompletedTask = createAsyncThunk('tasks/addCompletedTask', 
+  async ({userId, task}, thunkAPI) => {
+    try {
+      await addCompletedTaskToFirestore(userId, task);
+      return task;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+export const getCompletedTasks = createAsyncThunk('tasks/getCompletedTasks', 
+  async (userId, thunkAPI) => {
+    try {
+      const completedTasks = await getCompletedTasksFromFirestore(userId);
+      return completedTasks;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+
 
 const taskSlice = createSlice({
   name: 'tasks',
   initialState: {
     tasks: [],
+    completedTasks: [],
     status: 'idle',
     error: null
   },
-  reducers: {},
+  reducers: {
+    setTasks: (state, action) => {
+      state.tasks = action.payload;
+    },    
+    setCompletedTasks: (state, action) => {
+      state.completedTasks = action.payload;
+    },
+
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(addTask.fulfilled, (state, action) => {
-        state.push(action.payload);
-      })
-      .addCase(addTask.rejected, (state, action) => {
-        console.error("Failed to add task:", action.error.message);
-      })
+    .addCase("persist/REHYDRATE", (state, action) => {
+      if (!state.tasks) {
+        state.tasks = [];
+      }
+    })
+    .addCase(fetchTasks.fulfilled, (state, action) => {
+      state.tasks = action.payload;
+    })
+    .addCase(fetchTasks.rejected, (state, action) => {
+      console.error("Failed to get tasks:", action.error.message);
+    })
+    .addCase(addTask.fulfilled, (state, action) => {
+      state.tasks.push(action.payload);
+    })
+    .addCase(addTask.rejected, (state, action) => {
+      console.error("Failed to add task:", action.error.message);
+    })
 
-      .addCase(deleteTask.fulfilled, (state, action) => {
-        return state.filter((task) => task.id !== action.payload);
-      })
-      .addCase(deleteTask.rejected, (state, action) => {
-        console.error("Failed to delete task:", action.error.message);
-      })
+    .addCase(deleteTask.fulfilled, (state, action) => {
+      const index = state.tasks.findIndex((task) => task.id === action.payload);
+      if (index !== -1) {
+        state.tasks.splice(index, 1);
+      }
+    })
+    
+    .addCase(deleteTask.rejected, (state, action) => {
+      console.error("Failed to delete task:", action.error.message);
+    })
 
-      .addCase(completeTask.fulfilled, (state, action) => {
-        const task = state.find((task) => task.id === action.payload);
-        if (task) {
-          task.isCompleted = true;
-        }
-      })
-      .addCase(completeTask.rejected, (state, action) => {
-        console.error("Failed to complete task:", action.error.message);
-      });
+    .addCase(markTaskAsCompleted.fulfilled, (state, action) => {
+      const task = state.tasks.find((task) => task.id === action.payload);
+      if (task) {
+        task.isCompleted = true;
+      }
+    })
+    .addCase(markTaskAsCompleted.rejected, (state, action) => {
+      console.error("Failed to complete task:", action.error.message);
+    })
+    .addCase(addCompletedTask.fulfilled, (state, action) => {
+      // We don't need to change the state here
+    })
+    .addCase(addCompletedTask.rejected, (state, action) => {
+      console.error("Failed to add completed task:", action.error.message);
+    })
+    .addCase(getCompletedTasks.fulfilled, (state, action) => {
+      state.completedTasks = action.payload;
+    })
+    .addCase(getCompletedTasks.rejected, (state, action) => {
+      console.error("Failed to get completed tasks:", action.error.message);
+    })
+      
   },
 });
 
-
-
-
+export const { setTasks, setCompletedTasks } = taskSlice.actions;
 
 export default taskSlice.reducer;

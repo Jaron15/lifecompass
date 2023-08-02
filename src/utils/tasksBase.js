@@ -1,57 +1,110 @@
-import { getFirestore, doc, getDoc, setDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+
 import { nanoid } from '@reduxjs/toolkit';
 import {db} from './firebase'
+import { doc, collection, getDocs, addDoc, deleteDoc } from "firebase/firestore"; 
 
-export async function getTasksFromFirestore(user) {
-    const userDocRef = doc(db, 'users', user.uid);
-    const userDocSnap = await getDoc(userDocRef);
-    
-    if (userDocSnap.exists()) {
-        return userDocSnap.data().tasks || [];
-    } else {
-        console.error(`No user found found for ID: ${user.uid}`);
-        return [];
-    }
-}
-
-export async function addTaskToFirestore(user,task) {
-    const userDocRef = doc(db, 'users', user.uid);
-    const taskId = nanoid();
-    const newTask = {id: taskId, ...task};
-
-    await setDoc(userDocRef, {tasks: arrayUnion(newTask)}, {merge: true})
-
-    return newTask;
-}
-
-export async function deleteTaskFromFirestore(user,taskId) {
-    const userDocRef = doc(db, 'users', user.uid);
-
-    await setDoc(userDocRef, {tasks: arrayRemove({id: taskId})}, {merge: true});
-
-    return taskId
-}
-
-export async function completeTaskInFirestore(user, taskId) {
-    const userDocRef = doc(db, 'users', user.uid);
-    const userDocSnap = await getDoc(userDocRef);
-
-    if (userDocSnap.exists()) {
-        const tasks = userDocSnap.data().tasks;
-        const taskIndex = tasks.findIndex(task => task.id === taskId)
-
-        if (taskIndex !== -1) {
-            tasks[taskIndex].isCompleted = true;
-
-            await setDoc(userDocRef, {tasks}, {merge: true });
-
-            return tasks[taskIndex];
-        } else { 
-            console.error(`No such task! ID: ${taskId}`);
-            throw new Error('Task not found!')
+export async function getTasksFromFirestore(userId) {
+    try {
+        const tasks = [];
+        const tasksSnapshot = await getDocs(collection(db, 'users', userId, 'tasks'));
+        
+        // Check if tasksSnapshot exists
+        if (!tasksSnapshot.empty) {
+            tasksSnapshot.forEach((doc) => {
+              tasks.push({ id: doc.id, ...doc.data() });
+            });
         }
-    } else {
-        console.error(`No user found for ID: ${user.uid}`);
-        throw new Error('User not found!')
+
+        return tasks;
+    } catch (error) {
+        console.error('Error fetching tasks', error);
+        throw error;
     }
-}
+};
+
+
+
+export const addTaskToFirestore = async (userId, task) => {
+    console.log(userId);
+    console.log(task);
+    try {
+      // Validate task data
+      if (!task.name || !task.type) {
+        throw new Error('Task name and type are required');
+      }
+  
+      if (task.type === 'recurring' && !task.recurringDay) {
+        throw new Error('Recurring tasks require a recurringDay property');
+      }
+  
+      if (task.type === 'singular' && !task.dueDate) {
+        throw new Error('Singular tasks require a dueDate property');
+      }
+  
+      // Add id and isCompleted: false to every task
+      const taskData = {
+        ...task,
+        isCompleted: false
+      };
+  
+      const taskRef = await addDoc(collection(db, 'users', userId, 'tasks'), taskData);
+      console.log(taskRef.id, '---RIGHT HERE---');
+
+    return { id: taskRef.id, ...taskData };
+  } catch (error) {
+    console.error('Error adding task', error);
+    throw error;
+  }
+};
+
+export const deleteTaskFromFirestore = async (userId, taskId) => {
+    try {
+      const taskDoc = doc(db, 'users', userId, 'tasks', taskId);
+      await deleteDoc(taskDoc);
+    } catch (error) {
+      console.error('Error deleting task', error);
+      throw error;
+    }
+  };
+  
+export const markTaskAsCompletedInFirestore = async (userId, taskId, completedDate) => {
+    try {
+      const completedTask = {
+        taskId,
+        completedDate
+      };
+  
+      const completedTaskRef = await addDoc(collection(db, 'users', userId, 'completedTasks'), completedTask);
+
+      return { id: completedTaskRef.id, ...completedTask };
+    } catch (error) {
+      console.error('Error marking task as completed', error);
+      throw error;
+    }
+  };
+
+  export const addCompletedTaskToFirestore = async(userId, task) => {
+    const userDoc = doc(db, 'users', userId);
+    const completedTasksCollection = collection(userDoc, 'completedTasks');
+    const taskDoc = doc(completedTasksCollection, task.id);
+  
+    await setDoc(taskDoc, task);
+  }
+  
+  export const getCompletedTasksFromFirestore = async(userId) => {
+    const userDoc = doc(db, 'users', userId);
+    const completedTasksCollection = collection(userDoc, 'completedTasks');
+  
+    const completedTasksSnapshot = await getDocs(completedTasksCollection);
+  
+    const completedTasks = [];
+    completedTasksSnapshot.forEach((doc) => {
+      const taskData = doc.data();
+      taskData.id = doc.id;
+      completedTasks.push(taskData);
+    });
+  
+    return completedTasks;
+  }
+  
+  
