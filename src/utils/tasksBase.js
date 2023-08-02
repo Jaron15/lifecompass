@@ -73,7 +73,7 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
         
   
       if (taskSnap.exists()) {
-        // Destructure the task data to separate id from other fields
+     
         const { id, ...otherTaskData } = taskSnap.data();
   
         const completedTask = {
@@ -82,10 +82,8 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
           isCompleted: true,
         };
   
-        // Add to the 'completedTasks' collection without providing a specific id
         const completedTaskRef = await addDoc(collection(db, 'users', userId, 'completedTasks'), completedTask);
-  
-        // Delete the task from 'tasks' collection
+
         await deleteDoc(taskRef);
   
         return { id: completedTaskRef.id, ...completedTask };
@@ -104,7 +102,6 @@ export const addCompletedTaskToFirestore = async (userId, task) => {
       const currentDate = new Date();
       const dateString = currentDate.toISOString().split('T')[0];
   
-      // Deconstruct the task to separate the id from the other fields
       const { id, ...otherFields } = task;
   
       const completedTask = {
@@ -116,10 +113,8 @@ export const addCompletedTaskToFirestore = async (userId, task) => {
       const userDoc = doc(db, 'users', userId);
       const completedTasksCollection = collection(userDoc, 'completedTasks');
   
-      // Add the completedTask to Firestore without providing a specific id
       const completedTaskDoc = await addDoc(completedTasksCollection, completedTask);
-  
-      // Return the completed task with the new id
+
       return { ...completedTask, id: completedTaskDoc.id }; 
   
     } catch (error) {
