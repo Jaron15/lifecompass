@@ -66,48 +66,75 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
   
   export const markTaskAsCompletedInFirestore = async (userId, taskId, completedDate) => {
     try {
-      const taskDocRef = doc(db, 'users', userId, 'tasks', taskId);
-      const taskDocSnap = await getDoc(taskDocRef);
-
-      if (taskDocSnap.exists()) {
-        const task = taskDocSnap.data();
-
+        const taskRef = doc(db, 'users', userId, 'tasks', taskId);
+        console.log('userId:', userId);
+        console.log('taskId:', taskId);
+        const taskSnap = await getDoc(taskRef);
+        
+  
+      if (taskSnap.exists()) {
+        // Destructure the task data to separate id from other fields
+        const { id, ...otherTaskData } = taskSnap.data();
+  
         const completedTask = {
-          taskId,
-          completedDate
+          ...otherTaskData,
+          completedDate,
+          isCompleted: true,
         };
-    
+  
+        // Add to the 'completedTasks' collection without providing a specific id
         const completedTaskRef = await addDoc(collection(db, 'users', userId, 'completedTasks'), completedTask);
-
-     
-        await updateDoc(taskDocRef, {
-          isComplete: true
-        });
-
-    
-        return { task: { id: taskDocRef.id, ...task, isComplete: true }, completedTask: { id: completedTaskRef.id, ...completedTask } };
+  
+        // Delete the task from 'tasks' collection
+        await deleteDoc(taskRef);
+  
+        return { id: completedTaskRef.id, ...completedTask };
       } else {
         throw new Error('Task not found');
       }
-      
+  
     } catch (error) {
       console.error('Error marking task as completed', error);
       throw error;
     }
   };
-
-  export const addCompletedTaskToFirestore = async(userId, task) => {
-    const userDoc = doc(db, 'users', userId);
-    const completedTasksCollection = collection(userDoc, 'completedTasks');
-    const taskDoc = doc(completedTasksCollection, task.id);
   
-    await setDoc(taskDoc, task);
-  }
-
+export const addCompletedTaskToFirestore = async (userId, task) => {
+    try {
+      const currentDate = new Date();
+      const dateString = currentDate.toISOString().split('T')[0];
+  
+      // Deconstruct the task to separate the id from the other fields
+      const { id, ...otherFields } = task;
+  
+      const completedTask = {
+        ...otherFields,
+        isCompleted: true, 
+        completedDate: dateString,
+      };
+  
+      const userDoc = doc(db, 'users', userId);
+      const completedTasksCollection = collection(userDoc, 'completedTasks');
+  
+      // Add the completedTask to Firestore without providing a specific id
+      const completedTaskDoc = await addDoc(completedTasksCollection, completedTask);
+  
+      // Return the completed task with the new id
+      return { ...completedTask, id: completedTaskDoc.id }; 
+  
+    } catch (error) {
+      console.error('Error adding completed task to Firestore:', error);
+      throw error;
+    }
+  };  
+  
   export const deleteCompletedTaskFromFirestore = async (userId, taskId) => {
     try {
       const taskRef = doc(db, 'users', userId, 'completedTasks', taskId);
+      console.log(taskRef);
       await deleteDoc(taskRef);
+      console.log(`Task with ID ${taskId} deleted from Firestore`);
+
     } catch (error) {
       console.error('Error deleting completed task', error);
       throw error;

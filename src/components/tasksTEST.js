@@ -33,7 +33,7 @@ function TaskList() {
       <p className="font-medium text-lg">{task.name}</p>
       {task.type === 'recurring' && (
         <button
-          onClick={() => dispatch(addCompletedTask(task))}
+          onClick={() => dispatch(addCompletedTask({userId: userId, task: task}))}
           className="mt-2 p-2 bg-blue-500 text-white rounded-lg mx-4"
         >
           Complete task
