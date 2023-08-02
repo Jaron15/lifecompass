@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore } from '../../utils/tasksBase';
+import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore, deleteCompletedTaskFromFirestore } from '../../utils/tasksBase';
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', 
   async (userId, thunkAPI) => {
@@ -62,6 +62,19 @@ export const addCompletedTask = createAsyncThunk('tasks/addCompletedTask',
     }
   }
 );
+
+export const deleteCompletedTask = createAsyncThunk(
+  'tasks/deleteCompletedTask',
+  async ({userId, taskId}, thunkAPI) => {
+    try {
+      await deleteCompletedTaskFromFirestore(userId, taskId);
+      return taskId;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 
 export const getCompletedTasks = createAsyncThunk('tasks/getCompletedTasks', 
   async (userId, thunkAPI) => {
@@ -145,6 +158,12 @@ const taskSlice = createSlice({
     })
     .addCase(addCompletedTask.rejected, (state, action) => {
       console.error("Failed to add completed task:", action.error.message);
+    })
+    .addCase(deleteCompletedTask.fulfilled, (state, action) => {
+      state.completedTasks = state.completedTasks.filter((task) => task.id !== action.payload);
+    })
+    .addCase(deleteCompletedTask.rejected, (state, action) => {
+      console.error("Failed to delete completed task:", action.error.message);
     })
     .addCase(getCompletedTasks.fulfilled, (state, action) => {
       state.completedTasks = action.payload;

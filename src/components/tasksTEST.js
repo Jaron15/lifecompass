@@ -8,7 +8,8 @@ import {
   completeTask, 
   addCompletedTask,
   deleteTask,
-  markTaskAsCompleted 
+  markTaskAsCompleted, 
+  deleteCompletedTask
 } from '../redux/tasks/tasksSlice';
 
 function TaskList() {
@@ -63,6 +64,12 @@ function TaskList() {
   {completedTasks && completedTasks.map((task) => (
     <div key={task.id} className="border p-4 mt-4 bg-gray-100 rounded-lg">
       <p className="font-medium text-lg">{task.name}</p>
+      <button 
+        onClick={() => dispatch(deleteCompletedTask({userId: userId, taskId: task.id}))}
+        className="mt-2 p-2 bg-red-500 text-white rounded-lg mx-4"
+      >
+        Delete task
+      </button>
     </div>
   ))}
 </div>

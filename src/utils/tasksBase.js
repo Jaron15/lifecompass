@@ -1,7 +1,7 @@
 
 import { nanoid } from '@reduxjs/toolkit';
 import {db} from './firebase'
-import { doc, collection, getDocs, addDoc, deleteDoc, updateDoc, getDoc } from "firebase/firestore"; 
+import { doc, collection, getDocs, addDoc, deleteDoc, updateDoc, getDoc, setDoc } from "firebase/firestore"; 
 
 export async function getTasksFromFirestore(userId) {
     try {
@@ -103,6 +103,17 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
   
     await setDoc(taskDoc, task);
   }
+
+  export const deleteCompletedTaskFromFirestore = async (userId, taskId) => {
+    try {
+      const taskRef = doc(db, 'users', userId, 'completedTasks', taskId);
+      await deleteDoc(taskRef);
+    } catch (error) {
+      console.error('Error deleting completed task', error);
+      throw error;
+    }
+  };
+  
   
   export const getCompletedTasksFromFirestore = async(userId) => {
     const userDoc = doc(db, 'users', userId);
