@@ -1,5 +1,3 @@
-
-import { nanoid } from '@reduxjs/toolkit';
 import {db} from './firebase'
 import { doc, collection, getDocs, addDoc, deleteDoc, updateDoc, getDoc, setDoc } from "firebase/firestore"; 
 
@@ -8,7 +6,6 @@ export async function getTasksFromFirestore(userId) {
         const tasks = [];
         const tasksSnapshot = await getDocs(collection(db, 'users', userId, 'tasks'));
         
-        // Check if tasksSnapshot exists
         if (!tasksSnapshot.empty) {
             tasksSnapshot.forEach((doc) => {
               tasks.push({ id: doc.id, ...doc.data() });
@@ -26,7 +23,6 @@ export async function getTasksFromFirestore(userId) {
 
 export const addTaskToFirestore = async (userId, task) => {
     try {
-      // Validate task data
       if (!task.name || !task.type) {
         throw new Error('Task name and type are required');
       }
@@ -39,7 +35,7 @@ export const addTaskToFirestore = async (userId, task) => {
         throw new Error('Singular tasks require a dueDate property');
       }
   
-      // Add id and isCompleted: false to every task
+      
       const taskData = {
         ...task,
         isCompleted: false

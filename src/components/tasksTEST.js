@@ -1,11 +1,7 @@
 'use client'
-
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
-  fetchTasks, 
-  getCompletedTasks, 
-  completeTask, 
   addCompletedTask,
   deleteTask,
   markTaskAsCompleted, 
@@ -43,15 +39,12 @@ function TaskList() {
 }, [tasks, error, isModalOpen]); 
 
 
-  // useEffect(() => {
-    
-  //   dispatch(getCompletedTasks(userId));
-  // }, [dispatch, user]);
+
 
   return (
     <div className="px-8 py-6">
       <div>
-      {/* ... */}
+
       {isModalOpen && (
         <Modal
           isOpen={isModalOpen}
@@ -60,7 +53,7 @@ function TaskList() {
           message={modalMessage}
         />
       )}
-      {/* ... */}
+
     </div>
       <h2 className="text-2xl font-semibold text-blue-600">Tasks</h2>
       {tasks && tasks.map((task) => (

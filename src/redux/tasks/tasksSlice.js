@@ -59,7 +59,7 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask',
   }
 );
 
-//=======================================================
+
 export const markTaskAsCompleted = createAsyncThunk('tasks/markTaskAsCompleted', 
   async ({userId, taskId, completedDate}, thunkAPI) => {
     try {
