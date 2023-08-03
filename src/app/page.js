@@ -8,6 +8,7 @@ import TaskForm from "../components/TaskFormTEST";
 
 import HobbiesTEST from '../components/HobbiesTEST'
 import TaskList from "../components/tasksTEST";
+import EventsTestComponent from "../components/EventsTEST";
 
 
 
@@ -52,10 +53,11 @@ export default function Home() {
       ))}
       <h1 className='cursor-pointer text-blue-500' onClick={signOutUser}>Logout</h1>
      {/* {user ? <HobbiesTEST /> :'' } */}
-     {user ? <div>
+     {/* {user ? <div>
       <TaskForm />
       <TaskList />
-      </div> :'' }
+      </div> :'' } */}
+      {user? <EventsTestComponent /> : ''}
 
     </div>
   );
