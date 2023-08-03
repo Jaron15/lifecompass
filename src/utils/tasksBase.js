@@ -54,6 +54,19 @@ export const addTaskToFirestore = async (userId, task) => {
   }
 };
 
+
+export const updateTaskInFirestore = async (userId, taskId, updatedTask) => {
+  try {
+    console.log('taskbase try ');
+    const taskRef = doc(db, 'users', userId, 'tasks', taskId);
+    await updateDoc(taskRef, updatedTask);
+  } catch (error) {
+    console.error('Error updating task in Firestore:', error);
+    throw error;
+  }
+};
+
+
 export const deleteTaskFromFirestore = async (userId, taskId) => {
     try {
       const taskDoc = doc(db, 'users', userId, 'tasks', taskId);
