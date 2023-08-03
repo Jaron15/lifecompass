@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore, deleteCompletedTaskFromFirestore, updateTaskInFirestore } from '../../utils/tasksBase';
+import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore, deleteCompletedTaskFromFirestore, updateTaskInFirestore, updateCompletedTaskInFirestore } from '../../utils/tasksBase';
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', 
   async (userId, thunkAPI) => {
@@ -38,7 +38,17 @@ export const updateTask = createAsyncThunk(
   }
 );
 
-
+export const updateCompletedTask = createAsyncThunk(
+  'tasks/updateCompletedTask',
+  async ({ userId, taskId, updatedFields }, thunkAPI) => {
+    try {
+      const updatedTask = await updateCompletedTaskInFirestore(userId, taskId, updatedFields);
+      return updatedTask;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 export const deleteTask = createAsyncThunk('tasks/deleteTask', 
   async ({userId, taskId}, thunkAPI) => {
@@ -150,6 +160,14 @@ const taskSlice = createSlice({
     })
     .addCase(updateTask.rejected, (state, action) => {
       // Handle the error case
+    })
+    .addCase(updateCompletedTask.fulfilled, (state, action) => {
+      const updatedTask = action.payload;
+      const index = state.completedTasks.findIndex((task) => task.id === updatedTask.id);
+
+      if (index > -1) {
+        state.completedTasks[index] = updatedTask;
+      }
     })
     .addCase(deleteTask.fulfilled, (state, action) => {
       const index = state.tasks.findIndex((task) => task.id === action.payload);

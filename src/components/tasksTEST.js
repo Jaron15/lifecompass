@@ -10,7 +10,8 @@ import {
   deleteTask,
   markTaskAsCompleted, 
   deleteCompletedTask,
-  updateTask
+  updateTask,
+  updateCompletedTask
 } from '../redux/tasks/tasksSlice';
 
 function TaskList() {
@@ -98,17 +99,30 @@ function TaskList() {
       ))}
   
       <h2 className="text-2xl font-semibold text-blue-600 mt-6">Completed Tasks</h2>
+
       {completedTasks && completedTasks.map((task) => (
-        <div key={task.id} className="border p-4 mt-4 bg-gray-100 rounded-lg">
-          <p className="font-medium text-lg">{task.name}</p>
-          <button 
-            onClick={() => dispatch(deleteCompletedTask({userId: userId, taskId: task.id}))}
-            className="mt-2 p-2 bg-red-500 text-white rounded-lg mx-4"
-          >
-            Delete task
-          </button>
-        </div>
-      ))}
+    <div key={task.id} className="border p-4 mt-4 bg-gray-100 rounded-lg">
+      <p className="font-medium text-lg">{task.name}</p>
+      <p>Completed on: {task.completedDate}</p>
+      <button 
+        onClick={() => dispatch(deleteCompletedTask({userId: userId, taskId: task.id}))}
+        className="mt-2 p-2 bg-red-500 text-white rounded-lg mx-4"
+      >
+        Delete task
+      </button>
+      <button
+        onClick={() => {
+          const currentCompletedDate = new Date(task.completedDate);
+          currentCompletedDate.setDate(currentCompletedDate.getDate() + 1);
+          const newCompletedDate = currentCompletedDate.toISOString().split('T')[0];
+          dispatch(updateCompletedTask({ userId: userId, taskId: task.id, updatedFields: { completedDate: newCompletedDate } }))
+        }}
+        className="mt-2 p-2 bg-green-500 text-white rounded-lg"
+      >
+        change completed date
+      </button>
+    </div>
+  ))}
     </div>
   );
 }

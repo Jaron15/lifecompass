@@ -66,6 +66,31 @@ export const updateTaskInFirestore = async (userId, taskId, updatedTask) => {
   }
 };
 
+export const updateCompletedTaskInFirestore = async (userId, taskId, updatedFields) => {
+    try {
+      const taskRef = doc(db, 'users', userId, 'completedTasks', taskId);
+      const taskSnap = await getDoc(taskRef);
+  
+      if (taskSnap.exists()) {
+        const taskData = taskSnap.data();
+        const updatedTask = {
+          ...taskData,
+          ...updatedFields,
+        };
+  
+        await updateDoc(taskRef, updatedTask);
+  
+        return { id: taskId, ...updatedTask };
+      } else {
+        throw new Error('Completed task not found');
+      }
+    } catch (error) {
+      console.error('Error updating completed task', error);
+      throw error;
+    }
+  };
+  
+
 
 export const deleteTaskFromFirestore = async (userId, taskId) => {
     try {
