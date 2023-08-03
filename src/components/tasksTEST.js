@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
   fetchTasks, 
@@ -11,16 +11,37 @@ import {
   markTaskAsCompleted, 
   deleteCompletedTask,
   updateTask,
-  updateCompletedTask
+  updateCompletedTask,
+  clearError
 } from '../redux/tasks/tasksSlice';
+import Modal from '../components/Modal';
 
 function TaskList() {
   const dispatch = useDispatch();
+  const [modalMessage, setModalMessage] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+  const handleClose = () => {
+    closeModal();
+    dispatch(clearError());
+  };
+  const { error } = useSelector((state) => state.tasks); 
   
   const tasks = useSelector((state) => state.tasks.tasks);
   const completedTasks = useSelector((state) => state.tasks.completedTasks);
   const { user } = useSelector((state) => state.user);
   const userId = user.uid
+
+  useEffect(() => {
+    console.log(isModalOpen);
+    if (error) {
+      console.log(error);
+      setModalMessage(error);
+      openModal();
+    }
+}, [tasks, error, isModalOpen]); 
+
 
   // useEffect(() => {
     
@@ -29,6 +50,18 @@ function TaskList() {
 
   return (
     <div className="px-8 py-6">
+      <div>
+      {/* ... */}
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleClose}
+          title="Error"
+          message={modalMessage}
+        />
+      )}
+      {/* ... */}
+    </div>
       <h2 className="text-2xl font-semibold text-blue-600">Tasks</h2>
       {tasks && tasks.map((task) => (
         <div key={task.id} className="border p-4 mt-4 bg-gray-100 rounded-lg">

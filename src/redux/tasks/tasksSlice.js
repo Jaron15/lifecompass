@@ -28,9 +28,7 @@ export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async ({userId, taskId, updatedTask}, thunkAPI) => {
     try {
-      console.log('redux try');
       await updateTaskInFirestore(userId, taskId, updatedTask);
-      console.log(taskId, updatedTask);
       return { taskId, updatedTask };
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -130,7 +128,9 @@ const taskSlice = createSlice({
     setCompletedTasks: (state, action) => {
       state.completedTasks = action.payload;
     },
-
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -139,17 +139,41 @@ const taskSlice = createSlice({
         state.tasks = [];
       }
     })
+    //------------get------------------
+    .addCase(fetchTasks.pending, (state) => {
+      state.status = "loading";
+    })
     .addCase(fetchTasks.fulfilled, (state, action) => {
       state.tasks = action.payload;
     })
     .addCase(fetchTasks.rejected, (state, action) => {
-      console.error("Failed to get tasks:", action.error.message);
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //------------get------------------
+    //------------create------------------
+    .addCase(addTask.pending, (state) => {
+      state.status = "loading";
     })
     .addCase(addTask.fulfilled, (state, action) => {
       state.tasks.push(action.payload);
     })
     .addCase(addTask.rejected, (state, action) => {
-      console.error("Failed to add task:", action.error.message);
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //------------create------------------
+    //------------update------------------
+    .addCase(updateTask.pending, (state) => {
+      state.status = "loading";
     })
     .addCase(updateTask.fulfilled, (state, action) => {
       const { taskId, updatedTask } = action.payload;
@@ -159,7 +183,15 @@ const taskSlice = createSlice({
       }
     })
     .addCase(updateTask.rejected, (state, action) => {
-      // Handle the error case
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    .addCase(updateCompletedTask.pending, (state) => {
+      state.status = "loading";
     })
     .addCase(updateCompletedTask.fulfilled, (state, action) => {
       const updatedTask = action.payload;
@@ -169,47 +201,102 @@ const taskSlice = createSlice({
         state.completedTasks[index] = updatedTask;
       }
     })
+    .addCase(updateCompletedTask.rejected, (state, action) => {
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //------------update------------------
+    //------------delete------------------
+    .addCase(deleteTask.pending, (state) => {
+      state.status = "loading";
+    })
     .addCase(deleteTask.fulfilled, (state, action) => {
       const index = state.tasks.findIndex((task) => task.id === action.payload);
       if (index !== -1) {
         state.tasks.splice(index, 1);
       }
     })
-    
     .addCase(deleteTask.rejected, (state, action) => {
-      console.error("Failed to delete task:", action.error.message);
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //------------delete------------------
+    //------------mark complete------------------
+    .addCase(markTaskAsCompleted.pending, (state) => {
+      state.status = "loading";
     })
     .addCase(markTaskAsCompleted.fulfilled, (state, action) => {
       const completedTask = {...action.payload.completedTask, name: action.payload.originalTask.name}
   
-  state.tasks = state.tasks.filter((task) => task.id !== action.payload.originalTask.id);
-  state.completedTasks = [...state.completedTasks, completedTask];
+      state.tasks = state.tasks.filter((task) => task.id !== action.payload.originalTask.id);
+      state.completedTasks = [...state.completedTasks, completedTask];
     })
     .addCase(markTaskAsCompleted.rejected, (state, action) => {
-      console.error("Failed to complete task:", action.error.message);
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    .addCase(addCompletedTask.pending, (state) => {
+      state.status = "loading";
     })
     .addCase(addCompletedTask.fulfilled, (state, action) => {
       state.completedTasks.push(action.payload);
     })
     .addCase(addCompletedTask.rejected, (state, action) => {
-      console.error("Failed to add completed task:", action.error.message);
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //------------mark complete------------------
+    //------------delete complete------------------
+    .addCase(deleteCompletedTask.pending, (state) => {
+      state.status = "loading";
     })
     .addCase(deleteCompletedTask.fulfilled, (state, action) => {
       state.completedTasks = state.completedTasks.filter((task) => task.id !== action.payload);
     })
     .addCase(deleteCompletedTask.rejected, (state, action) => {
-      console.error("Failed to delete completed task:", action.error.message);
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //------------delete complete------------------
+    //------------get complete------------------
+    .addCase(getCompletedTasks.pending, (state) => {
+      state.status = "loading";
     })
     .addCase(getCompletedTasks.fulfilled, (state, action) => {
       state.completedTasks = action.payload;
     })
     .addCase(getCompletedTasks.rejected, (state, action) => {
-      console.error("Failed to get completed tasks:", action.error.message);
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
     })
-      
+    //------------get complete------------------
   },
 });
 
-export const { setTasks, setCompletedTasks } = taskSlice.actions;
+export const { setTasks, setCompletedTasks, clearError } = taskSlice.actions;
 
 export default taskSlice.reducer;
