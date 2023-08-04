@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addEventToFirestore, getEventsFromFirestore } from '../../utils/eventsBase';
+import { addEventToFirestore, getEventsFromFirestore, deleteEventFromFirestore  } from '../../utils/eventsBase';
 
 export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
@@ -25,6 +25,19 @@ export const addEvent = createAsyncThunk(
   }
 );
 
+export const deleteEvent = createAsyncThunk(
+  'events/deleteEvent',
+  async ({userId, eventId}, thunkAPI) => {
+    try {
+      await deleteEventFromFirestore(userId, eventId);
+      return eventId;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+
 export const eventsSlice = createSlice({
   name: 'events',
   initialState: {
@@ -40,6 +53,7 @@ export const eventsSlice = createSlice({
         state.hobbies = [];
       }
     })
+    //----------fetch------------
     .addCase(fetchEvents.pending, (state) => {
       state.status = 'loading';
     })
@@ -55,6 +69,8 @@ export const eventsSlice = createSlice({
         state.error = action.error;
       }
     })
+     //----------fetch------------
+     //----------create------------
     .addCase(addEvent.pending, (state) => {
       state.status = 'loading';
     })
@@ -70,6 +86,25 @@ export const eventsSlice = createSlice({
         state.error = action.error;
       }
     })
+    //----------create------------
+    //----------delete------------
+    .addCase(deleteEvent.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(deleteEvent.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.events = state.events.filter(event => event.id !== action.payload);
+    })
+    .addCase(deleteEvent.rejected, (state, action) => {
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //----------delete------------
+
   },
 });
 

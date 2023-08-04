@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addEvent, fetchEvents } from '../redux/events/eventsSlice';
+import { addEvent, fetchEvents, deleteEvent } from '../redux/events/eventsSlice';
 
 const EventsComponent = () => {
     const dispatch = useDispatch();
@@ -17,14 +17,20 @@ const EventsComponent = () => {
         description: '',
         location: '', 
         url: '' 
-      }
+      },
+      endDate: '',
+      repeatsAnnually: false,
     });
 
     const handleAddEvent = () => {
         console.log(newEvent);
         dispatch(addEvent({userId: user.uid, event: newEvent}));
     };
-
+    
+    const handleDeleteEvent = (eventId) => {
+        dispatch(deleteEvent({userId: user.uid, eventId}));
+      };
+      
     const handleInputChange = (e, field, isDetail) => {
       if(isDetail){
         setNewEvent({
@@ -60,13 +66,32 @@ const EventsComponent = () => {
           type="date"
           value={newEvent.date}
           onChange={(e) => handleInputChange(e, 'date')}
+          placeholder="Event date"
         />
-         <input
+        <input
+          className="border-2 border-blue-500 rounded p-2 m-2"
+          type="date"
+          value={newEvent.endDate}
+          onChange={(e) => handleInputChange(e, 'endDate')}
+          placeholder="End date (optional)"
+        />
+        <input
           className="border-2 border-blue-500 rounded p-2 m-2"
           type="time"
           value={newEvent.time}
           onChange={(e) => handleInputChange(e, 'time')}
+          placeholder="Event time"
         />
+        <label>
+          <input
+            type="checkbox"
+            checked={newEvent.repeatsAnnually}
+            onChange={(e) =>
+              setNewEvent({ ...newEvent, repeatsAnnually: e.target.checked })
+            }
+          />
+          Repeats annually
+        </label>
         <input
           className="border-2 border-blue-500 rounded p-2 m-2"
           type="text"
@@ -98,15 +123,18 @@ const EventsComponent = () => {
           {events.map((event) => {
             const name = event.name;
             const date = event.date;
+            const endDate = event.endDate;
             const time = event.time;
             const description = event.details.description;
             const location = event.details.location;
             const details = event.details.url;
+            const repeatsAnnually = event.repeatsAnnually;
              return (
             <div className="border-2 border-blue-500 rounded p-2 m-2" key={event.id}>
-              <h2>{event.name}</h2>
-              <p>Date: {new Date(event.date).toLocaleDateString()}</p>
+              <h2>{name}</h2>
+              <p>Date: {new Date(date).toLocaleDateString()} {endDate && `- ${new Date(endDate).toLocaleDateString()}`}</p>
               {time && <p>Time: {time}</p>}
+              {repeatsAnnually && <p>Repeats annually</p>}
               {event.details && 
                 <div>
                   {description && <p>Description: {description}</p>}
@@ -114,6 +142,12 @@ const EventsComponent = () => {
                   {details && <p>Relevant Link: {details}</p>}
                 </div>
               }
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded m-2"
+                onClick={() => handleDeleteEvent(event.id)}
+                >
+                Delete Event
+              </button>
             </div>
           )})}
         </div>

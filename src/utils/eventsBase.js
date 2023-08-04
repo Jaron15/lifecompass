@@ -1,4 +1,4 @@
-import { doc, getDocs, collection, addDoc } from 'firebase/firestore';
+import { doc, getDocs, collection, addDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../utils/firebase'; 
 
 export const getEventsFromFirestore = async (userId) => {
@@ -15,7 +15,6 @@ console.log(events);
     throw error;
   }
 };
-
 
 export const addEventToFirestore = async (userId, event) => {
   try {
@@ -43,3 +42,17 @@ export const addEventToFirestore = async (userId, event) => {
     throw error;
   }
 };
+
+export const deleteEventFromFirestore = async (userId, eventId) => {
+  try {
+    if (!eventId || typeof eventId !== 'string') {
+      throw new Error('Could not find event');
+    }
+    const eventDoc = doc(db, 'users', userId, 'events', eventId);
+    await deleteDoc(eventDoc);
+  } catch (error) {
+    console.error('Error deleting event from Firestore:', error);
+    throw error;
+  }
+};
+
