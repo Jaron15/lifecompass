@@ -58,7 +58,14 @@ export const eventsSlice = createSlice({
     status: 'idle',
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setEvents: (state, action) => {
+      state.hobbies = action.payload;
+    },
+    clearError: (state) => {
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
     .addCase("persist/REHYDRATE", (state, action) => {
@@ -139,6 +146,8 @@ export const eventsSlice = createSlice({
     //----------update------------
   },
 });
+
+export const { setEvents, clearError } = eventsSlice.actions;
 
 export default eventsSlice.reducer;
 

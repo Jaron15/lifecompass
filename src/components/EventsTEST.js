@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addEvent, fetchEvents, deleteEvent, updateEvent } from '../redux/events/eventsSlice';
+import { addEvent, fetchEvents, deleteEvent, updateEvent, clearError } from '../redux/events/eventsSlice';
+import Modal from './Modal';
 
 const EventsComponent = () => {
     const dispatch = useDispatch();
@@ -88,6 +89,23 @@ const EventsComponent = () => {
         }
       }
       
+      const [modalMessage, setModalMessage] = useState(null);
+      const [isModalOpen, setModalOpen] = useState(false);
+      const openModal = () => setModalOpen(true);
+      const closeModal = () => setModalOpen(false);
+      const handleClose = () => {
+        closeModal();
+        dispatch(clearError());
+      };
+      const { error } = useSelector((state) => state.events); 
+    useEffect(() => {
+        console.log(isModalOpen);
+        if (error) {
+          console.log(error);
+          setModalMessage(error);
+          openModal();
+        }
+    }, [events, error, isModalOpen]); 
 
     useEffect(() => {
         dispatch(fetchEvents(user.uid)); 
@@ -95,6 +113,18 @@ const EventsComponent = () => {
     
     return (
       <div className="flex flex-col items-center justify-center">
+         <div>
+
+{isModalOpen && (
+  <Modal
+    isOpen={isModalOpen}
+    onClose={handleClose}
+    title="Error"
+    message={modalMessage}
+  />
+)}
+
+</div>
         <input
           className="border-2 border-blue-500 rounded p-2 m-2"
           type="text"

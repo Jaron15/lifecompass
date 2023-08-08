@@ -58,11 +58,22 @@ export const deleteEventFromFirestore = async (userId, eventId) => {
 
 export const updateEventInFirestore = async (userId, eventId, updatedEvent) => {
   try {
+    if (!userId || typeof userId !== 'string') {
+      throw new Error('Invalid user ID.');
+    }
+    if (!eventId || typeof eventId !== 'string') {
+      throw new Error('Invalid event ID.');
+    }
+    if (typeof updatedEvent.name !== 'string' || updatedEvent.name.trim() === '') {
+      throw new Error('Event name is required and must be a string.');
+    }
+    if (!updatedEvent.date) {
+      throw new Error('Event date cannot be empty.');
+    }
     const eventDoc = doc(db, 'users', userId, 'events', eventId);
     await updateDoc(eventDoc, updatedEvent);
   } catch (error) {
     console.error('Error updating event in Firestore:', error);
-    throw error;
+    throw error; 
   }
 };
-
