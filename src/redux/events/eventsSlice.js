@@ -60,7 +60,7 @@ export const eventsSlice = createSlice({
   },
   reducers: {
     setEvents: (state, action) => {
-      state.hobbies = action.payload;
+      state.events = action.payload;
     },
     clearError: (state) => {
       state.error = null;
