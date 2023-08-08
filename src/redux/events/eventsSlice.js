@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addEventToFirestore, getEventsFromFirestore, deleteEventFromFirestore  } from '../../utils/eventsBase';
+import { addEventToFirestore, getEventsFromFirestore, deleteEventFromFirestore, updateEventInFirestore  } from '../../utils/eventsBase';
 
 export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
@@ -36,6 +36,19 @@ export const deleteEvent = createAsyncThunk(
     }
   }
 );
+
+export const updateEvent = createAsyncThunk(
+  'events/updateEvent',
+  async ({userId, eventId, updatedEvent}, thunkAPI) => {
+    try {
+      await updateEventInFirestore(userId, eventId, updatedEvent);
+      return {eventId, updatedEvent};
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 
 
 export const eventsSlice = createSlice({
@@ -104,7 +117,26 @@ export const eventsSlice = createSlice({
       }
     })
     //----------delete------------
-
+    //----------update------------
+    .addCase(updateEvent.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(updateEvent.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      const index = state.events.findIndex(event => event.id === action.payload.eventId);
+      if (index !== -1) {
+        state.events[index] = {...state.events[index], ...action.payload.updatedEvent};
+      }
+    })
+    .addCase(updateEvent.rejected, (state, action) => {
+      state.status = "idle";
+      if (action.payload) {
+        state.error = action.payload.error;
+      } else {
+        state.error = action.error;
+      }
+    })
+    //----------update------------
   },
 });
 
