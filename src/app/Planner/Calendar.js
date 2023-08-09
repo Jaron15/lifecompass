@@ -9,6 +9,7 @@ import { addHobby } from '../../redux/hobbies/hobbiesSlice';
 import {createEvent} from '../../redux/events/eventsSlice';
 import {addTask} from '../../redux/tasks/tasksSlice';
 import DayComponent from "./DayComponent";
+import AddForm from "./AddForm";
 
 
 const Calendar = () => {
@@ -85,6 +86,7 @@ const {tasks} = useSelector(state => state.tasks)
   const [direction, setDirection] = useState(0);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevDate, setPrevDate] = useState();
+  const [showForm, setShowForm] = useState(false)
 
   // button opacity control for mobile scroll 
   //to be able to see dates covered by button
@@ -247,7 +249,8 @@ const {tasks} = useSelector(state => state.tasks)
 
   
   return (
-    <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} >
+    <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} >
+      {showForm && <AddForm />}
     <div className="w-full max-w-full  rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ">
       <div className="justify-between items-center px-6 py-4 hidden lg:flex">
         <button onClick={prevMonth}>{"<"}</button>
@@ -285,7 +288,7 @@ className="grid grid-cols-7">{renderDaysOfMonth()}
       <button 
         style={{opacity: buttonOpacity}}
         className="absolute sm:bottom-5 sm:right-10 lg:right-30 bottom-20 right-5 bg-primary p-2 rounded-full text-white shadow-lg" 
-        // onClick={addingAHobby} 
+        onClick={() => setShowForm(true)} 
       >
         <IoIosAddCircleOutline size={60} />
       </button>
