@@ -191,7 +191,7 @@ const {tasks} = useSelector(state => state.tasks)
       //--------------tasks-------------------
       const taskEvents = [];
       tasks.forEach(task => {
-        if (task.recurringDay && Array.isArray(task.recurringDay) && task.recurringDay.includes(currentDayName)) {
+        if (task.recurringDay && task.recurringDay.includes(currentDayName)) {
             taskEvents.push(`${task.name}`);
         }
         else if (task.dueDate && task.dueDate.includes(currentDateStr)) {
