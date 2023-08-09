@@ -52,11 +52,11 @@ export default function Home() {
         </div>
       ))}
       <h1 className='cursor-pointer text-blue-500' onClick={signOutUser}>Logout</h1>
-     {/* {user ? <HobbiesTEST /> :'' } */}
-     {/* {user ? <div>
+     {user ? <HobbiesTEST /> :'' }
+     {user ? <div>
       <TaskForm />
       <TaskList />
-      </div> :'' } */}
+      </div> :'' }
       {user? <EventsTestComponent /> : ''}
 
     </div>

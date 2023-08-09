@@ -31,7 +31,7 @@ export const signInAsync = createAsyncThunk(
       thunkAPI.dispatch(setHobbies(hobbies))
       thunkAPI.dispatch(setTasks(tasks))
       thunkAPI.dispatch(setCompletedTasks(completedTasks))
-      thunkAPI.dispatch(setEvents)
+      thunkAPI.dispatch(setEvents(events))
       // Instead of dispatching the action, return the user object
       return { displayName, email: firebaseEmail, uid };
     } catch (error) {

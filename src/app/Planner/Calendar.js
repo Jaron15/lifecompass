@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { addHobby } from '../../redux/hobbies/hobbiesSlice';
 import {createEvent} from '../../redux/events/eventsSlice';
 import {addTask} from '../../redux/tasks/tasksSlice';
-
+import DayComponent from "./DayComponent";
 
 
 const Calendar = () => {
@@ -52,34 +52,35 @@ const Calendar = () => {
     schedule: '2023-6-7'
   }
 
-const addingAHobby = () => {
-  console.log("User in addingAHobby:", user.user);
-  console.log("Hobby in addingAHobby:", newHobby);
+// const addingAHobby = () => {
+//   console.log("User in addingAHobby:", user.user);
+//   console.log("Hobby in addingAHobby:", newHobby);
 
-  if (user) {
-  dispatch(addHobby({user: user.user, hobby: newHobby}))
-  }
-  console.log('button clicked');
-}
-const addingAnEvent = () => {
-  dispatch(createEvent(newEvent))
-  console.log('button clicked');
-}
-const addingATask = () => {
-  dispatch(addTask(newTask1))
-  console.log('button clicked');
-}
-const hobbies = useSelector(state => state.hobbies);
-const events = useSelector(state => state.events);
-const tasks = useSelector(state => state.tasks)
+//   if (user) {
+//   dispatch(addHobby({user: user.user, hobby: newHobby}))
+//   }
+//   console.log('button clicked');
+// }
+// const addingAnEvent = () => {
+//   dispatch(createEvent(newEvent))
+//   console.log('button clicked');
+// }
+// const addingATask = () => {
+//   dispatch(addTask(newTask1))
+//   console.log('button clicked');
+// }
+
+//test area end //
+
+const {hobbies} = useSelector(state => state.hobbies);
+const {events} = useSelector(state => state.events);
+const {tasks} = useSelector(state => state.tasks)
 
     useEffect(() => {
         console.log(hobbies);
         console.log(events);
         console.log(tasks);
     }, [hobbies, events, tasks]); 
-
-//test area end //
 
   const [direction, setDirection] = useState(0);
   const [isFirstRender, setIsFirstRender] = useState(true);
@@ -114,58 +115,17 @@ const tasks = useSelector(state => state.tasks)
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   
   const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth(); // month is zero-based index
+  const currentMonth = currentDate.getMonth(); 
+  // month is zero-based index
+  const formattedMonth = String(currentMonth + 1).padStart(2, '0');
+
 
   // Calculate the number of days in the current month
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   
   // Calculate the day of the week the month starts on
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-
-  // find out if today is the current date 
-  const isToday = (day) => {
-    const today = new Date();
-    return day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-  };
-
-
-  const DayComponent = ({ day, isWeekend, isDifferentMonth, events, hobbies, tasks}) => {
-    let tdClassNames = "ease relative  cursor-pointer border border-stroke sm:p-1 p-[5px] transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:p-3 xl:h-31 overflow-clip text-center sm:text-start";
-    let spanClassNames = "font-medium text-black dark:text-white ";
-    
   
-    if (isWeekend) tdClassNames += " bg-gray-200";
-    if (isDifferentMonth) tdClassNames += " text-gray-500";
-    if (isToday(day)) spanClassNames += "  bg-primary rounded-full text-white px-1 sm:px-2 m-[-0.5rem]";
-  
-    return (
-      <td 
-    style={{
-      height: `calc(100vh / 7.38) `,
-    }}
-    className={tdClassNames}>
-      <span className={spanClassNames}>{day}</span>
-      {hobbies && hobbies.length > 0 && hobbies.map((hobby, i) => (
-        <div key={i} className="bg-green-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
-          {hobby}
-        </div>
-      ))}
-      {events && events.length > 0 && events.map((event, i) => (
-        <div key={i} className="bg-blue-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
-          {event}
-        </div>
-      ))}
-      {tasks && tasks.length > 0 && tasks.map((task, i) => (
-  <div key={i} className="bg-yellow-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
-    {task}
-  </div>
-))}
-
-    </td>
-    );
-  };
-  
-
   //functions to change month 
   const nextMonth = () => {
     setCurrentDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1));
@@ -193,7 +153,7 @@ const tasks = useSelector(state => state.tasks)
   const renderDaysOfMonth = () => {
     let days = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<DayComponent key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
+      days.push(<DayComponent key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} currentYear={currentYear}/>);
     }
     for (let day = 1; day <= daysInMonth; day++) {
       // Get the name of the current day of the week
@@ -201,22 +161,23 @@ const tasks = useSelector(state => state.tasks)
 
       //----------events------------------
       const dayEvents = [];
+      const formattedDay = String(day).padStart(2, '0');
       // Calculate the date of the current day
-      const currentDateStr = `${currentYear}-${currentMonth + 1}-${day}`; // month is 1-based here
-      console.log(currentDateStr);
+      const currentDateStr = `${currentYear}-${formattedMonth}-${formattedDay}`; 
+      
       // Filter events that are scheduled for this day
-      const scheduledEvents = events.filter(event => event.eventDate === currentDateStr);
+      const scheduledEvents = events.filter(event => event.date === currentDateStr);
       
       // Add the scheduled events to the `events` array
       scheduledEvents.forEach(event => {
-        dayEvents.push(`${event.eventName} at ${event.eventTime}`);
-        console.log(events);
+        dayEvents.push(`${event.name}`);
+  
       });
       //----------events------------------
   
       //---------------hobbies----------------
       // Create a list of all hobby practice events that should occur on this day
-      console.log(currentDayName);
+      // console.log(currentDayName);
       const hobbyEvents = [];
       hobbies.forEach(hobby => {
         if (hobby.daysOfWeek.includes(currentDayName)) {
@@ -237,17 +198,13 @@ const tasks = useSelector(state => state.tasks)
           taskEvents.push(`${task.name}`);
         }
     });
-    console.log(`Tasks for ${currentDayName}, ${currentDateStr}: `, taskEvents);
-
-      
-      
       //--------------tasks-------------------
         
-        days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} tasks={taskEvents} />);
+        days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} tasks={taskEvents} currentMonth={currentMonth} currentYear={currentYear} />);
       }
     // fill the remaining days to make total 42
     for (let i = days.length; i < 42; i++) {
-      days.push(<DayComponent key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} />);
+      days.push(<DayComponent key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} currentYear={currentYear} />);
     }
     return days;
 };
@@ -328,7 +285,7 @@ className="grid grid-cols-7">{renderDaysOfMonth()}
       <button 
         style={{opacity: buttonOpacity}}
         className="absolute sm:bottom-5 sm:right-10 lg:right-30 bottom-20 right-5 bg-primary p-2 rounded-full text-white shadow-lg" 
-        onClick={addingAHobby} 
+        // onClick={addingAHobby} 
       >
         <IoIosAddCircleOutline size={60} />
       </button>
