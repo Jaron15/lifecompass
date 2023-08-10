@@ -5,6 +5,17 @@ import { addEvent } from '../../redux/events/eventsSlice';
 const EventForm = ({ closeAddForm }) => {
     const { user } = useSelector((state) => state.user);
     const dispatch = useDispatch();
+    const [eventDuration, setEventDuration] = useState('single'); 
+
+    const handleDurationChange = (e) => {
+        setEventDuration(e.target.value);
+        
+        setEventFormData(prevState => ({
+            ...prevState,
+            date: '',
+            endDate: ''
+        }));
+    };
 
     const [eventFormData, setEventFormData] = useState({
         name: '',
@@ -66,7 +77,7 @@ const EventForm = ({ closeAddForm }) => {
     };
 
     return (
-        <div className="bg-gray-100 p-4 rounded-md max-h-[32rem] overflow-scroll w-full">
+        <div className="bg-gray-100 p-4 rounded-md max-h-[32rem] overflow-scroll overflow-x-clip w-full hide-scrollbar">
             <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2" htmlFor="name">Event Name:</label>
                 <input 
@@ -78,30 +89,61 @@ const EventForm = ({ closeAddForm }) => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
-
             <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2" htmlFor="date">Start Date:</label>
-                <input 
-                    type="date" 
-                    id="date"
-                    name="date"
-                    value={eventFormData.date}
-                    onChange={handleChange}
+                <label className="block text-gray-700 font-bold mb-2" htmlFor="duration">Event Duration:</label>
+                <select 
+                    id="duration"
+                    value={eventDuration}
+                    onChange={handleDurationChange}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
+                >
+                    <option value="single">Single Day</option>
+                    <option value="multi">Multiple Days</option>
+                </select>
             </div>
 
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2" htmlFor="endDate">End Date:</label>
-                <input 
-                    type="date" 
-                    id="endDate"
-                    name="endDate"
-                    value={eventFormData.endDate}
-                    onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-            </div>
+            {eventDuration === 'single' && (
+                <div className="mb-4">
+                    <label className="block text-gray-700 font-bold mb-2" htmlFor="date">Date:</label>
+                    <input 
+                        type="date" 
+                        id="date"
+                        name="date"
+                        value={eventFormData.date}
+                        onChange={handleChange}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+            )}
+
+            {eventDuration === 'multi' && (
+                <>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-bold mb-2" htmlFor="date">Start Date:</label>
+                        <input 
+                            type="date" 
+                            id="date"
+                            name="date"
+                            value={eventFormData.date}
+                            onChange={handleChange}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="block text-gray-700 font-bold mb-2" htmlFor="endDate">End Date:</label>
+                        <input 
+                            type="date" 
+                            id="endDate"
+                            name="endDate"
+                            value={eventFormData.endDate}
+                            onChange={handleChange}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                    </div>
+                </>
+            )}
+
 
             <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2" htmlFor="time">Time:</label>
