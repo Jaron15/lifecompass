@@ -1,27 +1,15 @@
 'use client'
-import { useDispatch, useSelector } from 'react-redux';
-import { addHobby } from '../../redux/hobbies/hobbiesSlice';
 import React, { useState } from 'react';
 import HobbyForm from './HobbyForm';
 import EventForm from './EventForm';
+import TaskForm from './TaskForm';
 
 const AddForm = ({closeAddForm}) => {
   const [selectedItem, setSelectedItem] = useState('');
   
-
-
   const handleChange = (event) => {
     setSelectedItem(event.target.value);
   };
-
-
-const TaskForm = () => {
-    return (
-        <div>  
-            <button onClick={taskSubmit}>Submit</button>
-        </div>
-    );
-}
 
   return (
     <div className="absolute inset-0 flex items-center justify-center z-20 ">
@@ -42,7 +30,7 @@ const TaskForm = () => {
         </select>
         {selectedItem === "Hobby" && <HobbyForm closeAddForm={closeAddForm} />}
         {selectedItem === "Event" && <EventForm closeAddForm={closeAddForm}  />}
-        {selectedItem === "Task" && <TaskForm />}
+        {selectedItem === "Task" && <TaskForm closeAddForm={closeAddForm} />}
       </form>
     </div>
   );
