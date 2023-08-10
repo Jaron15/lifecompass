@@ -29,7 +29,7 @@ export function getUserHobbiesCollection(user) {
     const hobbiesCollection = getUserHobbiesCollection(user);
 // data validation
     if (!Array.isArray(hobby.daysOfWeek) || typeof hobby.hobbyName !== 'string' || 
-    !Array.isArray(hobby.practiceLog) || typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal < 0) {
+    !Array.isArray(hobby.practiceLog) || typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal < 0 || hobby.hobbyName === '') {
   throw new Error('Hobby validation failed');
 }
 

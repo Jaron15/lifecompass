@@ -16,61 +16,7 @@ const Calendar = () => {
   // test area //
   const user = useSelector((state) => state.user);
   const dispatch =useDispatch()
-  const newHobby = {
-    id: '1',
-    hobbyName: 'Piano',
-    practiceTimeGoal: 60,
-    daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
-    practiceLog: []
-  };
-  const newHobby1 = {
-    id: '2',
-    hobbyName: 'Guitar',
-    practiceTimeGoal: 60,
-    daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
-    practiceLog: []
-  };
-  const newHobby2 = {
-    id: '3',
-    hobbyName: 'drums',
-    practiceTimeGoal: 60,
-    daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
-    practiceLog: []
-  };
-  const newEvent = {
-    eventName: 'Birthday Party',
-    eventTime: '16:00',
-    eventDate: '2023-6-5'
-  };
-  const newTask = {
-    type: 'recurring',
-    name: 'clean house',
-    schedule: ['Wednesday', 'Friday']
-  }
-  const newTask1 = {
-    type: 'singular',
-    name: 'clean house',
-    schedule: '2023-6-7'
-  }
-
-// const addingAHobby = () => {
-//   console.log("User in addingAHobby:", user.user);
-//   console.log("Hobby in addingAHobby:", newHobby);
-
-//   if (user) {
-//   dispatch(addHobby({user: user.user, hobby: newHobby}))
-//   }
-//   console.log('button clicked');
-// }
-// const addingAnEvent = () => {
-//   dispatch(createEvent(newEvent))
-//   console.log('button clicked');
-// }
-// const addingATask = () => {
-//   dispatch(addTask(newTask1))
-//   console.log('button clicked');
-// }
-
+  
 //test area end //
 
 const {hobbies} = useSelector(state => state.hobbies);
@@ -184,7 +130,6 @@ const {tasks} = useSelector(state => state.tasks)
       hobbies.forEach(hobby => {
         if (hobby.daysOfWeek.includes(currentDayName)) {
           hobbyEvents.push(`Practice ${hobby.hobbyName} for ${hobby.practiceTimeGoal} minutes`);
-          console.log(hobbyEvents);
         }
       });
   
@@ -250,7 +195,7 @@ const {tasks} = useSelector(state => state.tasks)
   
   return (
     <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} >
-      {showForm && <AddForm />}
+      {showForm && <AddForm closeAddForm={() => setShowForm(false)}/>}
     <div className="w-full max-w-full  rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ">
       <div className="justify-between items-center px-6 py-4 hidden lg:flex">
         <button onClick={prevMonth}>{"<"}</button>
