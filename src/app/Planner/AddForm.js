@@ -14,20 +14,20 @@ const AddForm = ({closeAddForm}) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center z-20 ">
       <form 
-      className="bg-white shadow-lg p-8 flex flex-col w-5/6 max-w-sm mx-auto rounded-lg relative">
+      className="bg-white dark:bg-boxdark shadow-lg p-8 flex flex-col w-5/6 max-w-sm mx-auto rounded-lg relative border dark:border-white">
         <button 
             onClick={closeAddForm}
             className="absolute top-2 right-2 border rounded-full px-2 hover:bg-red-600 focus:outline-none"
         >
             x
         </button>
-       {!selectedItem && <label className="mb-2">
+       {!selectedItem && <label className="mb-2 text-black dark:text-[#e9e9e8]" >
           What would you like to add to your calendar?
         </label> }
         <select 
           value={selectedItem} 
           onChange={handleChange} 
-          className="border p-2 rounded-lg my-4"
+          className="border p-2 rounded-lg my-4 text-black"
         >
           {!selectedItem && <option value="">Select...</option>}
           <option value="Hobby">Hobby</option>

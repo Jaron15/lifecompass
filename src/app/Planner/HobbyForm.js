@@ -72,21 +72,21 @@ const HobbyForm = ({closeAddForm}) => {
     return (
       <div className="bg-gray-100 p-4 rounded-md">
         <div className="mb-4">
-          <label className="block text-gray-700 font-bold mb-2" htmlFor="hobbyName">Hobby Name:</label>
+          <label className="block text-black dark:text-white font-bold mb-2" htmlFor="hobbyName">Hobby Name:</label>
           <input 
             type="text" 
             id="hobbyName"
             name="hobbyName" 
             value={hobbyFormData.hobbyName} 
             onChange={handleHobbyNameChange} 
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="mb-4">
-          <span className="block text-gray-700 font-bold mb-2">Days you want to practice:</span>
+          <span className="block text-black dark:text-white font-bold mb-2">Days you want to practice:</span>
           <div>
             {daysOfWeek.map(day => (
-              <label key={day} className="inline-block mr-4">
+              <label key={day} className="inline-block mr-4 text-black dark:text-white">
                 <input 
                   type="checkbox" 
                   value={day} 
@@ -100,12 +100,12 @@ const HobbyForm = ({closeAddForm}) => {
           </div>
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 font-bold mb-2" htmlFor="practiceDuration">How long for a session:</label>
+          <label className="block text-black dark:text-white font-bold mb-2" htmlFor="practiceDuration">How long for a session:</label>
           <select 
             id="practiceDuration"
             value={hobbyFormData.practiceDuration}
             onChange={handlePracticeDurationChange}
-            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-black"
           >
             {[...Array(10)].map((_, index) => (
               <option key={index} value={(index + 1) * 10}>
@@ -116,7 +116,7 @@ const HobbyForm = ({closeAddForm}) => {
         </div>
         <button 
           onClick={hobbySubmit}
-          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${!isSubmitEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`block w-full max-w-xs mx-auto bg-primary hover:bg-highlight dark:bg-highlight dark:hover:primary focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold disabled:opacity-25 ${!isSubmitEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           Submit
         </button>

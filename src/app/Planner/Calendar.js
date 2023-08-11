@@ -196,14 +196,14 @@ const {tasks} = useSelector(state => state.tasks)
   return (
     <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} >
       {showForm && <AddForm closeAddForm={() => setShowForm(false)}/>}
-    <div className="w-full max-w-full  rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ">
+    <div className="w-full max-w-full  rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-black ">
       <div className="justify-between items-center px-6 py-4 hidden lg:flex">
         <button onClick={prevMonth}>{"<"}</button>
         <h2>{`${monthNames[currentMonth]}, ${currentYear}`}</h2>
         <button onClick={nextMonth}>{">"}</button>
       </div>
       {/* calendar table start*/}
-      <table className="w-full mb-10">
+      <table className="w-full mb-10 sm:mb-0">
         {/* day headers */}
         <thead>
           <tr className="grid grid-cols-7 rounded-t-sm bg-primary text-white sticky">{renderDayHeaders()}</tr>

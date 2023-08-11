@@ -4,7 +4,7 @@ import AddForm from './AddForm'
 
 function page() {
   return (
-    <div className="flex justify-center min-h-screen overflow-hidden">
+    <div className="flex justify-center overflow-hidden">
     {/* <AddForm /> */}
     <Calendar />
   </div>
