@@ -54,7 +54,7 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
 <DayViewModal 
   isOpen={isModalOpen} 
   onClose={handleClose} 
-  items={[...(hobbies || []), ...(events || [])]}  
+  items={[...(hobbies || []), ...(events || []), ...(tasks || [])]}  
 />
     </td>
     );

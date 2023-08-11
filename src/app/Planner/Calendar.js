@@ -118,8 +118,10 @@ const {tasks} = useSelector(state => state.tasks)
       
       // Add the scheduled events to the `events` array
       scheduledEvents.forEach(event => {
-        dayEvents.push(event);
-  
+        dayEvents.push({
+          ...event,
+          category: "Event"
+      });
       });
       //----------events------------------
   
@@ -129,7 +131,10 @@ const {tasks} = useSelector(state => state.tasks)
       const hobbyEvents = [];
       hobbies.forEach(hobby => {
         if (hobby.daysOfWeek.includes(currentDayName)) {
-          hobbyEvents.push(hobby);
+          hobbyEvents.push({
+            ...hobby,
+          category: "Hobby"
+          });
         }
       });
       
@@ -140,10 +145,16 @@ const {tasks} = useSelector(state => state.tasks)
       const taskEvents = [];
       tasks.forEach(task => {
         if (task.recurringDay && task.recurringDay.includes(currentDayName)) {
-          taskEvents.push(task);
+          taskEvents.push({
+            ...task,
+            category: "Task"
+          });
         }
         else if (task.dueDate && task.dueDate.includes(currentDateStr)) {
-          taskEvents.push(task);
+          taskEvents.push({
+            ...task,
+            category: "Task"
+          });
         }
       });
       

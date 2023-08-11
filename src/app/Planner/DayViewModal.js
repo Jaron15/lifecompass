@@ -2,10 +2,19 @@ import React from "react";
 
 const DayViewModal = ({ isOpen, onClose, items }) => {
   if (!isOpen) return null;
-console.log(items);
-  function handleClose(params) {
-    console.log("button clicked");
-    onClose();
+  console.log(items);
+
+  function getClassNameForCategory(category) {
+    switch (category) {
+      case "Event":
+        return "border border-blue-400";
+      case "Hobby":
+        return "border border-green-400";
+      case "Task":
+        return "border border-yellow-600";
+      default:
+        return "border border-gray-200";
+    }
   }
 
   return (
@@ -22,9 +31,13 @@ console.log(items);
         </button>
         {items.map((item, index) => (
           <div key={index} className="mb-4">
-            <div className="flex justify-between items-center bg-gray-200 p-4 rounded-lg">
-              <span>{item.name}</span>
-              <button>Details</button>
+            <div
+              className={`flex justify-between items-center p-4 rounded-lg ${getClassNameForCategory(
+                item.category
+              )}`}
+            >
+              <span className="text-black">{item.name}</span>
+              <button className="text-black">Details</button>
             </div>
           </div>
         ))}
