@@ -4,7 +4,7 @@ import DayViewModal from './DayViewModal';
 import { useState, useEffect} from 'react';
 
 
-const DayComponent = ({ day, isWeekend, isDifferentMonth, events, hobbies, tasks, currentMonth, currentYear}) => {
+const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear}) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
@@ -12,9 +12,6 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events, hobbies, tasks
     console.log('handleClose');
     setModalOpen(false)
   }
-  useEffect(() => {
-    console.log("Modal state changed:", isModalOpen);
-  }, [isModalOpen]);
   
 
     let tdClassNames = "ease relative  cursor-pointer border border-stroke sm:p-1 p-[5px] transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:p-3 xl:h-31 overflow-clip text-center sm:text-start";
@@ -41,17 +38,17 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events, hobbies, tasks
       <span className={spanClassNames}>{day}</span>
       {hobbies && hobbies.length > 0 && hobbies.map((hobby, i) => (
         <div key={i} className="bg-green-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
-          {hobby}
+          {hobby.name}
         </div>
       ))}
       {events && events.length > 0 && events.map((event, i) => (
         <div key={i} className="bg-blue-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
-          {event}
+          {event.name}
         </div>
       ))}
       {tasks && tasks.length > 0 && tasks.map((task, i) => (
   <div key={i} className="bg-yellow-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
-    {task}
+    {task.name}
   </div>
 ))}
 <DayViewModal 

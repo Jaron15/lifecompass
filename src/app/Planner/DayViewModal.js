@@ -2,7 +2,7 @@ import React from "react";
 
 const DayViewModal = ({ isOpen, onClose, items }) => {
   if (!isOpen) return null;
-
+console.log(items);
   function handleClose(params) {
     console.log("button clicked");
     onClose();

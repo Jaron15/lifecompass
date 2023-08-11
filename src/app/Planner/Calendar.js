@@ -23,11 +23,11 @@ const {hobbies} = useSelector(state => state.hobbies);
 const {events} = useSelector(state => state.events);
 const {tasks} = useSelector(state => state.tasks)
 
-    useEffect(() => {
-        console.log(hobbies);
-        console.log(events);
-        console.log(tasks);
-    }, [hobbies, events, tasks]); 
+    // useEffect(() => {
+    //     console.log(hobbies);
+    //     console.log(events);
+    //     console.log(tasks);
+    // }, [hobbies, events, tasks]); 
 
   const [direction, setDirection] = useState(0);
   const [isFirstRender, setIsFirstRender] = useState(true);
@@ -118,7 +118,7 @@ const {tasks} = useSelector(state => state.tasks)
       
       // Add the scheduled events to the `events` array
       scheduledEvents.forEach(event => {
-        dayEvents.push(`${event.name}`);
+        dayEvents.push(event);
   
       });
       //----------events------------------
@@ -129,9 +129,10 @@ const {tasks} = useSelector(state => state.tasks)
       const hobbyEvents = [];
       hobbies.forEach(hobby => {
         if (hobby.daysOfWeek.includes(currentDayName)) {
-          hobbyEvents.push(`Practice ${hobby.hobbyName} for ${hobby.practiceTimeGoal} minutes`);
+          hobbyEvents.push(hobby);
         }
       });
+      
   
       //---------------hobbies----------------
       
@@ -139,12 +140,13 @@ const {tasks} = useSelector(state => state.tasks)
       const taskEvents = [];
       tasks.forEach(task => {
         if (task.recurringDay && task.recurringDay.includes(currentDayName)) {
-            taskEvents.push(`${task.name}`);
+          taskEvents.push(task);
         }
         else if (task.dueDate && task.dueDate.includes(currentDateStr)) {
-          taskEvents.push(`${task.name}`);
+          taskEvents.push(task);
         }
-    });
+      });
+      
       //--------------tasks-------------------
         
         days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} tasks={taskEvents} currentMonth={currentMonth} currentYear={currentYear} />);

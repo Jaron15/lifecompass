@@ -28,8 +28,8 @@ export function getUserHobbiesCollection(user) {
   export async function addHobbyToFirestore(user, hobby) {
     const hobbiesCollection = getUserHobbiesCollection(user);
 // data validation
-    if (!Array.isArray(hobby.daysOfWeek) || typeof hobby.hobbyName !== 'string' || 
-    !Array.isArray(hobby.practiceLog) || typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal < 0 || hobby.hobbyName === '') {
+    if (!Array.isArray(hobby.daysOfWeek) || typeof hobby.name !== 'string' || 
+    !Array.isArray(hobby.practiceLog) || typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal < 0 || hobby.name === '') {
   throw new Error('Hobby validation failed');
 }
 
@@ -79,7 +79,7 @@ export async function updateHobbyInFirestore(user, hobby) {
     }
   
     // Validation
-    if (typeof hobby.hobbyName !== 'string' || 
+    if (typeof hobby.name !== 'string' || 
     !Array.isArray(hobby.daysOfWeek) || 
     !Array.isArray(hobby.practiceLog) || 
     typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal <= 0) {

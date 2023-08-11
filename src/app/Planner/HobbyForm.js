@@ -7,12 +7,12 @@ const HobbyForm = ({closeAddForm}) => {
     const dispatch = useDispatch()
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const [hobbyFormData, setHobbyFormData] = useState({
-      hobbyName: '',
+      name: '',
       practiceDuration: 10,
       practiceDays: [],
       practiceLog: []
     })
-    const handleHobbyNameChange = (e) => {
+    const handlenameChange = (e) => {
       const { name, value } = e.target;
       setHobbyFormData(prevState => ({
           ...prevState,
@@ -23,7 +23,7 @@ const HobbyForm = ({closeAddForm}) => {
     const handlePracticeDurationChange = (e) => {
       setHobbyFormData(prevState => ({
         ...prevState,
-        practiceDuration: e.target.value
+        practiceDuration: Number(e.target.value)
       }));
     };
     
@@ -42,12 +42,12 @@ const HobbyForm = ({closeAddForm}) => {
         }
       });
     };
-    const isSubmitEnabled = hobbyFormData.hobbyName.trim() !== "" && hobbyFormData.practiceDays.length > 0;
+    const isSubmitEnabled = hobbyFormData.name.trim() !== "" && hobbyFormData.practiceDays.length > 0;
   
     const hobbySubmit = async (event) => {
       event.preventDefault();
       const hobbyData = {
-          hobbyName: hobbyFormData.hobbyName,
+          name: hobbyFormData.name,
           practiceTimeGoal: hobbyFormData.practiceDuration,
           daysOfWeek: hobbyFormData.practiceDays,
           practiceLog: hobbyFormData.practiceLog
@@ -59,7 +59,7 @@ const HobbyForm = ({closeAddForm}) => {
           console.log("Hobby added successfully!");
     
           setHobbyFormData({
-              hobbyName: '',
+              name: '',
               practiceDuration: 10,
               practiceDays: [],
               practiceLog: []
@@ -72,13 +72,13 @@ const HobbyForm = ({closeAddForm}) => {
     return (
       <div className="bg-gray-100 p-4 rounded-md">
         <div className="mb-4">
-          <label className="block text-black dark:text-white font-bold mb-2" htmlFor="hobbyName">Hobby Name:</label>
+          <label className="block text-black dark:text-white font-bold mb-2" htmlFor="name">Hobby Name:</label>
           <input 
             type="text" 
-            id="hobbyName"
-            name="hobbyName" 
-            value={hobbyFormData.hobbyName} 
-            onChange={handleHobbyNameChange} 
+            id="name"
+            name="name" 
+            value={hobbyFormData.name} 
+            onChange={handlenameChange} 
             className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
