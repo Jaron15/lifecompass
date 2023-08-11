@@ -183,7 +183,7 @@ function page() {
                     <input
                       type="name"
                       name="name"
-                      className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${
+                      className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none text-black dark:text-black border-[#E2E8F0] ${
                         nameError ? "border-red-500" : "focus:border-primary"
                       }`}
                       placeholder="John"
@@ -226,7 +226,7 @@ function page() {
                     <input
                       type="email"
                       name="email"
-                      className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${
+                      className={`w-full text-black -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${
                         emailError ? "border-red-500" : "focus:border-primary"
                       }`}
                       placeholder="johnsmith@example.com"
@@ -284,7 +284,7 @@ function page() {
                     <input
                       type="password"
                       name="password"
-                      className={`w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${
+                      className={`w-full text-black -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none dark:text-black border-[#E2E8F0] ${
                         passwordError
                           ? "border-red-500"
                           : "focus:border-primary"

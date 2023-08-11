@@ -116,7 +116,7 @@ function page() {
                     <input
                       type="email"
                       name="email"
-                      className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] focus:border-primary"
+                      className="w-full -ml-10 pl-10 !text-black pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] focus:border-primary"
                       placeholder="johnsmith@example.com"
                     />
                   </div>
@@ -169,7 +169,7 @@ function page() {
                     <input
                       type="password"
                       name="password"
-                      className="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] focus:border-primary"
+                      className="w-full text-black -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 outline-none border-[#E2E8F0] focus:border-primary"
                       placeholder="************"
                     />
                   </div>
