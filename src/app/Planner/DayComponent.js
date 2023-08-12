@@ -4,9 +4,10 @@ import DayViewModal from './DayViewModal';
 import { useState, useEffect} from 'react';
 
 
-const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear}) => {
+const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear, formattedMonth}) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
+  const date = `${currentYear}-${formattedMonth}-${day}`;
 
   const handleClose = () => {
     console.log('handleClose');
@@ -47,14 +48,16 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
         </div>
       ))}
       {tasks && tasks.length > 0 && tasks.map((task, i) => (
-  <div key={i} className="dark:bg-yellow-800 text-black dark:text-white border dark:border-none border-yellow-600 shadow shadow-yellow-600 px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
+  <div key={i} className="dark:bg-yellow-800 text-black dark:text-white border dark:border-none dark:shadow-none border-yellow-600 shadow shadow-yellow-600 px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
     {task.name}
   </div>
 ))}
 <DayViewModal 
   isOpen={isModalOpen} 
   onClose={handleClose} 
-  items={[...(hobbies || []), ...(events || []), ...(tasks || [])]}  
+  items={[...(hobbies || []), ...(events || []), ...(tasks || [])]}
+  date={date}
+  
 />
     </td>
     );

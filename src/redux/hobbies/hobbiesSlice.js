@@ -55,7 +55,8 @@ export const logPractice = createAsyncThunk(
         user,
         hobbyId,
         logEntry
-      );
+        );
+        console.log('made it to slice');
       return { hobbyId, logEntry: updatedLogEntry };
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

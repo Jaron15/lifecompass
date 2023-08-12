@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import LogPracticeForm from "./LogPracticeForm";
 
-const DayViewModal = ({ isOpen, onClose, items }) => {
+const DayViewModal = ({ isOpen, onClose, items, date }) => {
     
   const [expandedItem, setExpandedItem] = useState(null); // To keep track of the expanded item
   
@@ -72,8 +73,7 @@ const DayViewModal = ({ isOpen, onClose, items }) => {
       <ul className="sm:text-center text-left text-black dark:text-white">
         <li className="my-2"><strong>Practice Days:</strong> <br/> {item.daysOfWeek.join(", ")}</li>
         <li className="my-2"><strong>Practice Time Goal:</strong> <br/> {item.practiceTimeGoal + ' Minutes'}</li>
-        {/* Add a component or logic to handle marking hobby as completed */}
-        {/* This could be another sub-component to keep the code modular */}
+        <LogPracticeForm hobbyId={item.firestoreId} date={date} />
       </ul>
   
     )}
