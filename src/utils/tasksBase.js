@@ -130,7 +130,7 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
     }
   };
   
-  export const markTaskAsCompletedInFirestore = async (userId, taskId, completedDate) => {
+  export const markTaskAsCompletedInFirestore = async (userId, taskId ) => {
     try {
         if (!userId) {
             throw new Error('Invalid or missing user ID');
@@ -138,9 +138,12 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
           if (!taskId) {
             throw new Error('Invalid or missing task ID');
           }
-          if (!completedDate || isNaN(Date.parse(completedDate))) {
-            throw new Error('Invalid or missing completed date');
-          }
+          // if (!completedDate || isNaN(Date.parse(completedDate))) {
+          //   throw new Error('Invalid or missing completed date');
+          // }
+          const currentDate = new Date();
+      const dateString = currentDate.toISOString().split('T')[0];
+
         const taskRef = doc(db, 'users', userId, 'tasks', taskId);
         const taskSnap = await getDoc(taskRef);
         
@@ -151,14 +154,14 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
   
         const completedTask = {
           ...otherTaskData,
-          completedDate,
+          completedDate: dateString,
           isCompleted: true,
         };
   
         const completedTaskRef = await addDoc(collection(db, 'users', userId, 'completedTasks'), completedTask);
 
-        await deleteDoc(taskRef);
-  
+        await updateDoc(taskRef, { isCompleted: true });
+
         return { id: completedTaskRef.id, ...completedTask };
       } else {
         throw new Error('Task not found');

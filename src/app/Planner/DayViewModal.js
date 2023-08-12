@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import LogPracticeForm from "./LogPracticeForm";
 import { useDispatch, useSelector } from 'react-redux';
-import { addCompletedTask, deleteCompletedTask } from '../../redux/tasks/tasksSlice';
+import { addCompletedTask, deleteCompletedTask, markTaskAsCompleted, updateTask } from '../../redux/tasks/tasksSlice';
 
 const DayViewModal = ({ isOpen, onClose, items, date }) => {
   const dispatch = useDispatch();
     const { user } = useSelector((state) => state.user)
     const completedTasks = useSelector((state) => state.tasks.completedTasks);
+    const tasks = useSelector((state) => state.tasks.tasks);
   const [expandedItem, setExpandedItem] = useState(null); 
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
-  
- console.log(isCheckboxSelected);
   if (!isOpen) return null;
-
+console.log(date);
   function getClassNameForCategory(category) {
     switch (category) {
       case "Event":
@@ -37,15 +36,35 @@ const DayViewModal = ({ isOpen, onClose, items, date }) => {
   
 
   const handleCompletion = (task, date) => {
-    
-
-    dispatch(addCompletedTask({userId: user.uid, task:task, dueDate:date}));
-    
+    console.log(task);
+    if (task.type === 'recurring'){
+    dispatch(addCompletedTask({userId: user.uid, task:task, dueDate:date})); 
+   } else {
+   dispatch(markTaskAsCompleted({userId: user.uid, taskId:task.refId})) 
+  }
 };
+
 const handleUndo = (task, date) => {
+  if (task.type === 'recurring') {
   const completedTaskForUndo = completedTasks.find(ctask => ctask.refId === task.refId && ctask.dueDate === date);
   const taskId = completedTaskForUndo.docId
   dispatch(deleteCompletedTask({userId: user.uid, taskId: taskId }))
+}
+else {
+  dispatch(updateTask({
+    userId: user.uid,
+    taskId: task.id,
+    updatedTask: {
+      ...task,
+      isCompleted: false
+    }
+  }));
+const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ctask.dueDate === date);
+  if (completedTask) {
+     dispatch(deleteCompletedTask({userId: user.uid, taskId: completedTask.id}));
+  }
+}
+
 };
 
   return (
@@ -61,7 +80,9 @@ const handleUndo = (task, date) => {
           Close
         </button>
         {items.map((item, index) => {
-      const isTaskCompletedForDate = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date || ctask.completedDate === date));
+      const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date || ctask.completedDate === date));
+      const isSingularTaskCompletedForDate = tasks && tasks.some(task => task.refId === item.refId && task.isCompleted && task.dueDate === date);
+
           return (
   <div key={index} className="mb-4 ">
     <div
@@ -112,16 +133,16 @@ const handleUndo = (task, date) => {
         <strong>Completed:</strong>
               <input 
                 type="checkbox" 
-                checked={isTaskCompletedForDate}
+                checked={item.type === 'recurring' ? isRecurringTaskCompletedForDate : isSingularTaskCompletedForDate}
                 readOnly
               />
             </li>
-            {isTaskCompletedForDate ? (
-              <button onClick={() => handleUndo(item, date)}>Undo Completion</button>
-            ) : (
-              <button onClick={() => handleCompletion(item, date)}>Mark as Complete</button>
-            )}
-          </ul>
+            {(item.type === 'recurring' && isRecurringTaskCompletedForDate) || (item.type !== 'recurring' && isSingularTaskCompletedForDate) ? (
+            <button onClick={() => handleUndo(item, date)}>Undo Completion</button>
+          ) : (
+            <button onClick={() => handleCompletion(item, date)}>Mark as Complete</button>
+          )}
+      </ul>
     )}
   </div>
 )}

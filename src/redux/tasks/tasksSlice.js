@@ -236,8 +236,12 @@ const taskSlice = createSlice({
     .addCase(markTaskAsCompleted.fulfilled, (state, action) => {
       const completedTask = {...action.payload.completedTask, name: action.payload.originalTask.name}
   
-      state.tasks = state.tasks.filter((task) => task.id !== action.payload.originalTask.id);
-      state.completedTasks = [...state.completedTasks, completedTask];
+      const taskIndex = state.tasks.findIndex(task => task.id === action.payload.originalTask.id);
+      if (taskIndex !== -1) {
+          state.tasks[taskIndex].isCompleted = true;
+      }
+      state.completedTasks.push(completedTask);
+
     })
     .addCase(markTaskAsCompleted.rejected, (state, action) => {
       state.status = "idle";

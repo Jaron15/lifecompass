@@ -7,13 +7,13 @@ import { useState, useEffect} from 'react';
 const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear, formattedMonth}) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const date = `${currentYear}-${formattedMonth}-${day}`;
+  const formattedDay = String(day).padStart(2, '0');
+  const date = `${currentYear}-${formattedMonth}-${formattedDay}`;
 
   const handleClose = () => {
     console.log('handleClose');
     setModalOpen(false)
   }
-  
 
     let tdClassNames = "ease relative  cursor-pointer border border-stroke sm:p-1 p-[5px] transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:p-3 xl:h-31 overflow-clip text-center sm:text-start";
     let spanClassNames = "font-medium text-black dark:text-white ";
