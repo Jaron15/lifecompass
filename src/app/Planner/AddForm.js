@@ -14,7 +14,7 @@ const AddForm = ({closeAddForm}) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center z-20 ">
       <form 
-      className="bg-white dark:bg-boxdark shadow-lg p-8 flex flex-col w-5/6 max-w-sm mx-auto rounded-lg relative border dark:border-white">
+      className="bg-white dark:bg-boxdark shadow-lg p-8 flex flex-col w-5/6 max-w-sm mx-auto rounded-lg relative border dark:border-primary">
         <button 
             onClick={closeAddForm}
             className="absolute top-2 right-2 border rounded-full px-2 hover:bg-red-600 focus:outline-none"

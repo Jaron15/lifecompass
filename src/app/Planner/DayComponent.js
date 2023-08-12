@@ -37,17 +37,17 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
     onClick={() => setModalOpen(true)}>
       <span className={spanClassNames}>{day}</span>
       {hobbies && hobbies.length > 0 && hobbies.map((hobby, i) => (
-        <div key={i} className="bg-green-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
+        <div key={i} className="dark:bg-green-800 text-black dark:text-white border border-green-600 shadow shadow-green-600 dark:shadow-none dark:border-none px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
           {hobby.name}
         </div>
       ))}
       {events && events.length > 0 && events.map((event, i) => (
-        <div key={i} className="bg-blue-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
+        <div key={i} className="dark:bg-blue-800 text-black dark:text-white border-blue-400 border shadow dark:shadow-none dark:border-none shadow-blue-400 px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
           {event.name}
         </div>
       ))}
       {tasks && tasks.length > 0 && tasks.map((task, i) => (
-  <div key={i} className="bg-yellow-800 text-white px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
+  <div key={i} className="dark:bg-yellow-800 text-black dark:text-white border dark:border-none border-yellow-600 shadow shadow-yellow-600 px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap  sm:text-base text-[0.5rem]">
     {task.name}
   </div>
 ))}
