@@ -77,9 +77,9 @@ export const markTaskAsCompleted = createAsyncThunk('tasks/markTaskAsCompleted',
 
 
 export const addCompletedTask = createAsyncThunk('tasks/addCompletedTask', 
-  async ({userId, task}, thunkAPI) => {
+  async ({userId, task, dueDate}, thunkAPI) => {
     try {
-      const completedTask = await addCompletedTaskToFirestore(userId, task);
+      const completedTask = await addCompletedTaskToFirestore(userId, task, dueDate);
       return completedTask;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

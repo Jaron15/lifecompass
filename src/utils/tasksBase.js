@@ -36,14 +36,20 @@ export const addTaskToFirestore = async (userId, task) => {
       }
   
       
-      const taskData = {
+      const initialTaskData = {
         ...task,
         isCompleted: false
       };
   
-      const taskRef = await addDoc(collection(db, 'users', userId, 'tasks'), taskData);
 
-    return { id: taskRef.id, ...taskData };
+      const taskRef = await addDoc(collection(db, 'users', userId, 'tasks'), initialTaskData);
+
+
+      await updateDoc(taskRef, { refId: taskRef.id });
+  
+
+      return { id: taskRef.id, ...initialTaskData, refId: taskRef.id };
+
   } catch (error) {
     console.error('Error adding task', error);
     throw error;
@@ -164,7 +170,7 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
     }
   };
   
-export const addCompletedTaskToFirestore = async (userId, task) => {
+export const addCompletedTaskToFirestore = async (userId, task, dueDate) => {
     try {
         if (!userId) {
             throw new Error('Invalid or missing user ID');
@@ -172,6 +178,10 @@ export const addCompletedTaskToFirestore = async (userId, task) => {
           if (!task || typeof task !== 'object' || !task.id) {
             throw new Error('Invalid or missing task data');
           }
+          if (task.type === 'recurring' && !dueDate) {
+            throw new Error('Needs Associated Day To Mark Complete');
+          }
+
       const currentDate = new Date();
       const dateString = currentDate.toISOString().split('T')[0];
   
@@ -182,14 +192,21 @@ export const addCompletedTaskToFirestore = async (userId, task) => {
         isCompleted: true, 
         completedDate: dateString,
       };
+      if (task.type === 'recurring') {
+        completedTask.dueDate = dueDate;
+    }
+
   
       const userDoc = doc(db, 'users', userId);
       const completedTasksCollection = collection(userDoc, 'completedTasks');
   
       const completedTaskDoc = await addDoc(completedTasksCollection, completedTask);
 
-      return { ...completedTask, id: completedTaskDoc.id }; 
-  
+      await updateDoc(doc(completedTasksCollection, completedTaskDoc.id), {
+        docId: completedTaskDoc.id
+    });
+
+    return { ...completedTask, id: completedTaskDoc.id, docId: completedTaskDoc.id };   
     } catch (error) {
       console.error('Error adding completed task to Firestore:', error);
       throw error;
