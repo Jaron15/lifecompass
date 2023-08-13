@@ -35,8 +35,6 @@ const [itemToEdit, setItemToEdit] = useState(null);
     console.log(itemToDelete);
     switch(itemToDelete.category) {
     case 'Task':
-      console.log('entered task case');
-      console.log(itemToDelete);
       dispatch(deleteTask({userId:user.uid, taskId:itemToDelete.refId}))
       break;
     case 'Event':
@@ -67,7 +65,6 @@ const [itemToEdit, setItemToEdit] = useState(null);
 //delete
 //edit
 const handleEditClick = (item) => {
-  console.log("Editing:", item);
   setItemToEdit(item);
   setIsEditModalOpen(true);
 };
