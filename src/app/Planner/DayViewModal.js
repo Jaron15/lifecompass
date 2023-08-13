@@ -31,29 +31,21 @@ const [itemToEdit, setItemToEdit] = useState(null);
   }
 
   const confirmDelete = (item) => {
-    
-    console.log(itemToDelete);
     switch(itemToDelete.category) {
     case 'Task':
       dispatch(deleteTask({userId:user.uid, taskId:itemToDelete.refId}))
       break;
     case 'Event':
-      console.log('entered task case');
-      console.log(itemToDelete);
       dispatch(deleteEvent({userId:user.uid, eventId:itemToDelete.refId}))
       break;
     case 'Hobby':
-      console.log('entered task case');
-      console.log(itemToDelete);
       dispatch(deleteHobby({user:user, hobbyId:itemToDelete.refId}))
       break;
       default:
        
         break;
     }
-    console.log('Deleting:', itemToDelete);
 
-   
     setShowDeleteModal(false);
     setItemToDelete(null);
   }
@@ -128,6 +120,30 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
 
 };
 
+function formatDateToMonthDay(dateString) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  const options = { weekday: 'long', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString(undefined, options);
+}
+
+const formattedDate = formatDateToMonthDay(date);
+function convertTo12HourFormat(timeString) {
+  let [hours, minutes] = timeString.split(":");
+  let period = "AM";
+  hours = parseInt(hours, 10);
+  if (hours >= 12) {
+      period = "PM";
+      if (hours > 12) {
+          hours -= 12;
+      }
+  } else if (hours === 0) {
+      hours = 12;
+  }
+  return `${hours}:${minutes} ${period}`;
+}
+
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 w-full lg:w-768px mx-auto">
        <DeleteModal 
@@ -139,6 +155,9 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
       />
   <div className="relative bg-white w-5/6 h-5/6 sm:w-3/5 sm:h-4/6 md:w-4/6 md:h-4/6 lg:w-1/2 2xl:w-2/5 lg:ml-72 lg:mt-14 mt-12 overflow-y-scroll rounded-lg p-6 bg-white dark:bg-boxdark border border-primary hide-scrollbar">
     <div className="w-full flex mb-12">
+    <h2 className="text-center text-xl font-bold  text-black dark:text-current w-full">
+        {formattedDate}
+      </h2>
         <div 
            onClick={(event) => {
             event.stopPropagation();
@@ -181,7 +200,7 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
     {item.category === "Event" && (
      <div className="flex flex-wrap bg-gray-100 px-auto text-left  sm:text-center rounded-md text-black dark:text-white">
      <ul className="w-full sm:w-1/2">
-       <li className="my-2"><strong>Time:</strong> <br/> {item.time || 'Not Specified'}</li>
+       <li className="my-2"><strong>Time:</strong> <br/>  {item.time ? convertTo12HourFormat(item.time) : 'Not Specified'}</li>
        <li className="my-2"><strong>Repeats:</strong> <br/> {item.isRepeating === "" ? "No" : item.isRepeating}</li>
      </ul>
      <ul className="w-full sm:w-1/2">

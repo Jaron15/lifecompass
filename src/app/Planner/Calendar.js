@@ -23,35 +23,26 @@ const Calendar = () => {
   
 //test area end //
  //error modal 
- const { error } = useSelector((state) => state.hobbies);
+//  const { error } = useSelector((state) => state.hobbies);
  
-   const [modalMessage, setModalMessage] = useState(null);
- const [isModalOpen, setModalOpen] = useState(false);
-   const openModal = () => setModalOpen(true);
-   const closeModal = () => setModalOpen(false);
-   const handleClose = () => {
-     closeModal();
-     dispatch(clearError());
-   };
-   useEffect(() => {
-     console.log(isModalOpen);
-     if (error) {
-       console.log(error);
-       setModalMessage(error);
-       openModal();
-     }
-     
- }, [hobbies, error, isModalOpen]); 
+//    const [modalMessage, setModalMessage] = useState(null);
+//  const [isModalOpen, setModalOpen] = useState(false);
+//    const openModal = () => setModalOpen(true);
+//    const closeModal = () => setModalOpen(false);
+//    const handleClose = () => {
+//      closeModal();
+//      dispatch(clearError());
+//    };
+//    useEffect(() => {
+//      console.log(isModalOpen);
+//      if (error) {
+//        console.log(error);
+//        setModalMessage(error);
+//        openModal();
+//      }
+//  }, [hobbies, error, isModalOpen]); 
  
  //error modal
-
-
-    // useEffect(() => {
-    //     console.log(hobbies);
-    //     console.log(events);
-    //     console.log(tasks);
-    // }, [hobbies, events, tasks]); 
-
   const [direction, setDirection] = useState(0);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevDate, setPrevDate] = useState();
@@ -230,17 +221,18 @@ const Calendar = () => {
 
   
   return (
-    <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} > {isModalOpen && (
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        title="Error"
-        message={modalMessage}
-      />
-    )}
+    <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} > 
+    {/* {isModalOpen && (
+      // <Modal
+      //   isOpen={isModalOpen}
+      //   onClose={handleClose}
+      //   title="Error"
+      //   message={modalMessage}
+      // />
+    )} */}
       {showForm && <AddForm closeAddForm={() => setShowForm(false)}/>}
     <div className="w-full max-w-full  rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-black ">
-      <div className="justify-between items-center px-6 py-4 hidden lg:flex">
+      <div className="justify-between items-center px-6 py-4 text-black dark:text-current flex">
         <button onClick={prevMonth}>{"<"}</button>
         <h2>{`${monthNames[currentMonth]}, ${currentYear}`}</h2>
         <button onClick={nextMonth}>{">"}</button>

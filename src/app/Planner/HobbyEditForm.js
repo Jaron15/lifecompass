@@ -6,7 +6,6 @@ const EditHobbyForm = ({ item, onClose }) => {
     const dispatch = useDispatch();
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const { user } = useSelector((state) => state.user);
-console.log(item.refId, 'THIS IS THE INITIAL');
     const [hobbyFormData, setHobbyFormData] = useState({
       name: item.name,
       practiceTimeGoal: item.practiceTimeGoal,
@@ -52,10 +51,8 @@ console.log(item.refId, 'THIS IS THE INITIAL');
       const updatedHobbyData = {
           ...hobbyFormData
         };
-        console.log(updatedHobbyData, 'thisisit');
       try {
            dispatch(updateHobby({user: user, hobby: updatedHobbyData}));
-          console.log("Hobby updated successfully!");
           onClose();
       } catch (error) {
           console.error("Error updating hobby:", error);
