@@ -1,8 +1,8 @@
 'use client'
 import React, { useState } from 'react';
-import HobbyForm from './HobbyForm';
-import EventForm from './EventForm';
-import TaskForm from './TaskForm';
+import HobbyForm from './hobbyComponents/HobbyForm';
+import EventForm from './eventComponents/EventForm';
+import TaskForm from './taskComponents/TaskForm';
 import {ImCancelCircle} from 'react-icons/Im';
 
 const AddForm = ({closeAddForm}) => {

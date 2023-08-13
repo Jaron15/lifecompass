@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { logPractice } from '../redux/hobbies/hobbiesSlice';
+import { logPractice } from '../../../redux/hobbies/hobbiesSlice';
 import { useSelector } from 'react-redux';
 
 

@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import DayViewModal from '../../components/DayViewModal';
+import DayViewModal from '../../components/THE/DayViewModal';
 import { useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
 

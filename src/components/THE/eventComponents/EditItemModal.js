@@ -1,7 +1,7 @@
 import React from 'react';
 import EventEditForm from './EventEditForm';
-import TaskEditForm from './TaskEditForm';
-import HobbyEditForm from './HobbyEditForm';
+import TaskEditForm from '../taskComponents/TaskEditForm';
+import HobbyEditForm from '../hobbyComponents/HobbyEditForm';
 
 
 const EditItemModal = ({ isOpen, item, onClose }) => {

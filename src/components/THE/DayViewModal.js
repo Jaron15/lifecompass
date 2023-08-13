@@ -1,13 +1,13 @@
 import React, {  useState } from "react";
 
 import { useDispatch, useSelector } from 'react-redux';
-import {  deleteTask} from '../redux/tasks/tasksSlice';
+import {  deleteTask} from '../../redux/tasks/tasksSlice';
 import {ImCancelCircle} from 'react-icons/Im';
-import DeleteModal from '../app/planner/DeleteModal';  
+import DeleteModal from '../DeleteModal';  
 import { deleteEvent } from "@/src/redux/events/eventsSlice";
 import { deleteHobby } from "@/src/redux/hobbies/hobbiesSlice";
-import EditItemModal from "../app/planner/EditItemModal";
-import DayViewItem from "./DayViewItem";
+import EditItemModal from "./eventComponents/EditItemModal";
+import DayItem from "./DayItem";
 
 const DayViewModal = ({ isOpen, onClose, items, date }) => {
   const dispatch = useDispatch();
@@ -100,7 +100,7 @@ const formattedDate = formatDateToMonthDay(date);
      
 
           return (
-              <DayViewItem
+              <DayItem
               item={item}
               index={index}
               isEditModalOpen={isEditModalOpen}

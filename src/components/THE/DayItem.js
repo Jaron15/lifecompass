@@ -1,11 +1,11 @@
 import React, {  useState } from "react";
 import { useSelector } from 'react-redux';
 import { FaPencilAlt, FaTrash } from 'react-icons/fa'; 
-import EventItem from "./EventItem";
-import HobbyItem from "./HobbyItem";
-import TaskItem from "./TaskItem";
+import EventItem from "./eventComponents/EventItem";
+import HobbyItem from "./hobbyComponents/HobbyItem";
+import TaskItem from "./taskComponents/TaskItem";
 
-function DayViewItem({ item,
+function DayItem({ item,
   index,
   isEditModalOpen,
   handleDeleteClick,
@@ -89,4 +89,4 @@ const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(c
   );
 }
 
-export default DayViewItem
+export default DayItem

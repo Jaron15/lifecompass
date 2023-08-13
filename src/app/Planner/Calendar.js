@@ -9,7 +9,7 @@ import { addHobby, clearError } from '../../redux/hobbies/hobbiesSlice';
 import {createEvent} from '../../redux/events/eventsSlice';
 import {addTask} from '../../redux/tasks/tasksSlice';
 import DayComponent from "./DayComponent";
-import AddForm from "./AddForm";
+import AddForm from "../../components/THE/AddForm";
 import Modal from '../../components/Modal';
 
 

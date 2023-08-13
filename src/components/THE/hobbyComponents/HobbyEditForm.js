@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateHobby } from '../../redux/hobbies/hobbiesSlice';
+import { updateHobby } from '../../../redux/hobbies/hobbiesSlice';
 
 const EditHobbyForm = ({ item, onClose }) => {
     const dispatch = useDispatch();

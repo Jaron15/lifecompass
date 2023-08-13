@@ -1,6 +1,6 @@
 import React from 'react'
 import Calendar from './Calendar'
-import AddForm from './AddForm'
+import AddForm from '../../components/THE/AddForm'
 
 function page() {
   return (

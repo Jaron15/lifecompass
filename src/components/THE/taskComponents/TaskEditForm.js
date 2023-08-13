@@ -1,49 +1,62 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTask } from '../../redux/tasks/tasksSlice';
+import { updateTask } from '../../../redux/tasks/tasksSlice';
 
-const TaskForm = ({ closeAddForm }) => {
+const EditTaskForm = ({ item, onClose }) => {
     const { user } = useSelector((state) => state.user);
     const dispatch = useDispatch();
 
     const [taskFormData, setTaskFormData] = useState({
-        name: '',
-        dueDate: '',
-        type: 'singular',
-        recurringDay: 'Sunday'
+        name: item.name,
+        dueDate: item.dueDate,
+        type: item.type,
+        recurringDay: item.recurringDay || ''
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setTaskFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        if (name === "type" && value === "recurring") {
+            setTaskFormData(prevState => ({
+                ...prevState,
+                [name]: value,
+                dueDate: '',
+            }));
+        } else if (name === "type" && value === "singular") {
+            setTaskFormData(prevState => ({
+                ...prevState,
+                [name]: value,
+                recurringDay: '',
+            }));
+        } else {
+            setTaskFormData(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
+        }
     };
+    
 
-    const isSubmitEnabled = taskFormData.name.trim() !== "";
+    const isSubmitEnabled = taskFormData.name.trim() !== "" &&
+    ((taskFormData.type === "singular" && taskFormData.dueDate) || 
+    (taskFormData.type === "recurring" && taskFormData.recurringDay));
+
 
     const taskSubmit = async (event) => {
         event.preventDefault();
-        const taskData = {
+        const updatedTaskData = {
             ...taskFormData
         };
         try {
-            dispatch(addTask({ userId: user.uid, task: taskData }));
-            console.log("Task added successfully!");
-            setTaskFormData({
-                name: '',
-                dueDate: '',
-                type: 'singular',
-                recurringDay: ''
-            });
-            closeAddForm();
+            dispatch(updateTask({userId: user.uid, taskId: item.refId, updatedTask: updatedTaskData }));
+            console.log("Task updated successfully!");
+            onClose();
         } catch (error) {
-            console.error("Error adding task:", error);
+            console.error("Error updating task:", error);
         }
     };
 
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
 
     return (
         <div className="bg-gray-100 p-4 rounded-md max-h-[32rem]  w-full">
@@ -106,14 +119,22 @@ const TaskForm = ({ closeAddForm }) => {
             </div>
         )}
 
+<div className='flex flex-row  '>
             <button 
                 onClick={taskSubmit}
-                className={`block w-full max-w-xs mx-auto bg-primary hover:bg-highlight dark:bg-highlight dark:hover:primary focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold disabled:opacity-25 ${!isSubmitEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`block w-1/2 max-w-xs mx-1 bg-primary hover:bg-highlight dark:bg-highlight dark:hover:primary focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold disabled:opacity-25 ${!isSubmitEnabled ? 'opacity-50 cursor-not-allowed opacity-50' : ''}`}
             >
-                Submit
+                Update
             </button>
+            <button 
+                onClick={onClose}
+                className={`block w-1/2 max-w-xs mx-1 bg-red-500 hover:bg-highlight dark:bg-red-500 dark:hover:primary focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold `}
+            >
+                Cancel
+            </button>
+            </div>
         </div>
     );
-}
+                    }
+ export default EditTaskForm;
 
-export default TaskForm;
