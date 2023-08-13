@@ -10,7 +10,7 @@ const TaskForm = ({ closeAddForm }) => {
         name: '',
         dueDate: '',
         type: 'singular',
-        recurringDay: ''
+        recurringDay: 'Sunday'
     });
 
     const handleChange = (e) => {
@@ -29,7 +29,7 @@ const TaskForm = ({ closeAddForm }) => {
             ...taskFormData
         };
         try {
-            await dispatch(addTask({ userId: user.uid, task: taskData }));
+            dispatch(addTask({ userId: user.uid, task: taskData }));
             console.log("Task added successfully!");
             setTaskFormData({
                 name: '',
