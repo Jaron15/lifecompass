@@ -33,11 +33,17 @@ function DayViewItem({ item,
         return "border border-gray-200";
     }
   }
-  const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date || ctask.completedDate === date));
+  const isDateInPast = (dateStr) => {
+    const eventDate = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to midnight for an accurate comparison
+    return eventDate < today;
+};
+
+const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date && ctask.completedDate ));
       const isSingularTaskCompletedForDate = tasks && tasks.some(task => task.refId === item.refId && task.isCompleted && task.dueDate === date);
       const hasPracticeLog = item.practiceLog && item.practiceLog.some(log => log.date === date);
-
-
+      const eventHasPassed = isDateInPast(item.date) 
   return (
     <div key={index} className="mb-4 relative">
  {expandedItem === index &&  !isEditModalOpen && (
@@ -49,7 +55,7 @@ function DayViewItem({ item,
     <div
       className={`p-4 rounded-lg dark:bg-black  shadow drop-shadow   ${getClassNameForCategory(
         item.category
-      )} ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate || hasPracticeLog ? '!text-slate-600 dark:!text-slate-600 !border-slate-500 !shadow-slate-500' : ''}`}
+      )} ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate || hasPracticeLog || eventHasPassed ? '!text-slate-600 dark:!text-slate-600 !border-slate-500 !shadow-slate-500' : ''}`}
     >
       <span 
       onClick={() => toggleDetails(index)}

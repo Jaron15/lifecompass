@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { addCompletedTask, deleteCompletedTask, markTaskAsCompleted, updateTask } from '../../redux/tasks/tasksSlice';
+import { addCompletedTask, deleteCompletedTask, markTaskAsCompleted, updateTask } from '../redux/tasks/tasksSlice';
 
 function TaskItem({item, date, isRecurringTaskCompletedForDate, isSingularTaskCompletedForDate}) {
     const completedTasks = useSelector((state) => state.tasks.completedTasks);

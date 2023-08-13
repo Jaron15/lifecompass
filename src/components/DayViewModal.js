@@ -1,13 +1,12 @@
 import React, {  useState } from "react";
 
 import { useDispatch, useSelector } from 'react-redux';
-import {  deleteTask} from '../../redux/tasks/tasksSlice';
+import {  deleteTask} from '../redux/tasks/tasksSlice';
 import {ImCancelCircle} from 'react-icons/Im';
-import DeleteModal from './DeleteModal';  
+import DeleteModal from '../app/planner/DeleteModal';  
 import { deleteEvent } from "@/src/redux/events/eventsSlice";
 import { deleteHobby } from "@/src/redux/hobbies/hobbiesSlice";
-import EventEditForm from './EventEditForm'; 
-import EditItemModal from "./EditItemModal";
+import EditItemModal from "../app/planner/EditItemModal";
 import DayViewItem from "./DayViewItem";
 
 const DayViewModal = ({ isOpen, onClose, items, date }) => {
