@@ -7,6 +7,8 @@ import {ImCancelCircle} from 'react-icons/Im';
 import DeleteModal from './DeleteModal';  
 import { deleteEvent } from "@/src/redux/events/eventsSlice";
 import { deleteHobby } from "@/src/redux/hobbies/hobbiesSlice";
+import EventEditForm from './EventEditForm'; 
+import EditItemModal from "./EditItemModal";
 
 const DayViewModal = ({ isOpen, onClose, items, date }) => {
   const dispatch = useDispatch();
@@ -15,9 +17,14 @@ const DayViewModal = ({ isOpen, onClose, items, date }) => {
     const tasks = useSelector((state) => state.tasks.tasks);
   const [expandedItem, setExpandedItem] = useState(null); 
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
+  //delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  //edit modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+const [itemToEdit, setItemToEdit] = useState(null);
 
+//delete
   const handleDeleteClick = (item) => {
     setItemToDelete(item);
     setShowDeleteModal(true);
@@ -57,7 +64,13 @@ const DayViewModal = ({ isOpen, onClose, items, date }) => {
     setShowDeleteModal(false);
     setItemToDelete(null);
   }
-
+//delete
+//edit
+const handleEditClick = (item) => {
+  console.log("Editing:", item);
+  setItemToEdit(item);
+  setIsEditModalOpen(true);
+};
 
 
   if (!isOpen) return null;
@@ -133,6 +146,7 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
            onClick={(event) => {
             event.stopPropagation();
             onClose();
+            setIsEditModalOpen(false)
           }}
             className="absolute top-5 right-6 cursor-pointer cursor-pointer text-black dark:text-current"
             title="Close"
@@ -148,13 +162,14 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
           return (
 
   <div key={index} className="mb-4 relative">
- {expandedItem === index && (
+ {expandedItem === index &&  !isEditModalOpen && (
           <>
-          <FaTrash className="absolute top-6 right-5 cursor-pointer dark:!text-white z-40" onClick={() => handleDeleteClick(item)} />
-<FaPencilAlt style={{ color: 'red !important' }} className="absolute top-6 left-5 cursor-pointer dark:!text-white z-40" onClick={() => handleEdit(item)} />
+          <FaTrash className="absolute top-6 right-5 cursor-pointer text-black dark:!text-white z-30" onClick={() => handleDeleteClick(item)} />
+          <FaPencilAlt className="absolute top-6 text-black left-5 cursor-pointer dark:!text-white z-30" onClick={() => handleEditClick(item)} />
 
           </>
         )}
+        
     <div
       className={`p-4 rounded-lg dark:bg-black  shadow drop-shadow   ${getClassNameForCategory(
         item.category
@@ -219,6 +234,19 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
             </div>
           </div>
         )})}
+        {
+  console.log("Is Edit Modal Open:", isEditModalOpen, "Item to Edit:", itemToEdit)
+}
+        {
+        isEditModalOpen && (
+          <EditItemModal
+            item={itemToEdit}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setItemToEdit(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );
