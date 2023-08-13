@@ -235,9 +235,6 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
           </div>
         )})}
         {
-  console.log("Is Edit Modal Open:", isEditModalOpen, "Item to Edit:", itemToEdit)
-}
-        {
         isEditModalOpen && (
           <EditItemModal
             item={itemToEdit}
