@@ -170,6 +170,7 @@ function convertTo12HourFormat(timeString) {
             <ImCancelCircle size={24} />
         </div>
         </div>
+        
         {items.map((item, index) => {
       const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date || ctask.completedDate === date));
       const isSingularTaskCompletedForDate = tasks && tasks.some(task => task.refId === item.refId && task.isCompleted && task.dueDate === date);
