@@ -143,7 +143,7 @@ const Calendar = () => {
       scheduledEvents.forEach(event => {
         dayEvents.push({
           ...event,
-          category: "Event"
+          category: "Event",
       });
       });
       //----------events------------------

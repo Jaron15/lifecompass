@@ -36,7 +36,11 @@ export const addEventToFirestore = async (userId, event) => {
       const eventCollection = collection(db, 'users', userId, 'events');
       const eventDoc = await addDoc(eventCollection, event);
   
-      return { id: eventDoc.id, ...event };
+      const eventDocRef = doc(db, 'users', userId, 'events', eventDoc.id);
+    await updateDoc(eventDocRef, { refId: eventDoc.id });
+
+    return { id: eventDoc.id, ...event, refId: eventDoc.id };
+
   } catch (error) {
     console.error('Error adding event to Firestore:', error);
     throw error;

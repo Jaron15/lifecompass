@@ -11,8 +11,7 @@ export function getUserHobbiesCollection(user) {
 
       const snapshot = await getDocs(hobbiesCollection);
     
-      // Transform the snapshot to an array of hobbies for data handling
-      const hobbies = snapshot.docs.map(doc => ({...doc.data(), firestoreId: doc.id}));
+      const hobbies = snapshot.docs.map(doc => ({...doc.data(), refId: doc.id}));
     
       return hobbies;
     } catch (error) {
@@ -36,7 +35,11 @@ export function getUserHobbiesCollection(user) {
     try {
       const docRef = await addDoc(hobbiesCollection, hobby);
       
-      const newHobby = { ...hobby, firestoreId: docRef.id };
+      const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', docRef.id);
+        await updateDoc(hobbyDocRef, { refId: docRef.id });
+
+        const newHobby = { ...hobby, refId: docRef.id };
+
       
       return { user, newHobby };
     } catch (error) {
@@ -71,7 +74,7 @@ export function getUserHobbiesCollection(user) {
 
   
 export async function updateHobbyInFirestore(user, hobby) {
-    const hobbyRef = doc(db, 'users', user.uid, 'hobbies', hobby.firestoreId);
+    const hobbyRef = doc(db, 'users', user.uid, 'hobbies', hobby.refId);
     
     const hobbySnapshot = await getDoc(hobbyRef);
     if (!hobbySnapshot.exists()) {

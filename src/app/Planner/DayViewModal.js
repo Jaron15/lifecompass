@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import LogPracticeForm from "./LogPracticeForm";
 import { useDispatch, useSelector } from 'react-redux';
-import { addCompletedTask, deleteCompletedTask, markTaskAsCompleted, updateTask } from '../../redux/tasks/tasksSlice';
+import { addCompletedTask, deleteCompletedTask, deleteTask, markTaskAsCompleted, updateTask } from '../../redux/tasks/tasksSlice';
 import { FaPencilAlt, FaTrash } from 'react-icons/fa'; 
-import {ImCancelCircle} from 'react-icons/Im'
+import {ImCancelCircle} from 'react-icons/Im';
+import DeleteModal from './DeleteModal';  
+import { deleteEvent } from "@/src/redux/events/eventsSlice";
+import { deleteHobby } from "@/src/redux/hobbies/hobbiesSlice";
 
 const DayViewModal = ({ isOpen, onClose, items, date }) => {
   const dispatch = useDispatch();
@@ -12,8 +15,54 @@ const DayViewModal = ({ isOpen, onClose, items, date }) => {
     const tasks = useSelector((state) => state.tasks.tasks);
   const [expandedItem, setExpandedItem] = useState(null); 
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
+  const handleDeleteClick = (item) => {
+    setItemToDelete(item);
+    setShowDeleteModal(true);
+  }
+
+  const confirmDelete = (item) => {
+    
+    console.log(itemToDelete);
+    switch(itemToDelete.category) {
+    case 'Task':
+      console.log('entered task case');
+      console.log(itemToDelete);
+      dispatch(deleteTask({userId:user.uid, taskId:itemToDelete.refId}))
+      break;
+    case 'Event':
+      console.log('entered task case');
+      console.log(itemToDelete);
+      dispatch(deleteEvent({userId:user.uid, eventId:itemToDelete.refId}))
+      break;
+    case 'Hobby':
+      console.log('entered task case');
+      console.log(itemToDelete);
+      dispatch(deleteHobby({user:user, hobbyId:itemToDelete.refId}))
+      break;
+      default:
+       
+        break;
+    }
+    console.log('Deleting:', itemToDelete);
+
+   
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  }
+
+
+
   if (!isOpen) return null;
-console.log(date);
+
+
   function getClassNameForCategory(category) {
     switch (category) {
       case "Event":
@@ -71,16 +120,15 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 w-full lg:w-768px mx-auto">
+       <DeleteModal 
+        isOpen={showDeleteModal} 
+        type={itemToDelete?.category.toLowerCase()} 
+        item={itemToDelete}
+        onDelete={confirmDelete}
+        onCancel={cancelDelete}
+      />
   <div className="relative bg-white w-5/6 h-5/6 sm:w-3/5 sm:h-4/6 md:w-4/6 md:h-4/6 lg:w-1/2 2xl:w-2/5 lg:ml-72 lg:mt-14 mt-12 overflow-y-scroll rounded-lg p-6 bg-white dark:bg-boxdark border border-primary hide-scrollbar">
     <div className="w-full flex mb-12">
-          {/* <div 
-            // onClick={handleEdit} 
-            className="absolute top-5 left-6 cursor-pointer text-black dark:text-current"
-            title="Edit"
-        >
-           <FaPencilAlt size={24} />
-        </div> */}
-
         <div 
            onClick={(event) => {
             event.stopPropagation();
@@ -102,8 +150,8 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
   <div key={index} className="mb-4 relative">
  {expandedItem === index && (
           <>
-          <FaTrash className="absolute top-6 right-5 cursor-pointer dark:!text-white z-50" onClick={() => handleDelete(item)} />
-<FaPencilAlt style={{ color: 'red !important' }} className="absolute top-6 left-5 cursor-pointer dark:!text-white z-50" onClick={() => handleEdit(item)} />
+          <FaTrash className="absolute top-6 right-5 cursor-pointer dark:!text-white z-40" onClick={() => handleDeleteClick(item)} />
+<FaPencilAlt style={{ color: 'red !important' }} className="absolute top-6 left-5 cursor-pointer dark:!text-white z-40" onClick={() => handleEdit(item)} />
 
           </>
         )}
@@ -138,7 +186,7 @@ const completedTask = completedTasks.find(ctask => ctask.refId === task.id && ct
       <ul className="sm:text-center text-left text-black dark:text-white">
         <li className="my-2"><strong>Practice Days:</strong> <br/> {item.daysOfWeek.join(", ")}</li>
         <li className="my-2"><strong>Practice Time Goal:</strong> <br/> {item.practiceTimeGoal + ' Minutes'}</li>
-        <LogPracticeForm hobbyId={item.firestoreId} date={date} />
+        <LogPracticeForm hobbyId={item.refId} date={date} />
       </ul>
   
     )}

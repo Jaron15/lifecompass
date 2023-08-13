@@ -141,7 +141,7 @@ export const hobbiesSlice = createSlice({
       .addCase(deleteHobby.fulfilled, (state, action) => {
         state.status = "idle";
         const index = state.hobbies.findIndex(
-          (h) => h.firestoreId === action.payload
+          (h) => h.refId === action.payload
         );
         if (index !== -1) {
           state.hobbies.splice(index, 1);
@@ -162,7 +162,7 @@ export const hobbiesSlice = createSlice({
       })
       .addCase(updateHobby.fulfilled, (state, action) => {
         const index = state.hobbies.findIndex(
-          (h) => h.firestoreId === action.payload.firestoreId
+          (h) => h.refId === action.payload.refId
         );
         if (index !== -1) {
           state.hobbies[index] = action.payload;
@@ -184,7 +184,7 @@ export const hobbiesSlice = createSlice({
     builder
       .addCase(logPractice.fulfilled, (state, action) => {
         const hobby = state.hobbies.find(
-          (h) => h.firestoreId === action.payload.hobbyId
+          (h) => h.refId === action.payload.hobbyId
         );
 
         // add the log
@@ -202,7 +202,7 @@ export const hobbiesSlice = createSlice({
       })
       .addCase(deletePracticeLog.fulfilled, (state, action) => {
         const hobbyIndex = state.hobbies.findIndex(
-          (hobby) => hobby.firestoreId === action.payload.hobbyId
+          (hobby) => hobby.refId === action.payload.hobbyId
         );
         if (hobbyIndex !== -1) {
           const logIndex = state.hobbies[hobbyIndex].practiceLog.findIndex(
@@ -224,7 +224,7 @@ export const hobbiesSlice = createSlice({
       })
       .addCase(updatePracticeLog.fulfilled, (state, action) => {
         const hobbyIndex = state.hobbies.findIndex(
-          (hobby) => hobby.firestoreId === action.payload.hobbyId
+          (hobby) => hobby.refId === action.payload.hobbyId
         );
         if (hobbyIndex !== -1) {
           const logIndex = state.hobbies[hobbyIndex].practiceLog.findIndex(
