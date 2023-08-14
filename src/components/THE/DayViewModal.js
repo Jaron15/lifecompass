@@ -81,8 +81,8 @@ const HomePageHeader = <div className="w-full flex mb-12">
   </h2>
     </div>;
 
-const homeClass1 = 'relative col-span-12 rounded border border-stroke bg-white px-5 pt-7.5 pb-5 shadow drop-shadow-2xl dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8';
-const homeClass2 = '';
+const homeClass1 = 'relative max-h-[27.5rem] col-span-12 rounded border border-stroke bg-white px-5 pt-7.5 pb-5 shadow drop-shadow-2xl dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8 overflow-clip hide-scrollbar';
+const homeClass2 = 'h-full w-full';
 
   return (
     <div className={`${fromHomepage ? homeClass1 : 'fixed inset-0 cursor-default flex items-center justify-center z-50 w-full lg:w-768px mx-auto '}`}>
@@ -93,7 +93,7 @@ const homeClass2 = '';
         onDelete={confirmDelete}
         onCancel={cancelDelete}
       />
-  <div className={`${fromHomepage ? homeClass2 : 'relative shadow drop-shadow-2xl bg-white w-5/6 h-5/6 sm:w-3/5 sm:h-4/6 md:w-4/6 md:h-4/6 lg:w-1/2 2xl:w-2/5 lg:ml-72 lg:mt-14 mt-12 overflow-y-scroll rounded-lg p-6 bg-white dark:bg-boxdark border border-primary hide-scrollbar'}`}>
+  <div className={`${fromHomepage ? homeClass2 : 'relative shadow drop-shadow-2xl bg-white w-5/6 h-5/6 sm:w-3/5 sm:h-4/6 md:w-4/6 md:h-4/6 lg:w-1/2 2xl:w-2/5 lg:ml-72 lg:mt-14 mt-12 overflow-clip rounded-lg p-6 bg-white dark:bg-boxdark border border-primary hide-scrollbar'}`}>
 
     {!fromHomepage ? <div className="w-full flex mb-12">
     <h2 className="text-center text-xl font-bold  text-black dark:text-current w-full">
@@ -111,7 +111,7 @@ const homeClass2 = '';
             <ImCancelCircle size={24} />
         </div>
         </div> : HomePageHeader}
-
+          <div className="overflow-scroll hide-scrollbar h-full pb-14"> 
         {items.map((item, index) => {
      
 
@@ -129,6 +129,7 @@ const homeClass2 = '';
 
             />
         )})}
+        </div>
         {
         isEditModalOpen && (
           <EditItemModal

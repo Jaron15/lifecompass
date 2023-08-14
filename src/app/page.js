@@ -1,11 +1,6 @@
 'use client'
-import {db} from '../utils/firebase';
 import { useEffect, useState } from 'react';
 import {useSelector, useDispatch} from 'react-redux'
-import TaskForm from "../components/TaskFormTEST";
-import HobbiesTEST from '../components/HobbiesTEST'
-import TaskList from "../components/tasksTEST";
-import EventsTestComponent from "../components/EventsTEST";
 import DayViewModal from "../components/THE/DayViewModal";
 import Upcoming from '../components/Upcoming';
 
@@ -78,7 +73,7 @@ useEffect(() => {
 />
 
       {/* Upcoming */}
-      <section className="col-span-12  rounded shadow shadow-2xl border border-stroke bg-white p-7.5 dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+      <section className="col-span-12 rounded shadow shadow-2xl border border-stroke bg-white p-7.5 dark:border-strokedark dark:bg-boxdark xl:col-span-4 max-h-[27.5rem] ">
         <Upcoming /> 
       </section>
       </div>

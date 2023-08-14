@@ -24,7 +24,7 @@ const EditItemModal = ({ isOpen, item, onClose }) => {
 
   return (
     <div className="absolute top-0 left-0 flex w-full h-full items-center justify-center bg-black bg-opacity-50">
-      <div className="relative bg-white w-5/6 h-5/6 overflow-y-scroll rounded-lg p-6 bg-white dark:bg-boxdark border border-primary hide-scrollbar">
+      <div className="relative bg-white 2xsm:w-full 2xsm:h-full xsm:w-5/6 xsm:h-5/6 overflow-y-scroll rounded-lg p-6 bg-white dark:bg-boxdark border border-primary hide-scrollbar">
       <h2 className="text-2xl text-center font-bold underline mb-1 text-black dark:text-current">Edit {item.name}</h2> 
         {formComponent}
       </div>

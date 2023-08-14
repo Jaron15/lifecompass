@@ -78,10 +78,10 @@ useEffect(() => {
 }, [events])
 
   return (
-    <div className="upcoming-container mx-auto text-black dark:text-current max-w-xl">
-  <h2 className="text-2xl font-bold mb-4 text-center">Upcoming</h2>
-
-  <ul className="list-disc pl-6 space-y-2 ">
+    <div className="mx-auto text-black dark:text-current max-w-xl h-full overflow-clip">
+  <h2 className="text-2xl font-bold mb-4 text-center">Whats Coming Up </h2>
+<div className='overflow-scroll pb-12 h-full hide-scrollbar'>
+  <ul className="list-disc pl-6 space-y-1 sm:space-y-2">
     {combinedItems.map(item => {
       if (item.date) {
         return (
@@ -104,6 +104,7 @@ useEffect(() => {
       <li className="text-base font-bold cursor-pointer transition-colors hover:text-green-600 dark:text-shadow-dk text-shadow-lt shadow-green-600 dark:hover:shadow-white hover:shadow-black dark:hover:font-bold hover:font-medium hover:text-shadow-hlt dark:hover:text-shadow-hdk">{message}</li>
     ))}
   </ul>
+  </div>
 </div>
   );
 }

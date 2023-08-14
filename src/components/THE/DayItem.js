@@ -87,11 +87,11 @@ function DayItem({ item,
           </>
         )} 
         </div>
-
+<div className="flex justify-center">
       <span 
       onClick={() => toggleDetails(index)}
-      className={`text-black dark:text-white cursor-pointer text-center font-bold block text-xl ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate ? 'text-slate-600 dark:text-slate-300' : ''}`}>{formattedName}</span>
-
+      className={`text-black dark:text-white cursor-pointer text-center font-bold block 2xsm:max-w-44 md:max-w-full text-xl ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate ? 'text-slate-600 dark:text-slate-300' : ''}`}>{formattedName}</span>
+</div>
               {expandedItem === index && (
   <div className=" bg-gray-100 p-4 rounded-md ">
     {/* EVENT */}
