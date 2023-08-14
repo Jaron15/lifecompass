@@ -70,7 +70,6 @@ useEffect(() => {
       </header>
     <div className='mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5'>
       {/* Day at a Glance */}
-        {/* This is where the Day at a Glance content will go */}
         <DayViewModal 
         items={[...(currentHobbies  || []), ...(currentEvents  || []), ...(currentTasks || [])]}
         isOpen={true}
@@ -81,7 +80,6 @@ useEffect(() => {
 
       {/* Upcoming */}
       <section className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-        {/* This is where the Upcoming content will go */}
         {/* <Upcoming />  */}
       </section>
 
