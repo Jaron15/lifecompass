@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import DarkModeSwitcher from './DarkModeSwitch';
+import {GiCompass} from 'react-icons/gi'
 
 const Header = (props) => {
 
@@ -53,8 +54,8 @@ const Header = (props) => {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden" href="/">
-           <h1>Home</h1>
+          <Link className="block flex-shrink-0 lg:hidden text-black dark:text-current" href="/">
+          <GiCompass size={35} />
           </Link>
         </div>
 

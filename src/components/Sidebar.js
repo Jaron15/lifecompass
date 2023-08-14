@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
+import {GiCompass} from 'react-icons/gi'
 
 import SidebarLinkGroup from './SidebarLinkGroup';
 
@@ -62,9 +63,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center text-white justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <Link href="/">
-        <h1>Home</h1>
-        </Link>
+      
+      <Link href="/" className="flex items-center">
+    <h1 className="flex items-center font-bold space-x-1 text-2xl text-current lg:mt-[-.5vh]">
+        <span>Life</span>
+        <GiCompass size={30}/>
+        <span>Compass</span>
+    </h1>
+      </Link>
 
         <button
           ref={trigger}
@@ -92,7 +98,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
-        <nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
+        <nav className="mt-1 py-4 px-4 lg:mt-9 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
