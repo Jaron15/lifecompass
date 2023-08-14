@@ -20,6 +20,13 @@ module.exports = {
       ...defaultTheme.screens,
     },
     extend: {
+      textShadow: {
+        dk: '0px 0px 10px var(--tw-shadow-color)',
+        lt: '.5px .5px 6px var(--tw-shadow-color)',
+        hlt: '2px 2px 10px var(--tw-shadow-color), -2px -2px 10px var(--tw-shadow-color), 1px 1px 1px black, -1px -1px 1px black, 1px -1px 1px black, -1px 1px 1px black',
+        hdk: '2px 2px 10px var(--tw-shadow-color), -2px -2px 10px var(--tw-shadow-color), .5px .5px .5px var(--tw-shadow-color), -.5px -.75px .5px var(--tw-shadow-color), .5px -.75px .5px var(--tw-shadow-color), -.5px .75px .5px var(--tw-shadow-color)',
+        lg: '0 8px 16px var(--tw-shadow-color)',
+      },
       colors: {
         ...defaultTheme.colors,
         current: 'currentColor',
@@ -258,7 +265,7 @@ module.exports = {
     },
   },
   plugins: [
-    function ({ addUtilities }) {
+    function ({ addUtilities, matchUtilities, theme }) {
       const newUtilities = {
         '.hide-scrollbar::-webkit-scrollbar': {
           display: 'none',
@@ -268,6 +275,14 @@ module.exports = {
           'scrollbar-width': 'none',
         },
       };
+      matchUtilities(
+        {
+          'text-shadow': (value) => ({
+            textShadow: value,
+          }),
+        },
+        { values: theme('textShadow') }
+      )
 
       addUtilities(newUtilities, ['responsive', 'hover']);
     },

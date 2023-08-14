@@ -56,7 +56,7 @@ const EventForm = ({ closeAddForm }) => {
             ...eventFormData
         };
         try {
-            await dispatch(addEvent({ userId: user.uid, event: eventData }));
+            dispatch(addEvent({ userId: user.uid, event: eventData }));
             console.log("Event added successfully!");
             setEventFormData({
                 name: '',

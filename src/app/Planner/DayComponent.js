@@ -55,6 +55,11 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
     className={tdClassNames}
     onClick={handleOpen}>
       <span className={spanClassNames}>{day}</span>
+      {events && events.length > 0 && events.map((event, i) => (
+        <div key={i} className={`dark:bg-blue-800 text-black dark:text-white border-blue-400 border shadow dark:shadow-none dark:border-none shadow-blue-400 px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap sm:text-base text-[0.5rem] ${isDateInPast(event.date) ? completedClass : ''}`}>
+          {event.name}
+        </div>
+      ))}
       {hobbies && hobbies.length > 0 && hobbies.map((hobby, i) => {
         const hasPracticeLog = hobby.practiceLog && hobby.practiceLog.some(log => log.date === date);
 
@@ -63,11 +68,6 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
           {hobby.name}
         </div>
       )})}
-      {events && events.length > 0 && events.map((event, i) => (
-        <div key={i} className={`dark:bg-blue-800 text-black dark:text-white border-blue-400 border shadow dark:shadow-none dark:border-none shadow-blue-400 px-0.5 sm:py-0.5 py-[1px] rounded sm:mt-1 overflow-clip whitespace-nowrap sm:text-base text-[0.5rem] ${isDateInPast(event.date) ? completedClass : ''}`}>
-          {event.name}
-        </div>
-      ))}
       {tasks && tasks.length > 0 && tasks.map((task, i) => { 
             const isRecurringTaskCompleted = completedTasks && completedTasks.some(ctask => ctask.refId === task.refId && (ctask.dueDate === date && ctask.completedDate ));
             const isSingularTaskCompleted = task.isCompleted && task.dueDate === date;
@@ -81,7 +81,7 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
 <DayViewModal 
   isOpen={isModalOpen} 
   onClose={handleClose} 
-  items={[...(hobbies || []), ...(events || []), ...(tasks || [])]}
+  items={[ ...(events || []), ...(hobbies || []), ...(tasks || [])]}
   date={date}
   
 />

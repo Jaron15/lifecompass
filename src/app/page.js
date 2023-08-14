@@ -71,17 +71,17 @@ useEffect(() => {
     <div className='mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5'>
       {/* Day at a Glance */}
         <DayViewModal 
-        items={[...(currentHobbies  || []), ...(currentEvents  || []), ...(currentTasks || [])]}
+        items={[ ...(currentEvents  || []), ...(currentHobbies  || []), ...(currentTasks || [])]}
         isOpen={true}
         date={currentDateStr}
         fromHomepage={true}
 />
-      </div>
 
       {/* Upcoming */}
-      <section className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
-        {/* <Upcoming />  */}
+      <section className="col-span-12  rounded shadow shadow-2xl border border-stroke bg-white p-7.5 dark:border-strokedark dark:bg-boxdark xl:col-span-4">
+        <Upcoming /> 
       </section>
+      </div>
 
       {/* Progress Overview */}
       <section className="p-4">

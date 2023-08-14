@@ -28,6 +28,9 @@ const TaskForm = ({ closeAddForm }) => {
         const taskData = {
             ...taskFormData
         };
+        if (taskData.type === 'singular') {
+            taskData.recurringDay = '';
+        }
         try {
             dispatch(addTask({ userId: user.uid, task: taskData }));
             console.log("Task added successfully!");

@@ -47,14 +47,35 @@ function DayItem({ item,
     return eventDate < today;
   }
 };
-const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date && ctask.completedDate ));
+    const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date && ctask.completedDate ));
+
       const isSingularTaskCompletedForDate = tasks && tasks.some(task => task.refId === item.refId && task.isCompleted && task.dueDate === date);
+
       const hasPracticeLog = item.practiceLog && item.practiceLog.some(log => log.date === date);
       const eventHasPassed = isDateInPast(item.date) 
+      function formatItemName(item) {
+        if (item.category === 'Hobby') {
+            return `Practice ${item.name} for ${item.practiceTimeGoal} min`;
+        } else if (item.category === 'Event') {
+            if (item.time) {
+                // Convert military time to standard time with AM/PM
+                const [hour, minute] = item.time.split(':').map(Number);
+                const period = hour >= 12 ? 'PM' : 'AM';
+                const standardHour = hour % 12 || 12;
+                return `${item.name} at ${standardHour}:${minute.toString().padStart(2, '0')} ${period}`;
+            } else if (item.location) {
+                return `${item.name} at ${item.location}`;
+            }
+        } else if (item.category === 'Task') {
+            return `To do: ${item.name}`;
+        }
+        return item.name;
+    }
+    const formattedName = formatItemName(item);
   return (
-    <div key={index} className={`mb-4 relative ${fromHomepage && 'flex justify-center  w-full'}`}>
+    <div key={index} className={`mb-4 relative ${fromHomepage && 'flex justify-center   w-full'}`}>
     <div
-      className={`p-4 rounded-lg dark:bg-black  shadow drop-shadow ${fromHomepage && 'sm:w-9/12  w-full'}  ${getClassNameForCategory(
+      className={`p-4 rounded-lg dark:bg-black  shadow drop-shadow ${fromHomepage && 'sm:w-9/12 lg:w-10/12 w-full'}  ${getClassNameForCategory(
         item.category
       )} ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate || hasPracticeLog || eventHasPassed ? '!text-slate-600 dark:!text-slate-600 !border-slate-500 !shadow-slate-500' : ''}`}
     >
@@ -66,9 +87,11 @@ const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(c
           </>
         )} 
         </div>
+
       <span 
       onClick={() => toggleDetails(index)}
-      className={`text-black dark:text-white cursor-pointer text-center font-bold block text-xl ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate ? 'text-slate-600 dark:text-slate-300' : ''}`}>{item.name}</span>
+      className={`text-black dark:text-white cursor-pointer text-center font-bold block text-xl ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate ? 'text-slate-600 dark:text-slate-300' : ''}`}>{formattedName}</span>
+
               {expandedItem === index && (
   <div className=" bg-gray-100 p-4 rounded-md ">
     {/* EVENT */}
@@ -80,7 +103,8 @@ const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(c
     {item.category === "Hobby" && (
      <HobbyItem 
      item={item} 
-     date={date} />
+     date={date}
+ />
     )}
     {/* TASK */}
     {item.category === "Task" && (
