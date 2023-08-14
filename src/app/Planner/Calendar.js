@@ -178,7 +178,7 @@ const Calendar = () => {
       }
     // fill the remaining days to make total 42
     for (let i = days.length; i < 42; i++) {
-      days.push(<DayComponent key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear} />);
+      days.push(<DayComponent key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear} fillerDay={true} />);
     }
     return days;
 };

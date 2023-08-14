@@ -1,24 +1,53 @@
 'use client'
-import { getDocs, collection } from "firebase/firestore";
 import {db} from '../utils/firebase';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
 import {useSelector, useDispatch} from 'react-redux'
 import TaskForm from "../components/TaskFormTEST";
-
 import HobbiesTEST from '../components/HobbiesTEST'
 import TaskList from "../components/tasksTEST";
 import EventsTestComponent from "../components/EventsTEST";
-
-
-
+import DayViewModal from "../components/THE/DayViewModal";
+import Upcoming from '../components/Upcoming';
 
 export default function Home() {
   const currentDate = new Date();
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);
   const {user} = useSelector((state) => state.user)
+  const {hobbies} = useSelector(state => state.hobbies);
+  const {events} = useSelector(state => state.events);
+  const {tasks} = useSelector(state => state.tasks)
   console.log(user);
+
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const currentYear = currentDate.getFullYear();
+const currentMonth = currentDate.getMonth(); 
+const formattedMonth = String(currentMonth + 1).padStart(2, '0');
+const currentDay = currentDate.getDate();
+const formattedDay = String(currentDay).padStart(2, '0');
+const currentDateStr = `${currentYear}-${formattedMonth}-${formattedDay}`;
+const currentDayName = daysOfWeek[currentDate.getDay()];
+
+
+  const getEventsForDay = (events, dateStr) => {
+    return events.filter(event => event.date === dateStr);
+};
+const getHobbiesForDay = (hobbies, dayName) => {
+  return hobbies.filter(hobby => hobby.daysOfWeek.includes(dayName));
+};
+const getTasksForDay = (tasks, dayName, dateStr) => {
+  return tasks.filter(task => {
+      return (task.recurringDay && task.recurringDay.includes(dayName)) || 
+             (task.dueDate && task.dueDate === dateStr);
+  });
+};
+const currentEvents = getEventsForDay(events, currentDateStr).map(event => ({...event, category: "Event"}));
+const currentHobbies = getHobbiesForDay(hobbies, currentDayName).map(hobby => ({...hobby, category: "Hobby"}));
+const currentTasks = getTasksForDay(tasks, currentDayName, currentDateStr).map(task => ({...task, category: "Task"}));
+
+useEffect(() => {
+}, [currentDate])
+  
 
   const getGreeting = () => {
     const currentHour = new Date().getHours();
@@ -32,23 +61,28 @@ export default function Home() {
     }
 }
 
-
   return (
-    <div className="dashboard-container dark:bg-black bg-whiten min-h-screen">
+    <div className="mx-auto w-screen-2xl dark:bg-black bg-whiten p-4 md:p-6 2xl:p-10">
       {/* Header */}
       <header className=" p-4 text-white ">
         <h1 className="text-center sm:text-4xl text-3xl font-bold text-black dark:text-current ">{formattedDate}</h1>
         { user ? <p className="text-center text-xl mt-2 text-black dark:text-current ">{getGreeting()}, {user.displayName}!</p> : <p className="text-center text-xl mt-2 text-black dark:text-current ">{getGreeting()}, Guest!</p>}
       </header>
-
+    <div className='mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5'>
       {/* Day at a Glance */}
-      <section className="p-4">
         {/* This is where the Day at a Glance content will go */}
-      </section>
+        <DayViewModal 
+        items={[...(currentHobbies  || []), ...(currentEvents  || []), ...(currentTasks || [])]}
+        isOpen={true}
+        date={currentDateStr}
+        fromHomepage={true}
+/>
+      </div>
 
       {/* Upcoming */}
-      <section className="p-4">
+      <section className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
         {/* This is where the Upcoming content will go */}
+        {/* <Upcoming />  */}
       </section>
 
       {/* Progress Overview */}

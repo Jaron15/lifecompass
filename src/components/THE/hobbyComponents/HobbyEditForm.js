@@ -104,7 +104,7 @@ const EditHobbyForm = ({ item, onClose }) => {
             ))}
           </select>
         </div>
-        <div className='flex flex-row  '>
+        <div className='flex flex-row  justify-center'>
             <button 
                 onClick={hobbySubmit}
                 className={`block w-1/2 max-w-xs mx-1 bg-primary hover:bg-highlight dark:bg-highlight dark:hover:primary focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold disabled:opacity-25 ${!isSubmitEnabled ? 'opacity-50 cursor-not-allowed opacity-50' : ''}`}

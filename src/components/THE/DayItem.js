@@ -10,17 +10,22 @@ function DayItem({ item,
   isEditModalOpen,
   handleDeleteClick,
   handleEditClick,
-  date,}) {
+  date,
+  fromHomepage,
+  expandedItem,
+  toggleDetails})
+   {
+  console.log(fromHomepage);
     const completedTasks = useSelector((state) => state.tasks.completedTasks);
     const tasks = useSelector((state) => state.tasks.tasks);
-  const [expandedItem, setExpandedItem] = useState(null); 
-  const toggleDetails = (index) => {
-    if (expandedItem === index) {
-      setExpandedItem(null);
-    } else {
-      setExpandedItem(index);
-    }
-  };
+  // const [expandedItem, setExpandedItem] = useState(null); 
+  // const toggleDetails = (index) => {
+  //   if (expandedItem === index) {
+  //     setExpandedItem(null);
+  //   } else {
+  //     setExpandedItem(index);
+  //   }
+  // };
   function getClassNameForCategory(category) {
     switch (category) {
       case "Event":
@@ -34,32 +39,36 @@ function DayItem({ item,
     }
   }
   const isDateInPast = (dateStr) => {
-    const eventDate = new Date(dateStr);
+    if (item.category === 'Event') {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const eventDate = new Date(year, month - 1, day);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time to midnight for an accurate comparison
     return eventDate < today;
+  }
 };
-
 const isRecurringTaskCompletedForDate  = completedTasks && completedTasks.some(ctask => ctask.refId === item.refId && (ctask.dueDate === date && ctask.completedDate ));
       const isSingularTaskCompletedForDate = tasks && tasks.some(task => task.refId === item.refId && task.isCompleted && task.dueDate === date);
       const hasPracticeLog = item.practiceLog && item.practiceLog.some(log => log.date === date);
       const eventHasPassed = isDateInPast(item.date) 
   return (
-    <div key={index} className="mb-4 relative">
- {expandedItem === index &&  !isEditModalOpen && (
-          <>
-          <FaTrash className="absolute top-6 right-5 cursor-pointer text-black dark:!text-white z-30" onClick={() => handleDeleteClick(item)} />
-          <FaPencilAlt className="absolute top-6 text-black left-5 cursor-pointer dark:!text-white z-30" onClick={() => handleEditClick(item)} />
-          </>
-        )} 
+    <div key={index} className={`mb-4 relative ${fromHomepage && 'flex justify-center  w-full'}`}>
     <div
-      className={`p-4 rounded-lg dark:bg-black  shadow drop-shadow   ${getClassNameForCategory(
+      className={`p-4 rounded-lg dark:bg-black  shadow drop-shadow ${fromHomepage && 'sm:w-9/12  w-full'}  ${getClassNameForCategory(
         item.category
       )} ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate || hasPracticeLog || eventHasPassed ? '!text-slate-600 dark:!text-slate-600 !border-slate-500 !shadow-slate-500' : ''}`}
     >
+      <div className="relative">
+ {expandedItem === index &&  !isEditModalOpen && (
+          <>
+          <FaTrash className="absolute top-2 right-3 cursor-pointer text-black dark:!text-white z-30" onClick={() => handleDeleteClick(item)} />
+          <FaPencilAlt className="absolute top-2 text-black left-3 cursor-pointer dark:!text-white z-30" onClick={() => handleEditClick(item)} />
+          </>
+        )} 
+        </div>
       <span 
       onClick={() => toggleDetails(index)}
-      className={`text-black dark:text-white text-center font-bold block text-xl ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate ? 'text-slate-600 dark:text-slate-300' : ''}`}>{item.name}</span>
+      className={`text-black dark:text-white cursor-pointer text-center font-bold block text-xl ${isRecurringTaskCompletedForDate || isSingularTaskCompletedForDate ? 'text-slate-600 dark:text-slate-300' : ''}`}>{item.name}</span>
               {expandedItem === index && (
   <div className=" bg-gray-100 p-4 rounded-md ">
     {/* EVENT */}

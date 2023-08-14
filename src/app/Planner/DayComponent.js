@@ -5,7 +5,7 @@ import { useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
 
 
-const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear, formattedMonth}) => {
+const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear, formattedMonth, fillerDay}) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
   const formattedDay = String(day).padStart(2, '0');
@@ -14,11 +14,18 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
     // const tasks = useSelector((state) => state.tasks.tasks);
 
   const handleClose = () => {
-    console.log('handleClose');
+    
     setModalOpen(false)
   }
+  const handleOpen = () => {
+    if (!fillerDay) {
+    setModalOpen(true)
+  }
+  }
   const isDateInPast = (dateStr) => {
-    const eventDate = new Date(dateStr);
+    console.log(dateStr);
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const eventDate = new Date(year, month - 1, day);
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time to midnight for an accurate comparison
     return eventDate < today;
@@ -46,7 +53,7 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
       height: `calc(100vh / 7.38) `,
     }}
     className={tdClassNames}
-    onClick={() => setModalOpen(true)}>
+    onClick={handleOpen}>
       <span className={spanClassNames}>{day}</span>
       {hobbies && hobbies.length > 0 && hobbies.map((hobby, i) => {
         const hasPracticeLog = hobby.practiceLog && hobby.practiceLog.some(log => log.date === date);
