@@ -2,15 +2,23 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation'
 import {GiCompass} from 'react-icons/gi'
-
+import { useSelector } from 'react-redux';
+import { useAuth } from '../hooks/useAuth';
 import SidebarLinkGroup from './SidebarLinkGroup';
+import {BiLogOut} from 'react-icons/bi'
 
 
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-    const router = useRouter();
+  const { user } = useSelector((state) => state.user);
+  const {signOutUser} = useAuth();
+  const router = useRouter();
   const pathname = router.pathname;
-
+  
+  const handleSignOut = () => {
+    signOutUser();
+    router.push('./')
+  }
   const trigger = useRef(null);
   const sidebar = useRef(null);
 
@@ -364,6 +372,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   
 
               {/* <!-- Menu Item Auth Pages --> */}
+              {user ? (
+              <button
+                href="/"
+                className="group relative flex items-center gap-2.5 rounded-sm py-2 px-3 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 "
+                onClick={handleSignOut} 
+              >
+               <BiLogOut size={21} /> Logout
+              </button>
+            ) : (
               <SidebarLinkGroup
                 activeCondition={
                   pathname === '/auth'
@@ -464,7 +481,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup>)}
               {/* <!-- Menu Item Auth Pages --> */}
             </ul>
           </div>

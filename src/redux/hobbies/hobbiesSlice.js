@@ -8,6 +8,7 @@ import {
   deleteHobbyFromFirestore,
   updateHobbyInFirestore,
 } from "../../utils/hobbiesBase";
+import { userLoggedOut } from '../user/userSlice';
 
 export const addHobby = createAsyncThunk(
   "hobbies/addHobby",
@@ -117,6 +118,13 @@ export const hobbiesSlice = createSlice({
         if (!state.hobbies) {
           state.hobbies = [];
         }
+      })
+      .addCase(userLoggedOut, () => {
+        return {
+          status: "idle",
+          error: null,
+          hobbies: [],
+        };
       })
       .addCase(addHobby.pending, (state) => {
         state.status = "loading";

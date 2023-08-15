@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { addEventToFirestore, getEventsFromFirestore, deleteEventFromFirestore, updateEventInFirestore  } from '../../utils/eventsBase';
-
+import { userLoggedOut } from '../user/userSlice';
+ 
 export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
   async (userId, thunkAPI) => {
@@ -72,6 +73,13 @@ export const eventsSlice = createSlice({
       if (!state.events) {
         state.hobbies = [];
       }
+    })
+    .addCase(userLoggedOut, () => {
+      return {
+        events: [],
+        status: 'idle',
+        error: null,
+      };
     })
     //----------fetch------------
     .addCase(fetchEvents.pending, (state) => {

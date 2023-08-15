@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore, deleteCompletedTaskFromFirestore, updateTaskInFirestore, updateCompletedTaskInFirestore } from '../../utils/tasksBase';
+import { userLoggedOut } from '../user/userSlice';
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', 
   async (userId, thunkAPI) => {
@@ -138,6 +139,14 @@ const taskSlice = createSlice({
       if (!state.tasks) {
         state.tasks = [];
       }
+    }) 
+    .addCase(userLoggedOut, () => {
+      return {
+        tasks: [],
+        completedTasks: [],
+        status: 'idle',
+        error: null
+      };
     })
     //------------get------------------
     .addCase(fetchTasks.pending, (state) => {

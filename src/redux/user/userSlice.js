@@ -9,6 +9,7 @@ import {setCompletedTasks, setTasks} from '../tasks/tasksSlice'
 import { getEventsFromFirestore } from "@/src/utils/eventsBase";
 import { setEvents } from "../events/eventsSlice";
 
+
 const initialState = {
   user: null,
   status: 'idle',
