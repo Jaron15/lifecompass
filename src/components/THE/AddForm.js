@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import HobbyForm from './hobbyComponents/HobbyForm';
 import EventForm from './eventComponents/EventForm';
 import TaskForm from './taskComponents/TaskForm';
-import {ImCancelCircle} from 'react-icons/Im';
+import {ImCancelCircle} from 'react-icons/im';
 
 const AddForm = ({closeAddForm}) => {
   const [selectedItem, setSelectedItem] = useState('');

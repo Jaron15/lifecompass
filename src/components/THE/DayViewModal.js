@@ -2,7 +2,7 @@ import React, {  useState, useEffect } from "react";
 
 import { useDispatch, useSelector } from 'react-redux';
 import {  deleteTask} from '../../redux/tasks/tasksSlice';
-import {ImCancelCircle} from 'react-icons/Im';
+import {ImCancelCircle} from 'react-icons/im';
 import DeleteModal from '../DeleteModal';  
 import { deleteEvent } from "@/src/redux/events/eventsSlice";
 import { deleteHobby } from "@/src/redux/hobbies/hobbiesSlice";
