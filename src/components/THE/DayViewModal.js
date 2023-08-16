@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, {  useState, useEffect } from "react";
 
 import { useDispatch, useSelector } from 'react-redux';
 import {  deleteTask} from '../../redux/tasks/tasksSlice';
@@ -81,8 +81,9 @@ const HomePageHeader = <div className="w-full flex mb-12">
   </h2>
     </div>;
 
-const homeClass1 = 'relative max-h-[27.5rem] col-span-12 rounded border border-stroke bg-white px-5 pt-7.5 pb-5 shadow drop-shadow-2xl dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8 overflow-clip hide-scrollbar';
+const homeClass1 = 'relative h-[27.5rem] col-span-12 rounded border border-stroke bg-white px-5 pt-7.5 pb-5 shadow drop-shadow-2xl dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8 overflow-clip hide-scrollbar';
 const homeClass2 = 'h-full w-full';
+
 
   return (
     <div className={`${fromHomepage ? homeClass1 : 'fixed inset-0 cursor-default flex items-center justify-center z-50 w-full lg:w-768px mx-auto '}`}>

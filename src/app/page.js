@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import {useSelector, useDispatch} from 'react-redux'
 import DayViewModal from "../components/THE/DayViewModal";
 import Upcoming from '../components/Upcoming';
+import LineChart from '../components/ProductivityChart';
+import SimpleLineChart from '../components/ProductivityChart';
 
 export default function Home() {
   const currentDate = new Date();
@@ -76,15 +78,19 @@ useEffect(() => {
       <section className="col-span-12 rounded shadow shadow-2xl border border-stroke bg-white p-7.5 dark:border-strokedark dark:bg-boxdark xl:col-span-4 max-h-[27.5rem] ">
         <Upcoming /> 
       </section>
-      </div>
 
-      {/* Progress Overview */}
-      <section className="p-4">
-        {/* This is where the Progress Overview content will go */}
+      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-5 h-[27.5rem]">
+        <SimpleLineChart />
       </section>
 
+
+
+      </div>
+
+      
+
       {/* Footer */}
-      <footer className="bg-secondary p-4 text-white">
+      <footer className=" p-4 text-white">
         {/* This is where the footer content, like quick links, will go */}
       </footer>
     </div>

@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
+
 
 function Upcoming() {
   const { events, tasks, hobbies } = useSelector(state => ({
@@ -72,20 +74,15 @@ const [testState, setTestState] = useState(false)
     return randomTemplate(hobby.name, sessionsLeft);
   });
 
-useEffect(() => {
-  
-
-}, [events])
-
   return (
     <div className="mx-auto text-black dark:text-current max-w-xl h-full overflow-clip">
   <h2 className="text-2xl font-bold mb-4 text-center">Whats Coming Up </h2>
 <div className='overflow-scroll pb-12 h-full hide-scrollbar'>
-  <ul className="list-disc pl-6 space-y-1 sm:space-y-2">
+  <ul className="list-disc pl-6 space-y-1 sm:space-y-2 sm:text-center sm:list-none sm:pl-0 xl:text-left xl:list-disc xl:pl-6">
     {combinedItems.map(item => {
       if (item.date) {
         return (
-            //event
+            //event        
           <li key={item.id} className="text-base cursor-pointer font-bold transition-colors hover:text-blue-400 dark:text-shadow-dk text-shadow-lt shadow-blue-400 dark:hover:shadow-white hover:shadow-black dark:hover:font-bold hover:font-medium hover:text-shadow-hlt dark:hover:text-shadow-hdk">
             {item.name} on {formatDateForDisplay(item.date)}
           </li>
@@ -100,8 +97,8 @@ useEffect(() => {
       }
     })}
 
-    {hobbyPracticeMessages.map(message => (
-      <li className="text-base font-bold cursor-pointer transition-colors hover:text-green-600 dark:text-shadow-dk text-shadow-lt shadow-green-600 dark:hover:shadow-white hover:shadow-black dark:hover:font-bold hover:font-medium hover:text-shadow-hlt dark:hover:text-shadow-hdk">{message}</li>
+    {hobbyPracticeMessages.map((message, index) => (
+      <li key={index} className="text-base font-bold cursor-pointer transition-colors hover:text-green-600 dark:text-shadow-dk text-shadow-lt shadow-green-600 dark:hover:shadow-white hover:shadow-black dark:hover:font-bold hover:font-medium hover:text-shadow-hlt dark:hover:text-shadow-hdk">{message}</li>
     ))}
   </ul>
   </div>

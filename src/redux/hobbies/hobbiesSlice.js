@@ -9,6 +9,54 @@ import {
   updateHobbyInFirestore,
 } from "../../utils/hobbiesBase";
 import { userLoggedOut } from '../user/userSlice';
+import { createSelector } from '@reduxjs/toolkit';
+import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay } from 'date-fns';
+
+export const selectWeeklyProductivityScores = (state) => {
+  let totalPossiblePoints = 0;
+  let pointsEarned = 0;
+  
+  const today = new Date();
+  const startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 });
+  const daysSoFarThisWeek = eachDayOfInterval({ start: startOfWeekDate, end: endOfDay(today) });
+  
+  state.hobbies.hobbies.forEach(hobby => {
+    hobby.daysOfWeek.forEach((day) => {
+      const practiceDate = daysSoFarThisWeek.find(date => 
+        format(date, 'EEEE') === day
+      );
+      
+      if (practiceDate && isBefore(practiceDate, endOfDay(today))) {
+        totalPossiblePoints += 1;
+        
+        const formattedPracticeDate = format(practiceDate, 'yyyy-MM-dd');
+      
+      const practiceLog = hobby.practiceLog.find(log => {
+        console.log('----------------');
+        console.log(log);
+        console.log(log.date);
+        console.log(formattedPracticeDate);
+        
+        return log.date === formattedPracticeDate;
+      });
+      
+
+        
+        if (practiceLog) {
+          pointsEarned += (practiceLog.timeSpent >= hobby.practiceTimeGoal) ? 1 : 0.5;
+        }
+      }
+    });
+  });
+  
+  console.log('Total Possible Points So Far: ', totalPossiblePoints);
+  console.log('Points Earned: ', pointsEarned);
+  
+  const weeklyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
+  
+  return weeklyProductivityScore;
+};
+
 
 export const addHobby = createAsyncThunk(
   "hobbies/addHobby",
