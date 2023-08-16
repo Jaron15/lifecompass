@@ -95,7 +95,7 @@ useEffect(() => {
       
       setChartData(newChartData);
     
-    }, [hobbyProductivityScoreWeekly, hobbyProductivityScoreMonthly, tasksProductivityScoreWeekly, timePeriod]);
+    }, [hobbyProductivityScoreWeekly, hobbyProductivityScoreMonthly, tasksProductivityScoreWeekly, tasksProductivityScoreMonthly, timePeriod]);
   
   
   
