@@ -15,7 +15,7 @@ function DayItem({ item,
   expandedItem,
   toggleDetails})
    {
-  console.log(fromHomepage);
+  
     const completedTasks = useSelector((state) => state.tasks.completedTasks);
     const tasks = useSelector((state) => state.tasks.tasks);
   // const [expandedItem, setExpandedItem] = useState(null); 

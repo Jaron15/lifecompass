@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { useSelector } from 'react-redux';
-import { selectWeeklyProductivityScores  } from '../redux/hobbies/hobbiesSlice'
+import { selectMonthlyProductivityScores, selectWeeklyProductivityScores  } from '../redux/hobbies/hobbiesSlice'
 
 const CustomLegend = ({ payload }) => (
   <div className="flex items-center sm:space-x-4 justify-center w-full ml-5">
@@ -42,15 +42,18 @@ const ProductivityChart = () => {
   const [timePeriod, setTimePeriod] = useState('Weekly');
   const [overallProductivityScore, setOverallProductivityScore] = useState(0);
   const weeklyProductivityScore = useSelector(selectWeeklyProductivityScores);
+  const monthlyProductivityScore = useSelector(selectMonthlyProductivityScores);
   
   const [chartData, setChartData] = useState(initialData);
-console.log(chartData);
+
 useEffect(() => {
+  const productivityScore = timePeriod === 'Weekly' ? weeklyProductivityScore : monthlyProductivityScore;
+
     const updatedChartData = chartData.map((data) => {
       if (data.name === 'Hobbies Goals Met') {
         return {
           ...data,
-          value: weeklyProductivityScore,
+          value: productivityScore,
         };
       }
       return data;
@@ -61,10 +64,7 @@ useEffect(() => {
         dataForCalculation.reduce((acc, item) => acc + item.value, 0) / dataForCalculation.length
       ).toFixed(2);
     
-    
-   
     setOverallProductivityScore(newOverallProductivityScore);
-    
  
     const newChartData = updatedChartData.map((data) => {
         if (data.name === 'Overall Productivity Score') {
@@ -75,12 +75,10 @@ useEffect(() => {
         }
         return data;
       });
-  
-      console.log('asdasd');
+      
       setChartData(newChartData);
-      console.log(newChartData);
     
-    }, [weeklyProductivityScore]);
+    }, [weeklyProductivityScore, monthlyProductivityScore, timePeriod]);
   
   
   

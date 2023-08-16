@@ -23,7 +23,6 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
   }
   }
   const isDateInPast = (dateStr) => {
-    console.log(dateStr);
     const [year, month, day] = dateStr.split('-').map(Number);
     const eventDate = new Date(year, month - 1, day);
     const today = new Date();

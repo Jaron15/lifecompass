@@ -10,7 +10,7 @@ import {
 } from "../../utils/hobbiesBase";
 import { userLoggedOut } from '../user/userSlice';
 import { createSelector } from '@reduxjs/toolkit';
-import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay } from 'date-fns';
+import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay, startOfMonth } from 'date-fns';
 
 export const selectWeeklyProductivityScores = (state) => {
   let totalPossiblePoints = 0;
@@ -32,15 +32,10 @@ export const selectWeeklyProductivityScores = (state) => {
         const formattedPracticeDate = format(practiceDate, 'yyyy-MM-dd');
       
       const practiceLog = hobby.practiceLog.find(log => {
-        console.log('----------------');
-        console.log(log);
-        console.log(log.date);
-        console.log(formattedPracticeDate);
-        
+    
         return log.date === formattedPracticeDate;
       });
       
-
         
         if (practiceLog) {
           pointsEarned += (practiceLog.timeSpent >= hobby.practiceTimeGoal) ? 1 : 0.5;
@@ -49,13 +44,47 @@ export const selectWeeklyProductivityScores = (state) => {
     });
   });
   
-  console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  console.log('Points Earned: ', pointsEarned);
+  // console.log('Total Possible Points So Far: ', totalPossiblePoints);
+  // console.log('Points Earned: ', pointsEarned);
   
   const weeklyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
   
   return weeklyProductivityScore;
 };
+
+export const selectMonthlyProductivityScores = (state) => {
+  let totalPossiblePoints = 0;
+  let pointsEarned = 0;
+  
+  const today = new Date();
+  const firstOfMonth = startOfMonth(today);
+  const daysSoFarThisMonth = eachDayOfInterval({ start: firstOfMonth, end: today });
+
+  state.hobbies.hobbies.forEach(hobby => {
+    daysSoFarThisMonth.forEach(day => {
+      if (hobby.daysOfWeek.includes(format(day, 'EEEE'))) {
+        totalPossiblePoints += 1;
+        
+        const practiceLog = hobby.practiceLog.find(log => 
+          log.date === format(day, 'yyyy-MM-dd')
+        );
+
+        
+        if (practiceLog) {
+          pointsEarned += (practiceLog.timeSpent >= hobby.practiceTimeGoal) ? 1 : 0.5;
+        }
+      }
+    });
+  });
+
+  console.log('Total Possible Points So Far: ', totalPossiblePoints);
+  console.log('Points Earned: ', pointsEarned);
+  
+  const monthlyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
+  
+  return monthlyProductivityScore;
+};
+
 
 
 export const addHobby = createAsyncThunk(
