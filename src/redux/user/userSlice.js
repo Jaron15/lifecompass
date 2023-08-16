@@ -8,12 +8,15 @@ import { getCompletedTasksFromFirestore, getTasksFromFirestore } from "../../uti
 import {setCompletedTasks, setTasks} from '../tasks/tasksSlice'
 import { getEventsFromFirestore } from "@/src/utils/eventsBase";
 import { setEvents } from "../events/eventsSlice";
+import { DUMMY_USER } from "@/src/utils/demoData";
+import {demoSlice} from "../demo/demoSlice";
 
 
 const initialState = {
   user: null,
   status: 'idle',
-  error: null
+  error: null, 
+  demo: false 
 };
 
 export const signInAsync = createAsyncThunk(
@@ -77,12 +80,26 @@ const userSlice = createSlice({
       state.status = 'loggedIn';
     },
     userLoggedOut: (state) => {
+      if (!state.demo){
+
       console.log('userLoggedOut'); 
-      return initialState
+      return initialState 
+    }
     },
   },
   extraReducers: (builder) => {
     builder
+    .addCase(demoSlice.actions.toggleDemoMode, (state, action) => {
+      state.demo = !state.demo;
+      if (state.demo) {
+        state.user = DUMMY_USER
+      } else {
+        state.user=null,
+        state.status='idle',
+        state.error=null
+        //moved right here
+      }
+    })
       .addCase(signInAsync.pending, (state) => {
         state.status = 'loading';
       })

@@ -2,11 +2,17 @@ import Link from 'next/link';
 
 import DarkModeSwitcher from './DarkModeSwitch';
 import {GiCompass} from 'react-icons/gi'
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleDemoMode } from '../redux/demo/demoSlice';
 
 const Header = (props) => {
 
     const { sidebarOpen, setSidebarOpen } = props;
-  
+    const dispatch = useDispatch();
+    
+    // Step 2: Get the current demo mode status
+    const demoModeEnabled = useSelector(state => state.demo.enabled);
+
     return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
@@ -57,6 +63,14 @@ const Header = (props) => {
           <Link className="block flex-shrink-0 lg:hidden text-black dark:text-current" href="/">
           <GiCompass size={35} />
           </Link>
+          <div className="flex items-center w-full justify-center flex-grow">
+                <button 
+                    onClick={() => dispatch(toggleDemoMode())}
+                    className="px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
+                >
+                    {demoModeEnabled ? 'Exit Demo Mode' : 'Enter Demo Mode'}
+                </button>
+            </div>
         </div>
 
         {/* <div className="hidden sm:block">

@@ -5,6 +5,7 @@ import { signInAsync, signUpAsync, userLoggedOut, userLoggedIn } from '../redux/
 import { persistor } from '../redux/store';
 
 import { useSelector, useDispatch } from 'react-redux';
+import { toggleDemoMode } from '../redux/demo/demoSlice';
 
 
 
@@ -31,6 +32,9 @@ export function useAuth() {
   
   const signIn = async (email, password) => {
     try {
+      if (user.uid === 'demo_user') {
+        dispatch(toggleDemoMode())
+      }
       return await dispatch(signInAsync({ email, password }));
     } catch (error) {
       console.error('Failed to sign in:', error);
@@ -41,7 +45,10 @@ export function useAuth() {
   
   const signUp = async (email, password, name) => {
     try {
-      await dispatch(signUpAsync({ email, password, name }));
+      if (user.uid === 'demo_user') {
+        dispatch(toggleDemoMode())
+      }
+      dispatch(signUpAsync({ email, password, name }));
     } catch (error) {
       console.error('Failed to sign up:', error);
       throw error;

@@ -372,7 +372,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   
 
               {/* <!-- Menu Item Auth Pages --> */}
-              {user ? (
+              {user && user.uid !== 'demo_user' ? (
               <button
                 href="/"
                 className="group relative flex items-center gap-2.5 rounded-sm py-2 px-3 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 "

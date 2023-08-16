@@ -11,6 +11,9 @@ import {
 import { userLoggedOut } from '../user/userSlice';
 import { createSelector } from '@reduxjs/toolkit';
 import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay, startOfMonth } from 'date-fns';
+import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
+import {DUMMY_HOBBIES} from '../../utils/demoData';
+
 
 export const selectWeeklyProductivityScores = (state) => {
   let totalPossiblePoints = 0;
@@ -90,6 +93,13 @@ export const selectMonthlyProductivityScores = (state) => {
 export const addHobby = createAsyncThunk(
   "hobbies/addHobby",
   async ({ user, hobby }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      const mockRefId = 'demo_' + Date.now();
+      const newHobby = { ...hobby, refId: mockRefId };
+      
+      return { newHobby: newHobby };
+    } else {
     try {
       const response = await addHobbyToFirestore(user, hobby);
       return response;
@@ -98,11 +108,16 @@ export const addHobby = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const deleteHobby = createAsyncThunk(
   "hobbies/deleteHobby",
   async ({ user, hobbyId }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      return hobbyId;
+    } else {
     try {
       await deleteHobbyFromFirestore(user, hobbyId);
 
@@ -111,11 +126,17 @@ export const deleteHobby = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const updateHobby = createAsyncThunk(
   "hobbies/updateHobby",
   async ({ user, hobby }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      return hobby;
+    } else {
+
     try {
       await updateHobbyInFirestore(user, hobby);
       return hobby;
@@ -123,11 +144,21 @@ export const updateHobby = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const logPractice = createAsyncThunk(
   "hobbies/logPractice",
   async ({ user, hobbyId, logEntry }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+
+      const logEntryId = Date.now().toString();
+     
+      const logEntryWithId = { ...logEntry, id: logEntryId };
+      return { hobbyId, logEntry: logEntryWithId };
+    } else {
+
     try {
       const updatedLogEntry = await logPracticeInFirestore(
         user,
@@ -140,11 +171,18 @@ export const logPractice = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const deletePracticeLog = createAsyncThunk(
   "hobbies/deletePracticeLog",
   async ({ user, hobbyId, logEntryId }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+    
+      return { user, hobbyId, logEntryId };
+    } else {
+
     try {
       await deletePracticeLogFromFirestore(user, hobbyId, logEntryId);
       return { user, hobbyId, logEntryId };
@@ -152,11 +190,31 @@ export const deletePracticeLog = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const updatePracticeLog = createAsyncThunk(
   "hobbies/updatePracticeLog",
   async ({ user, hobbyId, logEntryId, newLogEntry }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      // In demo mode, we find the correct log entry in our Redux state and update it.
+      const hobby = state.hobbies.hobbies.find(h => h.refId === hobbyId);
+      if (!hobby) {
+        throw new Error('No hobby found with this ID');
+      }
+      
+      const logIndex = hobby.practiceLog.findIndex(log => log.id === logEntryId);
+      if (logIndex === -1) {
+        throw new Error('Log entry not found!');
+      }
+
+      const updatedLogEntry = { ...hobby.practiceLog[logIndex], ...newLogEntry };
+      hobby.practiceLog[logIndex] = updatedLogEntry;
+      
+      return { hobbyId, logEntryId, updatedLog: updatedLogEntry };
+
+    } else {
     try {
       const response = await updatePracticeLogInFirestore(
         user,
@@ -170,6 +228,7 @@ export const updatePracticeLog = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const hobbiesSlice = createSlice({
@@ -178,6 +237,7 @@ export const hobbiesSlice = createSlice({
     status: "idle",
     error: null,
     hobbies: [],
+    demo: false,
   },
   reducers: {
     setHobbies: (state, action) => {
@@ -189,19 +249,34 @@ export const hobbiesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase("persist/REHYDRATE", (state, action) => {
+      // Initialize hobbies if it's undefined after rehydration
+      console.log("Rehydrated State", action.payload);
+
+      if (!state.hobbies) {
+        state.hobbies = [];
+      }
+    })
+    .addCase(demoSlice.actions.toggleDemoMode, (state, action,) => {
+      // Toggle the demo status in response to the toggleDemoMode action
+      state.demo = !state.demo;
+      if (state.demo) {
+        state.hobbies = DUMMY_HOBBIES
+      } else {
+        state.hobbies = [],
+        state.status='idle',
+        state.error=null
+      }
+    })
       //-------create--------
-      .addCase("persist/REHYDRATE", (state, action) => {
-        // Initialize hobbies if it's undefined after rehydration
-        if (!state.hobbies) {
-          state.hobbies = [];
+      .addCase(userLoggedOut, (state) => {
+        if (!state.demo) {
+          return {
+            status: "idle",
+            error: null,
+            hobbies: [],
+          };
         }
-      })
-      .addCase(userLoggedOut, () => {
-        return {
-          status: "idle",
-          error: null,
-          hobbies: [],
-        };
       })
       .addCase(addHobby.pending, (state) => {
         state.status = "loading";
@@ -334,6 +409,6 @@ export const hobbiesSlice = createSlice({
   },
 });
 
-export const { setHobbies, clearError } = hobbiesSlice.actions;
+export const { setHobbies, clearError, setDemo  } = hobbiesSlice.actions;
 
 export default hobbiesSlice.reducer;

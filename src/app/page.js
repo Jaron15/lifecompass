@@ -14,6 +14,9 @@ export default function Home() {
   const {hobbies} = useSelector(state => state.hobbies);
   const {events} = useSelector(state => state.events);
   const {tasks} = useSelector(state => state.tasks)
+  const state = useSelector(state => state);
+console.log('Current Redux State:', state);
+
   console.log(user);
 
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
