@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { useSelector } from 'react-redux';
 import { selectMonthlyProductivityScores, selectWeeklyProductivityScores  } from '../redux/hobbies/hobbiesSlice'
+import { calculateWeeklyTaskProductivity, selectTasksProductivityScores } from '../redux/tasks/tasksSlice';
+
 
 const CustomLegend = ({ payload }) => (
   <div className="flex items-center sm:space-x-4 justify-center w-full ml-5">
@@ -41,23 +43,31 @@ const ProductivityChart = () => {
     
   const [timePeriod, setTimePeriod] = useState('Weekly');
   const [overallProductivityScore, setOverallProductivityScore] = useState(0);
-  const weeklyProductivityScore = useSelector(selectWeeklyProductivityScores);
-  const monthlyProductivityScore = useSelector(selectMonthlyProductivityScores);
+  const hobbyProductivityScoreWeekly = useSelector(selectWeeklyProductivityScores);
+  const hobbyProductivityScoreMonthly = useSelector(selectMonthlyProductivityScores);
+  const tasksProductivityScoreWeekly = useSelector(calculateWeeklyTaskProductivity);
+
   
   const [chartData, setChartData] = useState(initialData);
 
 useEffect(() => {
-  const productivityScore = timePeriod === 'Weekly' ? weeklyProductivityScore : monthlyProductivityScore;
-
-    const updatedChartData = chartData.map((data) => {
-      if (data.name === 'Hobbies Goals Met') {
+  const hobbiesProductivityScore = timePeriod === 'Weekly' ? hobbyProductivityScoreWeekly : hobbyProductivityScoreMonthly;
+  const tasksProductivityScore = tasksProductivityScoreWeekly
+  const updatedChartData = chartData.map((data) => {
+    if (data.name === 'Tasks Completed On Time') {
         return {
-          ...data,
-          value: productivityScore,
+            ...data,
+            value: tasksProductivityScore,
         };
-      }
-      return data;
-    });
+    } else if (data.name === 'Hobbies Goals Met') {
+        return {
+            ...data,
+            value: hobbiesProductivityScore,
+        };
+    }
+    return data;
+});
+
     const dataForCalculation = updatedChartData.filter(data => data.name !== 'Overall Productivity Score');
 
     const newOverallProductivityScore = (
@@ -78,7 +88,7 @@ useEffect(() => {
       
       setChartData(newChartData);
     
-    }, [weeklyProductivityScore, monthlyProductivityScore, timePeriod]);
+    }, [hobbyProductivityScoreWeekly, hobbyProductivityScoreMonthly, tasksProductivityScoreWeekly, timePeriod]);
   
   
   

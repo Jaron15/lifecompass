@@ -142,8 +142,12 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
           //   throw new Error('Invalid or missing completed date');
           // }
           const currentDate = new Date();
-      const dateString = currentDate.toISOString().split('T')[0];
+          const dateString = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+          const [month, day, year] = dateString.split('/');
+          const formattedDate = `${year}-${month}-${day}`;
 
+
+          console.log(formattedDate);
         const taskRef = doc(db, 'users', userId, 'tasks', taskId);
         const taskSnap = await getDoc(taskRef);
         
@@ -154,7 +158,7 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
   
         const completedTask = {
           ...otherTaskData,
-          completedDate: dateString,
+          completedDate: formattedDate,
           isCompleted: true,
         };
   
@@ -185,15 +189,16 @@ export const addCompletedTaskToFirestore = async (userId, task, dueDate) => {
             throw new Error('Needs Associated Day To Mark Complete');
           }
 
-      const currentDate = new Date();
-      const dateString = currentDate.toISOString().split('T')[0];
-  
+          const currentDate = new Date();
+          const dateString = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+          const [month, day, year] = dateString.split('/');
+          const formattedDate = `${year}-${month}-${day}`;
       const { id, ...otherFields } = task;
   
       const completedTask = {
         ...otherFields,
         isCompleted: true, 
-        completedDate: dateString,
+        completedDate: formattedDate,
       };
       if (task.type === 'recurring') {
         completedTask.dueDate = dueDate;

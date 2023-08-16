@@ -77,8 +77,8 @@ export const selectMonthlyProductivityScores = (state) => {
     });
   });
 
-  console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  console.log('Points Earned: ', pointsEarned);
+  // console.log('Total Possible Points So Far: ', totalPossiblePoints);
+  // console.log('Points Earned: ', pointsEarned);
   
   const monthlyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
   
