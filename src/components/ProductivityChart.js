@@ -6,11 +6,11 @@ import { calculateMonthlyTaskProductivity, calculateWeeklyTaskProductivity, sele
 
 
 const CustomLegend = ({ payload }) => (
-  <div className="flex items-center sm:space-x-4 justify-center w-full ml-5">
+  <div className="flex items-center space-x-2 md:space-x-4 justify-center w-full ml-5">
     {payload.map((entry, index) => (
       <div key={`item-${index}`} className="flex items-center mt-4">
         <div
-          className="w-4 h-4 mr-2"
+          className="w-4 h-4 mr-1 sm:mr-2"
           style={{ backgroundColor: entry.color }}
         />
         <span className="text-sm">{entry.value}</span>
@@ -24,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }) => {
       return (
           <div className="custom-tooltip" style={{ backgroundColor: '#ffffff', padding: '10px', border: '1px solid #ccc' }}>
          
-          <p className="label">{`${payload[0].payload.name}: ${payload[0].value}%`}</p>
+          <p className="label">{`${payload[0].payload.fullString}: ${payload[0].value}%`}</p>
   
         </div>
       );
@@ -36,11 +36,15 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const ProductivityChart = () => {
     const initialData = [
-        { name: 'Overall Productivity Score', value: 100, color: '#2d7ca6' },
-        { name: 'Tasks Completed On Time', value: 100, color: 'rgb(202, 138, 4)' },
-        { name: 'Hobbies Goals Met', value: 100, color: 'rgb(22, 101, 52)' },
+        { name: 'Overall', value: 100, color: '#2d7ca6', fullString: 'Overall Productivity Score'},
+        { name: 'Tasks', value: 100, color: 'rgb(202, 138, 4)', fullString: 'Tasks Completed On Time' },
+        { name: 'Hobbies', value: 100, color: 'rgb(22, 101, 52)', fullString: 'Hobbies Goals Met' },
       ];
     
+//       Productivity Score
+// Completed On Time
+// Goals Met
+      
   const [timePeriod, setTimePeriod] = useState('Weekly');
   const [overallProductivityScore, setOverallProductivityScore] = useState(0);
   const hobbyProductivityScoreWeekly = useSelector(selectWeeklyProductivityScores);
@@ -53,16 +57,16 @@ const ProductivityChart = () => {
 
 useEffect(() => {
   const hobbiesProductivityScore = timePeriod === 'Weekly' ? hobbyProductivityScoreWeekly : hobbyProductivityScoreMonthly;
-  
+
   const tasksProductivityScore = timePeriod === 'Weekly' ? tasksProductivityScoreWeekly : tasksProductivityScoreMonthly;
 
   const updatedChartData = chartData.map((data) => {
-    if (data.name === 'Tasks Completed On Time') {
+    if (data.name === 'Tasks') {
         return {
             ...data,
             value: tasksProductivityScore,
         };
-    } else if (data.name === 'Hobbies Goals Met') {
+    } else if (data.name === 'Hobbies') {
         return {
             ...data,
             value: hobbiesProductivityScore,
@@ -71,7 +75,7 @@ useEffect(() => {
     return data;
 });
 
-    const dataForCalculation = updatedChartData.filter(data => data.name !== 'Overall Productivity Score');
+    const dataForCalculation = updatedChartData.filter(data => data.name !== 'Overall');
 
     const newOverallProductivityScore = (
         dataForCalculation.reduce((acc, item) => acc + item.value, 0) / dataForCalculation.length
@@ -80,7 +84,7 @@ useEffect(() => {
     setOverallProductivityScore(newOverallProductivityScore);
  
     const newChartData = updatedChartData.map((data) => {
-        if (data.name === 'Overall Productivity Score') {
+        if (data.name === 'Overall') {
           return {
             ...data,
             value: parseFloat(newOverallProductivityScore),
@@ -100,28 +104,29 @@ useEffect(() => {
     setTimePeriod(event.target.value);
   };
   
+
   return (
-    <div className="flex flex-col items-center space-y-2 h-full ">
+    <div className="flex flex-col items-center space-y-2 h-[27.5rem]  w-full text-black dark:text-current -mt-4 xl:-mt-1">
       <div className="flex items-center justify-between w-full p-4 bg-gray-100 border-b border-gray-300">
         <h2 className="text-lg font-semibold">Productivity Chart</h2>
         <select
           value={timePeriod}
           onChange={handleTimePeriodChange}
-          className="p-2 bg-white border rounded shadow dark:bg-boxdark"
+          className="p-2 bg-white border rounded shadow dark:bg-boxdark cursor-pointer"
         >
           <option value="Weekly">Weekly</option>
           <option value="Monthly">Monthly</option>
         </select>
       </div>
 
-      <ResponsiveContainer width="100%" height='100%' >
+      <ResponsiveContainer width="100%" height="75%" >
         <BarChart
           data={chartData}
           className="-ml-5"
           margin={{
             top: 20, right: 30, left: 20, bottom: 5,
           }}
-
+          
         >
           <CartesianGrid strokeDasharray="3 3" />
           {/* <XAxis dataKey="name" /> */}
@@ -149,7 +154,7 @@ useEffect(() => {
         </BarChart>
       </ResponsiveContainer>
       
-      <span className="text-lg font-semibold">
+      <span className="text-lg font-semibold text-center">
         Overall Productivity Score: {overallProductivityScore}%
       </span>
     </div>

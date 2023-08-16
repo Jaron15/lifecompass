@@ -78,7 +78,7 @@ const [testState, setTestState] = useState(false)
     <div className="mx-auto text-black dark:text-current max-w-xl h-full overflow-clip">
   <h2 className="text-2xl font-bold mb-4 text-center">Whats Coming Up </h2>
 <div className='overflow-scroll pb-12 h-full hide-scrollbar'>
-  <ul className="list-disc pl-6 space-y-1 sm:space-y-2 sm:text-center sm:list-none sm:pl-0 xl:text-left xl:list-disc xl:pl-6">
+  <ul className="list-disc pl-6 sm:space-y-1 xl:text-left xl:list-disc xl:pl-6">
     {combinedItems.map(item => {
       if (item.date) {
         return (

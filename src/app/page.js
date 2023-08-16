@@ -75,12 +75,12 @@ useEffect(() => {
 />
 
       {/* Upcoming */}
-      <section className="col-span-12 rounded shadow shadow-2xl border border-stroke bg-white p-7.5 dark:border-strokedark dark:bg-boxdark xl:col-span-4 max-h-[27.5rem] ">
-        <Upcoming /> 
+      <section className="col-span-12 rounded shadow shadow-2xl border border-stroke bg-white p-3 dark:border-strokedark dark:bg-boxdark md:col-span-7 lg:col-span-6 xl:col-span-5 h-[27.5rem] xl:h-[30rem] ">
+        <SimpleLineChart />
       </section>
 
-      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-5 h-[27.5rem]">
-        <SimpleLineChart />
+      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-5 lg:col-span-6 xl:col-span-5 max-h-[27.5rem]">
+        <Upcoming /> 
       </section>
 
 

@@ -94,8 +94,8 @@ export const calculateMonthlyTaskProductivity = (state) => {
       }
     });
   });
-  console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  console.log('Points Earned: ', pointsEarned);
+  // console.log('Total Possible Points So Far: ', totalPossiblePoints);
+  // console.log('Points Earned: ', pointsEarned);
   // Calculate Productivity Score for This Month
   const monthlyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
 
