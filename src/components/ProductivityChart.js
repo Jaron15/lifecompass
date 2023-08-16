@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { useSelector } from 'react-redux';
 import { selectMonthlyProductivityScores, selectWeeklyProductivityScores  } from '../redux/hobbies/hobbiesSlice'
-import { calculateWeeklyTaskProductivity, selectTasksProductivityScores } from '../redux/tasks/tasksSlice';
+import { calculateMonthlyTaskProductivity, calculateWeeklyTaskProductivity, selectTasksProductivityScores } from '../redux/tasks/tasksSlice';
 
 
 const CustomLegend = ({ payload }) => (
@@ -46,13 +46,16 @@ const ProductivityChart = () => {
   const hobbyProductivityScoreWeekly = useSelector(selectWeeklyProductivityScores);
   const hobbyProductivityScoreMonthly = useSelector(selectMonthlyProductivityScores);
   const tasksProductivityScoreWeekly = useSelector(calculateWeeklyTaskProductivity);
-
+  const tasksProductivityScoreMonthly = useSelector(calculateMonthlyTaskProductivity);
+  
   
   const [chartData, setChartData] = useState(initialData);
 
 useEffect(() => {
   const hobbiesProductivityScore = timePeriod === 'Weekly' ? hobbyProductivityScoreWeekly : hobbyProductivityScoreMonthly;
-  const tasksProductivityScore = tasksProductivityScoreWeekly
+  
+  const tasksProductivityScore = timePeriod === 'Weekly' ? tasksProductivityScoreWeekly : tasksProductivityScoreMonthly;
+
   const updatedChartData = chartData.map((data) => {
     if (data.name === 'Tasks Completed On Time') {
         return {
