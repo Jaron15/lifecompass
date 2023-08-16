@@ -1,8 +1,9 @@
+import PlaceholderPage from '@/src/components/PlaceholderPage'
 import React from 'react'
 
 function page() {
   return (
-    <div>page</div>
+    <PlaceholderPage />
   )
 }
 

@@ -1,9 +1,9 @@
+import PlaceholderPage from '@/src/components/PlaceholderPage'
 import React from 'react'
 
 function page() {
-  console.log('file name change');
   return (
-    <div>page</div>
+    <PlaceholderPage />
   )
 }
 
