@@ -82,7 +82,7 @@ const HomePageHeader = <div className="w-full flex mb-12">
     </div>;
 
 const homeClass1 = 'relative h-[27.5rem] xl:h-[30rem] col-span-12 rounded border border-stroke bg-white px-5 pt-7.5 pb-5 shadow drop-shadow-2xl dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-7 z-50  hide-scrollbar';
-const homeClass2 = 'h-full w-full overflow-clip';
+const homeClass2 = 'h-full w-full overflow-clip pb-12';
 
 
   return (

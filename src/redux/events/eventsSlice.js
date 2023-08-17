@@ -101,7 +101,6 @@ export const eventsSlice = createSlice({
       if (state.demo) {
         const demoEventsWithDynamicDates = generateDynamicEventDates(DUMMY_EVENTS);
         state.events = demoEventsWithDynamicDates;
-
       } else {
         state.events = [],
         state.status='idle',

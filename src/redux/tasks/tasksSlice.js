@@ -339,8 +339,6 @@ const taskSlice = createSlice({
         const { DUMMY_TASKS, DUMMY_COMPLETED_TASKS } = generateDynamicDummyTasks();
         state.tasks = DUMMY_TASKS;
         state.completedTasks= DUMMY_COMPLETED_TASKS;
-        console.log(state.tasks);
-        console.log(state.completedTasks);
       } else {
         state.tasks= [],
         state.completedTasks= [],

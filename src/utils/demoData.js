@@ -19,7 +19,7 @@ export const generateDynamicHobby = () => {
 
   const practiceLog = daysInMonthSoFar
     .filter(day => uniqueDaysOfWeek.includes(format(day, 'EEEE')))
-    .map(day => ({ date: format(day, 'yyyy-MM-dd'), minutes: 60 }));
+    .map(day => ({ date: format(day, 'yyyy-MM-dd'), timeSpent: 60 }));
 
   return {
     refId: `dummy-hobby-${Date.now()}`,
@@ -80,8 +80,6 @@ export function generateDynamicDummyTasks() {
   nextSunday.setDate(pastSunday.getDate() + 7);
   const futureDate = new Date(today);
   futureDate.setDate(today.getDate() + 5);
-console.log('here is the past sunday' + pastSunday);
-console.log('here is the past sunday' + pastSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }));
   const DUMMY_TASKS = [
     {
       id: 'task1',
