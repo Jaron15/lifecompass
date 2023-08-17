@@ -21,3 +21,33 @@ export const DUMMY_HOBBIES = [
     displayName: 'DEMO USER'
   };
   
+  export const DUMMY_TASKS = [
+    {
+      id: 'task1',
+      refId: 'task1',
+      name: 'clean the house',
+      dueDate: '2023-08-15',
+      isCompleted: false,
+      type: 'singular',
+      recurringDay: ''
+    },
+    {
+      id: 'task2',
+      refId: 'task2',
+      name: 'wash car',
+      dueDate: '2023-08-16',
+      isCompleted: false,
+      type: 'singular',
+      recurringDay: ''
+    },
+    {
+      id: 'task3',
+      refId: 'task3',
+      name: 'Laundry',
+      recurringDay: 'Sunday',
+      isCompleted: false,
+      type: 'recurring',
+      dueDate: ''
+    },
+  ];
+  

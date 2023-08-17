@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore, deleteCompletedTaskFromFirestore, updateTaskInFirestore, updateCompletedTaskInFirestore } from '../../utils/tasksBase';
 import { userLoggedOut } from '../user/userSlice';
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format, eachWeekOfInterval, parse, isWithinInterval, eachDayOfInterval, endOfDay, isBefore, parseISO, isAfter  } from 'date-fns';
+import {DUMMY_TASKS} from '../../utils/demoData';
+import {demoSlice} from '../demo/demoSlice';
 
 export const calculateWeeklyTaskProductivity = (state) => {
   let totalPossiblePoints = 0;
@@ -104,7 +106,11 @@ export const calculateMonthlyTaskProductivity = (state) => {
 
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', 
-  async (userId, thunkAPI) => {
+  async (userId, thunkAPI) => { 
+    const state = thunkAPI.getState();
+    if (state.tasks.demo) {
+      return DUMMY_TASKS;
+    } else {
     try {
       const tasks = await getTasksFromFirestore(userId);
       return tasks;
@@ -112,11 +118,23 @@ export const fetchTasks = createAsyncThunk('tasks/fetchTasks',
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const addTask = createAsyncThunk(
   'tasks/addTask',
   async ({userId, task}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.tasks.demo) {
+      const refId = `demo-task-id-${Date.now()}`;    
+      const newTask = {
+        id: refId, 
+        ...task,
+        isCompleted: false,
+        refId: refId
+      };
+      return newTask;
+    } else {
     try {
       const newTask = await addTaskToFirestore(userId, task);
       return newTask;
@@ -124,11 +142,16 @@ export const addTask = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const updateTask = createAsyncThunk(
   'tasks/updateTask',
   async ({userId, taskId, updatedTask}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.tasks.demo) {
+      return { taskId, updatedTask };
+    } else {
     try {
       await updateTaskInFirestore(userId, taskId, updatedTask);
       return { taskId, updatedTask };
@@ -136,11 +159,23 @@ export const updateTask = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
-
+//has extra logic
 export const updateCompletedTask = createAsyncThunk(
   'tasks/updateCompletedTask',
   async ({ userId, taskId, updatedFields }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.tasks.demo) {
+      
+      const task = state.tasks.completedTasks.find((task) => task.id === taskId);
+
+      const updatedTask = {
+        ...task,
+        ...updatedFields,
+      };
+      return { id: taskId, ...updatedTask };
+    } else {
     try {
       const updatedTask = await updateCompletedTaskInFirestore(userId, taskId, updatedFields);
       return updatedTask;
@@ -148,10 +183,15 @@ export const updateCompletedTask = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const deleteTask = createAsyncThunk('tasks/deleteTask', 
   async ({userId, taskId}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.tasks.demo) {
+      return taskId;
+    } else {
     try {
       await deleteTaskFromFirestore(userId, taskId);
       return taskId;
@@ -159,15 +199,29 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask',
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 
 export const markTaskAsCompleted = createAsyncThunk('tasks/markTaskAsCompleted', 
   async ({userId, taskId, completedDate}, thunkAPI) => {
-    try {
-      const state = thunkAPI.getState();
-      const taskData = state.tasks.tasks.find((task) => task.id === taskId);
+    const state = thunkAPI.getState();
+    const taskData = state.tasks.tasks.find((task) => task.refId === taskId);
+    if (state.tasks.demo) {
+      const currentDate = new Date();
+      const dateString = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      const [month, day, year] = dateString.split('/');
+      const formattedDate = `${year}-${month}-${day}`;
       
+      const completedTask = {
+        ...taskData,
+        completedDate: formattedDate,
+        isCompleted: true,
+      };
+      
+      return {completedTask: completedTask, originalTask: taskData}; 
+    } else {
+    try {
       const completedTask = await markTaskAsCompletedInFirestore(userId, taskId, completedDate);
       
       return {completedTask, originalTask: taskData};
@@ -175,11 +229,33 @@ export const markTaskAsCompleted = createAsyncThunk('tasks/markTaskAsCompleted',
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 
 export const addCompletedTask = createAsyncThunk('tasks/addCompletedTask', 
   async ({userId, task, dueDate}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    
+    if (state.tasks.demo) {
+      const currentDate = new Date();
+      const dateString = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      const [month, day, year] = dateString.split('/');
+      const formattedDate = `${year}-${month}-${day}`;
+
+      const { id, ...otherFields } = task;
+      const completedTask = {
+        ...otherFields,
+        isCompleted: true, 
+        completedDate: formattedDate,
+      };
+      if (task.type === 'recurring') {
+        completedTask.dueDate = dueDate;
+      }
+      const mockId = `mock-${Date.now()}`;
+      return { ...completedTask, id: mockId, docId: mockId };  
+
+    } else {
     try {
       const completedTask = await addCompletedTaskToFirestore(userId, task, dueDate);
       return completedTask;
@@ -187,11 +263,16 @@ export const addCompletedTask = createAsyncThunk('tasks/addCompletedTask',
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const deleteCompletedTask = createAsyncThunk(
   'tasks/deleteCompletedTask',
   async ({userId, taskId}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.tasks.demo) {
+      return taskId;
+    } else {
     try {
       await deleteCompletedTaskFromFirestore(userId, taskId);
       return taskId;
@@ -199,11 +280,16 @@ export const deleteCompletedTask = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 
 export const getCompletedTasks = createAsyncThunk('tasks/getCompletedTasks', 
   async (userId, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.tasks.demo) {
+      return state.tasks.completedTasks;
+    } else {
     try {
       const completedTasks = await getCompletedTasksFromFirestore(userId);
       return completedTasks;
@@ -211,18 +297,21 @@ export const getCompletedTasks = createAsyncThunk('tasks/getCompletedTasks',
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
+const initialState = {
+  tasks: [],
+  completedTasks: [],
+  status: 'idle',
+  error: null,
+  demo: false
+};
 
 
 const taskSlice = createSlice({
   name: 'tasks',
-  initialState: {
-    tasks: [],
-    completedTasks: [],
-    status: 'idle',
-    error: null
-  },
+  initialState: initialState,
   reducers: {
     setTasks: (state, action) => {
       state.tasks = action.payload;
@@ -241,13 +330,28 @@ const taskSlice = createSlice({
         state.tasks = [];
       }
     }) 
-    .addCase(userLoggedOut, () => {
+    .addCase(demoSlice.actions.toggleDemoMode, (state, action,) => {
+      
+      state.demo = !state.demo;
+      if (state.demo) {
+        state.tasks = DUMMY_TASKS
+      } else {
+        state.tasks= [],
+        state.completedTasks= [],
+        state.status= 'idle',
+        state.error= null
+      }
+
+    })
+    .addCase(userLoggedOut, (state) => {
+      if (!state.demo) {
       return {
         tasks: [],
         completedTasks: [],
         status: 'idle',
         error: null
       };
+    }
     })
     //------------get------------------
     .addCase(fetchTasks.pending, (state) => {

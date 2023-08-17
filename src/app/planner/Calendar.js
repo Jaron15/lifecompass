@@ -45,6 +45,7 @@ const Calendar = () => {
   const [prevDate, setPrevDate] = useState();
   const [showForm, setShowForm] = useState(false)
 
+
   // button opacity control for mobile scroll 
   //to be able to see dates covered by button
   const [buttonOpacity, setButtonOpacity] = useState(1);
