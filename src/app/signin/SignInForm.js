@@ -32,7 +32,7 @@ function SignInForm() {
   };
 
   return (
-    <div className="min-w-screen min-h-screen bg-[#E2E8F0] dark:bg-black flex items-center justify-center px-5 py-5">
+   
       <div className="bg-boxdark text-gray-500 rounded-3xl shadow-xl w-full overflow-hidden border max-w-[1000px]">
         <div className="md:flex w-full">
           <div className="hidden md:flex w-1/2 bg-white dark:bg-boxdark py-10 px-10 text-center items-center justify-center">
@@ -196,7 +196,7 @@ function SignInForm() {
           </form>
         </div>
       </div>
-    </div>
+   
   );
 }
 

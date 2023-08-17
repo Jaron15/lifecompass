@@ -1,102 +1,80 @@
 'use client'
 import { useEffect, useState } from 'react';
-import {useSelector, useDispatch} from 'react-redux'
-import DayViewModal from "../components/THE/DayViewModal";
-import Upcoming from '../components/Upcoming';
-import LineChart from '../components/ProductivityChart';
-import SimpleLineChart from '../components/ProductivityChart';
-
-export default function Home() {
-  const currentDate = new Date();
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const formattedDate = currentDate.toLocaleDateString(undefined, options);
-  const {user} = useSelector((state) => state.user)
-  const {hobbies} = useSelector(state => state.hobbies);
-  const {events} = useSelector(state => state.events);
-  const {tasks} = useSelector(state => state.tasks)
-  const state = useSelector(state => state);
-console.log('Current Redux State:', state);
-
-  console.log(hobbies);
-
-  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const currentYear = currentDate.getFullYear();
-const currentMonth = currentDate.getMonth(); 
-const formattedMonth = String(currentMonth + 1).padStart(2, '0');
-const currentDay = currentDate.getDate();
-const formattedDay = String(currentDay).padStart(2, '0');
-const currentDateStr = `${currentYear}-${formattedMonth}-${formattedDay}`;
-const currentDayName = daysOfWeek[currentDate.getDay()];
+import SignUpForm from './signup/SignUpForm';
+import SignInForm from './signin/SignInForm';
 
 
-  const getEventsForDay = (events, dateStr) => {
-    return events.filter(event => event.date === dateStr);
-};
-const getHobbiesForDay = (hobbies, dayName) => {
-  return hobbies.filter(hobby => hobby.daysOfWeek.includes(dayName));
-};
-const getTasksForDay = (tasks, dayName, dateStr) => {
-  return tasks.filter(task => {
-      return (task.recurringDay && task.recurringDay.includes(dayName)) || 
-             (task.dueDate && task.dueDate === dateStr);
-  });
-};
-const currentEvents = getEventsForDay(events, currentDateStr).map(event => ({...event, category: "Event"}));
-const currentHobbies = getHobbiesForDay(hobbies, currentDayName).map(hobby => ({...hobby, category: "Hobby"}));
-const currentTasks = getTasksForDay(tasks, currentDayName, currentDateStr).map(task => ({...task, category: "Task"}));
+export default function LandingPage() {
+  const [form, setForm] = useState(null);
 
-useEffect(() => {
-}, [currentDate])
-  
+  const handleSignUp = () => {
+    setForm('signUp');
+  };
 
-  const getGreeting = () => {
-    const currentHour = new Date().getHours();
-    
-    if (currentHour < 12) {
-        return "Good morning";
-    } else if (currentHour < 18) {
-        return "Good afternoon";
-    } else {
-        return "Good evening";
-    }
-}
+  const handleSignIn = () => {
+    setForm('signIn');
+  };
+
+  const handleDemo = () => {
+    // Navigate to the demo page, or trigger the demo mode
+    setForm('demo');
+  };
 
   return (
-    <div className="mx-auto w-screen-2xl dark:bg-black bg-whiten p-4 md:p-6 2xl:p-10">
-      {/* Header */}
-      <header className=" p-4 text-white ">
-        <h1 className="text-center sm:text-4xl text-3xl font-bold text-black dark:text-current ">{formattedDate}</h1>
-        { user ? <p className="text-center text-xl mt-2 text-black dark:text-current ">{getGreeting()}, {user.displayName}!</p> : <p className="text-center text-xl mt-2 text-black dark:text-current ">{getGreeting()}, Guest!</p>}
-      </header>
-    <div className='mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5'>
-      {/* Day at a Glance */}
-        <DayViewModal 
-        items={[ ...(currentEvents  || []), ...(currentHobbies  || []), ...(currentTasks || [])]}
-        isOpen={true}
-        date={currentDateStr}
-        fromHomepage={true}
-/>
+    <div className="flex flex-col items-center sm:justify-center bg-[#F3F4F6]  min-h-screen w-screen bg-gradient-to-b from-transparent via-whiten to-white dark:bg-black dark:to-transparent dark:via-transparent ">
+      <div className='flex flex-col items-center justify-center w-10/12 lg:max-w-[1000px] sm:-mt-30'>
 
-      {/* Upcoming */}
-      <section className="col-span-12 rounded shadow shadow-2xl border border-stroke bg-white p-3 dark:border-strokedark dark:bg-boxdark md:col-span-7 lg:col-span-6 xl:col-span-5 h-[27.5rem] xl:h-[30rem] ">
-        <SimpleLineChart />
-      </section>
+      {form === null && (
+          <div className="text-center dark:text-white text-black space-y-5 sm:space-y-6 p-8">
+            <h1 className="text-5xl font-bold dark:text-white">
+              Organize Your Life, Effortlessly
+            </h1>
+            <h2 className="text-2xl font-semibold dark:text-gray-300">
+              Welcome to Life Compass
+            </h2>
+            <p className="text-lg dark:text-gray-400">
+              A simple, intuitive, and powerful time management tool designed to help you stay organized and focused on what matters most to you.
+            </p>
+          </div>
+        )}
+        
+      {form === 'signUp' && 
+        <div className='w-full flex justify-center mt-4 sm:mt-0'>
+          <SignUpForm />
+        </div>
+      }
 
-      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-5 lg:col-span-6 xl:col-span-5 max-h-[27.5rem]">
-        <Upcoming /> 
-      </section>
+      {form === 'signIn' && 
+        <div className='w-full flex justify-center mt-4 sm:mt-0'>
+          <SignInForm />
+        </div>
+      }
 
-
-
+      <div className={`mt-4 w-full ${form ? 'flex space-x-4' : 'grid grid-cols-6 gap-4 sm:gap-6 md:max-w-[48rem]'}`}>
+        {form !== 'signUp' && (
+          <button className={`${form ? ' w-full flex items-center align-middle' : 'col-span-3'} flex justify-center  px-6 py-3 text-lg font-semibold dark:text-white rounded-md dark:bg-primary border-2 border-highlight  text-black  hover:shadow hover:shadow-lg hover:shadow-highlightglow hover:scale-105 ease-in-out
+          duration-300`} onClick={handleSignUp}>
+            Sign Up
+          </button>
+        )}
+        
+        {form !== 'signIn' && (
+          <button className={`${form ? ' w-full flex items-center' : 'col-span-3'} flex justify-center  px-6 py-3 text-lg font-semibold dark:text-white rounded-md dark:bg-primary border-2 border-highlight  text-black  hover:shadow hover:shadow-lg hover:shadow-highlightglow hover:scale-105 ease-in-out
+          duration-300 `} onClick={handleSignIn}>
+            Sign In
+          </button>
+        )}
+        
+        <button className={`${form ? ' w-full flex items-center' : 'col-span-6 sm:col-span-6'} flex justify-center  px-6 py-3 text-lg font-semibold text-white rounded-md bg-primary hover:shadow hover:shadow-lg hover:shadow-highlightglow hover:scale-105 ease-in-out dark:bg-whiten border-2 border-highlight dark:text-black
+        duration-300`} onClick={handleDemo}>
+          Use Demo Version
+        </button>
       </div>
-
-      
-
-      {/* Footer */}
-      <footer className=" p-4 text-white">
-        {/* This is where the footer content, like quick links, will go */}
-      </footer>
+      </div>
     </div>
   );
-
 }
+
+
+
+// export default LandingPage;

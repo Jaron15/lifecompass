@@ -5,8 +5,9 @@ import {GiCompass} from 'react-icons/gi'
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleDemoMode } from '../redux/demo/demoSlice';
 
-const Header = (props) => {
 
+const Header = (props) => {
+  const { user } = useSelector((state) => state.user);
     const { sidebarOpen, setSidebarOpen } = props;
     const dispatch = useDispatch();
     
@@ -14,7 +15,7 @@ const Header = (props) => {
     const demoModeEnabled = useSelector(state => state.demo.enabled);
 
     return (
-    <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
+    <header className={` sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none`}>
       <div className="flex flex-grow items-center justify-between py-4 px-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 ">
           {/* <!-- Hamburger Toggle BTN --> */}
@@ -24,7 +25,7 @@ const Header = (props) => {
               e.stopPropagation();
               props.setSidebarOpen(!props.sidebarOpen);
             }}
-            className="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden"
+            className={`${!user && 'hidden'} z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden`}
           >
             <span className="relative block h-5.5 w-5.5 cursor-pointer">
               <span className="du-block absolute right-0 h-full w-full">
@@ -63,14 +64,14 @@ const Header = (props) => {
           <Link className="block flex-shrink-0 lg:hidden text-black dark:text-current" href="/">
           <GiCompass size={35} />
           </Link>
-          <div className="flex items-center w-full justify-center flex-grow">
+          {/* <div className="flex items-center w-full justify-center flex-grow">
                 <button 
                     onClick={() => {dispatch(toggleDemoMode())}}
                     className="px-4 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200"
                 >
                     {demoModeEnabled ? 'Exit Demo Mode' : 'Enter Demo Mode'}
                 </button>
-            </div>
+            </div> */}
         </div>
 
         {/* <div className="hidden sm:block">

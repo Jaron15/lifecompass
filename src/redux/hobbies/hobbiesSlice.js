@@ -49,10 +49,8 @@ export const selectWeeklyProductivityScores = (state) => {
   });
   
   // console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  // console.log('Points Earned: ', pointsEarned);
-  console.log(pointsEarned, 'spacebetween', totalPossiblePoints);
+  // console.log('Points Earned: ', pointsEarned); 
   const weeklyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
-  console.log(weeklyProductivityScore);
   return weeklyProductivityScore;
 };
 
