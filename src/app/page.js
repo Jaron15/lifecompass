@@ -17,7 +17,7 @@ export default function Home() {
   const state = useSelector(state => state);
 console.log('Current Redux State:', state);
 
-  console.log(user);
+  console.log(hobbies);
 
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const currentYear = currentDate.getFullYear();

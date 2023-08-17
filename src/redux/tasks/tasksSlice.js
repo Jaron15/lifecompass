@@ -4,6 +4,8 @@ import { userLoggedOut } from '../user/userSlice';
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format, eachWeekOfInterval, parse, isWithinInterval, eachDayOfInterval, endOfDay, isBefore, parseISO, isAfter  } from 'date-fns';
 import {DUMMY_TASKS} from '../../utils/demoData';
 import {demoSlice} from '../demo/demoSlice';
+import { generateDynamicDummyTasks } from '../../utils/demoData';
+
 
 export const calculateWeeklyTaskProductivity = (state) => {
   let totalPossiblePoints = 0;
@@ -334,7 +336,11 @@ const taskSlice = createSlice({
       
       state.demo = !state.demo;
       if (state.demo) {
-        state.tasks = DUMMY_TASKS
+        const { DUMMY_TASKS, DUMMY_COMPLETED_TASKS } = generateDynamicDummyTasks();
+        state.tasks = DUMMY_TASKS;
+        state.completedTasks= DUMMY_COMPLETED_TASKS;
+        console.log(state.tasks);
+        console.log(state.completedTasks);
       } else {
         state.tasks= [],
         state.completedTasks= [],

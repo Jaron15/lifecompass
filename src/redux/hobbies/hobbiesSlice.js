@@ -13,6 +13,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay, startOfMonth } from 'date-fns';
 import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
 import {DUMMY_HOBBIES} from '../../utils/demoData';
+import {generateDynamicHobby} from '../../utils/demoData'
 
 
 export const selectWeeklyProductivityScores = (state) => {
@@ -261,7 +262,10 @@ export const hobbiesSlice = createSlice({
       // Toggle the demo status in response to the toggleDemoMode action
       state.demo = !state.demo;
       if (state.demo) {
-        state.hobbies = DUMMY_HOBBIES
+        const demoHobby1 = generateDynamicHobby();
+        
+        state.hobbies = [demoHobby1]; 
+        
       } else {
         state.hobbies = [],
         state.status='idle',

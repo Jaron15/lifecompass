@@ -3,6 +3,7 @@ import { addEventToFirestore, getEventsFromFirestore, deleteEventFromFirestore, 
 import { userLoggedOut } from '../user/userSlice';
 import { DUMMY_EVENTS } from '../../utils/demoData';
 import {demoSlice} from '../demo/demoSlice';
+import {generateDynamicEventDates} from '../../utils/demoData'
 
  
 export const fetchEvents = createAsyncThunk(
@@ -98,7 +99,9 @@ export const eventsSlice = createSlice({
       // Toggle the demo status in response to the toggleDemoMode action
       state.demo = !state.demo;
       if (state.demo) {
-        state.events = DUMMY_EVENTS
+        const demoEventsWithDynamicDates = generateDynamicEventDates(DUMMY_EVENTS);
+        state.events = demoEventsWithDynamicDates;
+
       } else {
         state.events = [],
         state.status='idle',

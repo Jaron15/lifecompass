@@ -1,27 +1,164 @@
-export const DUMMY_HOBBIES = [
+
+import { format, eachDayOfInterval, startOfMonth, endOfYesterday, subDays, addDays } from 'date-fns';
+
+export const DUMMY_USER = {
+  uid: 'demo_user',
+  email:'notarealuser@email.com',
+  displayName: 'DEMO USER'
+};
+export const generateDynamicHobby = () => {
+  const today = new Date();
+  const currentDayName = format(today, 'EEEE');
+  const daysOfWeek = ['Monday', 'Wednesday', 'Friday', currentDayName];
+  const uniqueDaysOfWeek = [...new Set(daysOfWeek)]; // Ensures no duplicate days
+
+  const daysInMonthSoFar = eachDayOfInterval({
+    start: startOfMonth(today),
+    end: endOfYesterday()
+  });
+
+  const practiceLog = daysInMonthSoFar
+    .filter(day => uniqueDaysOfWeek.includes(format(day, 'EEEE')))
+    .map(day => ({ date: format(day, 'yyyy-MM-dd'), minutes: 60 }));
+
+  return {
+    refId: `dummy-hobby-${Date.now()}`,
+    name: 'Guitar',
+    daysOfWeek: uniqueDaysOfWeek,
+    practiceTimeGoal: 60,
+    practiceLog: practiceLog,
+  };
+};
+
+export const generateDynamicEventDates = (events) => {
+  const today = new Date();
+
+  const updatedEvents = [
+    { ...events[0], date: format(today, 'yyyy-MM-dd') },
+    { ...events[1], date: format(subDays(today, 7), 'yyyy-MM-dd') },
+    { ...events[2], date: format(subDays(today, 14), 'yyyy-MM-dd') },
+    { ...events[3], date: format(addDays(today, 7), 'yyyy-MM-dd') }
+  ];
+
+  return updatedEvents;
+
+};
+
+export const generateDynamicTaskDates = (tasks) => {
+  const today = new Date();
+
+  tasks[0].dueDate = format(today, 'yyyy-MM-dd');
+  tasks[0].type = 'singular';
+  tasks[0].recurringDay = '';
+
+  tasks[1].type = 'recurring';
+  tasks[1].recurringDay = 'Sunday';
+  tasks[1].dueDate = '';
+
+  tasks[2].type = 'recurring';
+  tasks[2].recurringDay = 'Sunday';
+  tasks[2].dueDate = '';
+
+  tasks[3].dueDate = format(addDays(today, 7), 'yyyy-MM-dd');
+  tasks[3].type = 'singular';
+  tasks[3].recurringDay = '';
+
+  return tasks;
+};
+
+// export const DUMMY_HOBBIES = [generateDynamicHobby()]
+  
+
+export function generateDynamicDummyTasks() {
+  const today = new Date();
+  const pastSunday = new Date(today);
+  pastSunday.setDate(today.getDate() - today.getDay());
+  const previousSunday = new Date(pastSunday);
+  previousSunday.setDate(pastSunday.getDate() - 7);
+
+  const nextSunday = new Date(pastSunday);
+  nextSunday.setDate(pastSunday.getDate() + 7);
+  const futureDate = new Date(today);
+  futureDate.setDate(today.getDate() + 5);
+console.log('here is the past sunday' + pastSunday);
+console.log('here is the past sunday' + pastSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }));
+  const DUMMY_TASKS = [
     {
-      refId: 'dummy1',
-      name: 'Guitar',
-      daysOfWeek: ['Monday', 'Wednesday', 'Friday'],
-      practiceTimeGoal: 60,
-      practiceLog: [],
+      id: 'task1',
+      refId: 'task1',
+      name: 'Clean the House',
+      dueDate: today.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      isCompleted: false,
+      type: 'singular',
+      recurringDay: ''
     },
     {
-      refId: 'dummy2',
-      name: 'Reading',
-      daysOfWeek: ['Sunday'],
-      practiceTimeGoal: 60,
-      practiceLog: [],
+      id: 'task2',
+      refId: 'task2',
+      name: 'Laundry',
+      recurringDay: 'Sunday',
+      isCompleted: false,
+      type: 'recurring',
+      dueDate: ''
+    },
+    {
+      id: 'task3',
+      refId: 'task3',
+      name: 'Grocery Shopping',
+      recurringDay: 'Sunday',
+      isCompleted: false,
+      type: 'recurring',
+      dueDate: ''
+    },
+    {
+      id: 'task4',
+      refId: 'task4',
+      name: 'Pay Bills',
+      dueDate: futureDate.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      isCompleted: false,
+      type: 'singular',
+      recurringDay: ''
     },
   ];
-  
-  export const DUMMY_USER = {
-    uid: 'demo_user',
-    email:'notarealuser@email.com',
-    displayName: 'DEMO USER'
-  };
-  
-  export const DUMMY_TASKS = [
+
+  const DUMMY_COMPLETED_TASKS = [
+    {
+      id: 'completedtask1',
+      refId: 'task2',
+      name: 'Laundry',
+      completedDate: pastSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      dueDate: pastSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    },
+    {
+      id: 'completedtask2',
+      refId: 'task3',
+      name: 'Grocery Shopping',
+      completedDate: pastSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      dueDate: pastSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    },
+    {
+      id: 'completedtask3',
+      refId: 'task2',
+      name: 'Laundry',
+      completedDate: previousSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      dueDate: previousSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    },
+    {
+      id: 'completedtask4',
+      refId: 'task3',
+      name: 'Grocery Shopping',
+      completedDate: previousSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      dueDate: previousSunday.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    }
+  ];
+
+
+  return { DUMMY_TASKS, DUMMY_COMPLETED_TASKS };
+}
+
+
+
+  const DUMMY_TASKS = [
     {
       id: 'task1',
       refId: 'task1',
