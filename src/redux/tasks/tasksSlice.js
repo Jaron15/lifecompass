@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore, deleteCompletedTaskFromFirestore, updateTaskInFirestore, updateCompletedTaskInFirestore } from '../../utils/tasksBase';
 import { userLoggedOut } from '../user/userSlice';
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format, eachWeekOfInterval, parse, isWithinInterval, eachDayOfInterval, endOfDay, isBefore, parseISO, isAfter  } from 'date-fns';
-import {DUMMY_TASKS} from '../../utils/demoData';
 import {demoSlice} from '../demo/demoSlice';
 import { generateDynamicDummyTasks } from '../../utils/demoData';
 

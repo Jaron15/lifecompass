@@ -20,7 +20,7 @@ function SignInForm() {
     const action = await signIn(email, password);
 
     if (signInAsync.fulfilled.match(action)) {
-      router.push("./");
+      router.push("./dashboard");
       console.log("successful!!");
     } else {
       if (action.payload) {

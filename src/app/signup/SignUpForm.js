@@ -62,7 +62,7 @@ function SignUpForm() {
 
     try {
       await signUp(email, password, name);
-      router.push("./");
+      router.push("./dashboard");
 
       console.log("successful!!");
     } catch (error) {

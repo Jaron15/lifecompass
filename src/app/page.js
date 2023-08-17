@@ -2,10 +2,13 @@
 import { useEffect, useState } from 'react';
 import SignUpForm from './signup/SignUpForm';
 import SignInForm from './signin/SignInForm';
+// import { useRouter } from 'next/router';
+import { toggleDemoMode } from '../redux/demo/demoSlice';
 
 
 export default function LandingPage() {
   const [form, setForm] = useState(null);
+  // const router = useRouter()
 
   const handleSignUp = () => {
     setForm('signUp');
@@ -17,7 +20,8 @@ export default function LandingPage() {
 
   const handleDemo = () => {
     // Navigate to the demo page, or trigger the demo mode
-    setForm('demo');
+    dispatch(toggleDemoMode())
+    // router.push('dashboard')
   };
 
   return (

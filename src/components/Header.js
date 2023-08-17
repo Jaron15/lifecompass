@@ -61,7 +61,7 @@ const Header = (props) => {
           </button>
           {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden text-black dark:text-current" href="/">
+          <Link className="block flex-shrink-0 lg:hidden text-black dark:text-current" href="/dashboard">
           <GiCompass size={35} />
           </Link>
           {/* <div className="flex items-center w-full justify-center flex-grow">
