@@ -50,4 +50,62 @@ export const DUMMY_HOBBIES = [
       dueDate: ''
     },
   ];
+  export const DUMMY_EVENTS = [
+    {
+      id: 'event1',
+      refId: 'event1',
+      name: 'Concert',
+      date: '2023-08-13',
+      time: '19:00',
+      endDate: '',
+      isRepeating: '',
+      details: {
+        description: 'Outdoor summer concert.',
+        location: 'Downtown Park',
+        url: ''
+      }
+    },
+    {
+      id: 'event2',
+      refId: 'event2',
+      name: 'Team Meeting',
+      date: '2023-08-16',
+      time: '14:00',
+      endDate: '',
+      isRepeating: '',
+      details: {
+        description: 'Monthly team meeting to discuss project progress.',
+        location: 'Office',
+        url: ''
+      }
+    },
+    {
+      id: 'event3',
+      refId: 'event3',
+      name: 'Birthday Party',
+      date: '2023-08-25',
+      time: '18:00',
+      endDate: '',
+      isRepeating: '',
+      details: {
+        description: "Celebrating Alex's 30th birthday.",
+        location: 'Home',
+        url: ''
+      }
+    },
+    {
+      id: 'event4',
+      refId: 'event4',
+      name: 'Dentist Appointment',
+      date: '2023-08-27',
+      time: '11:00',
+      endDate: '',
+      isRepeating: '',
+      details: {
+        description: 'Regular check-up.',
+        location: 'Dental Clinic',
+        url: ''
+      }
+    }
+  ];
   

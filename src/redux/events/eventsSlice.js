@@ -1,6 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { addEventToFirestore, getEventsFromFirestore, deleteEventFromFirestore, updateEventInFirestore  } from '../../utils/eventsBase';
 import { userLoggedOut } from '../user/userSlice';
+import { DUMMY_EVENTS } from '../../utils/demoData';
+import {demoSlice} from '../demo/demoSlice';
+
  
 export const fetchEvents = createAsyncThunk(
   'events/fetchEvents',
@@ -17,6 +20,11 @@ export const fetchEvents = createAsyncThunk(
 export const addEvent = createAsyncThunk(
   'events/addEvent',
   async ({userId, event}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.events.demo) {
+      const mockId = `demo-event-id-${Date.now()}`;
+      return { id: mockId, ...event, refId: mockId };
+    } else {
     try {
       const addedEvent = await addEventToFirestore(userId, event);
       return addedEvent;
@@ -24,11 +32,16 @@ export const addEvent = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const deleteEvent = createAsyncThunk(
   'events/deleteEvent',
   async ({userId, eventId}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.events.demo) {
+      return eventId;
+    } else {
     try {
       await deleteEventFromFirestore(userId, eventId);
       return eventId;
@@ -36,11 +49,16 @@ export const deleteEvent = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 export const updateEvent = createAsyncThunk(
   'events/updateEvent',
   async ({userId, eventId, updatedEvent}, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.events.demo) {
+      return {eventId, updatedEvent};
+    } else {
     try {
       await updateEventInFirestore(userId, eventId, updatedEvent);
       return {eventId, updatedEvent};
@@ -48,6 +66,7 @@ export const updateEvent = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
+}
 );
 
 
@@ -58,6 +77,7 @@ export const eventsSlice = createSlice({
     events: [],
     status: 'idle',
     error: null,
+    demo: false
   },
   reducers: {
     setEvents: (state, action) => {
@@ -71,15 +91,28 @@ export const eventsSlice = createSlice({
     builder
     .addCase("persist/REHYDRATE", (state, action) => {
       if (!state.events) {
-        state.hobbies = [];
+        state.events = [];
       }
     })
-    .addCase(userLoggedOut, () => {
+    .addCase(demoSlice.actions.toggleDemoMode, (state, action,) => {
+      // Toggle the demo status in response to the toggleDemoMode action
+      state.demo = !state.demo;
+      if (state.demo) {
+        state.events = DUMMY_EVENTS
+      } else {
+        state.events = [],
+        state.status='idle',
+        state.error=null
+      }
+    })
+    .addCase(userLoggedOut, (state) => {
+      if (!state.demo) {
       return {
         events: [],
         status: 'idle',
         error: null,
-      };
+      }
+    }
     })
     //----------fetch------------
     .addCase(fetchEvents.pending, (state) => {
