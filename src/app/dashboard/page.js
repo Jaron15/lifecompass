@@ -8,7 +8,7 @@ import useCheckAuth from '@/src/hooks/useCheckAuth';
 
 
 
-export default function page() {
+export default function Page() {
     useCheckAuth('/')
   const currentDate = new Date();
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
