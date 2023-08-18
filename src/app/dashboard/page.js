@@ -4,7 +4,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import DayViewModal from "../../components/THE/DayViewModal";
 import Upcoming from '../../components/Upcoming';
 import SimpleLineChart from '../../components/ProductivityChart';
-import checkAuth from '@/src/hooks/checkAuth';
+import checkAuth from '@/src/hooks/useCheckAuth';
 
 
 

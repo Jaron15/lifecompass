@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import DayComponent from "./DayComponent";
 import AddForm from "../../components/THE/AddForm";
 import Modal from '../../components/Modal';
-import checkAuth from "@/src/hooks/checkAuth";
+import checkAuth from "@/src/hooks/useCheckAuth";
 
 
 const Calendar = () => {
