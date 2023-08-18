@@ -4,8 +4,12 @@ import {useSelector, useDispatch} from 'react-redux'
 import DayViewModal from "../../components/THE/DayViewModal";
 import Upcoming from '../../components/Upcoming';
 import SimpleLineChart from '../../components/ProductivityChart';
+import checkAuth from '@/src/hooks/checkAuth';
 
-export default function Page() {
+
+
+export default function page() {
+    checkAuth('/')
   const currentDate = new Date();
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);

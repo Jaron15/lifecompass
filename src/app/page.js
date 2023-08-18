@@ -2,13 +2,24 @@
 import { useEffect, useState } from 'react';
 import SignUpForm from './signup/SignUpForm';
 import SignInForm from './signin/SignInForm';
-// import { useRouter } from 'next/router';
 import { toggleDemoMode } from '../redux/demo/demoSlice';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
   const [form, setForm] = useState(null);
-  // const router = useRouter()
+  const dispatch = useDispatch();
+  const router = useRouter();
+const {user} = useSelector((state) => state.user)
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard')
+    }
+  
+   
+  }, [])
+  
+
 
   const handleSignUp = () => {
     setForm('signUp');
@@ -19,10 +30,11 @@ export default function LandingPage() {
   };
 
   const handleDemo = () => {
-    // Navigate to the demo page, or trigger the demo mode
     dispatch(toggleDemoMode())
-    // router.push('dashboard')
+    router.push('/dashboard');
+
   };
+
 
   return (
     <div className="flex flex-col items-center sm:justify-center bg-[#F3F4F6]  min-h-screen w-screen bg-gradient-to-b from-transparent via-whiten to-white dark:bg-black dark:to-transparent dark:via-transparent ">
