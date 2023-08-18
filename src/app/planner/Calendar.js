@@ -8,11 +8,11 @@ import { useDispatch } from "react-redux";
 import DayComponent from "./DayComponent";
 import AddForm from "../../components/THE/AddForm";
 import Modal from '../../components/Modal';
-import checkAuth from "@/src/hooks/useCheckAuth";
+import useCheckAuth from "@/src/hooks/useCheckAuth";
 
 
 const Calendar = () => {
-  checkAuth('/')
+  useCheckAuth('/')
   const {hobbies} = useSelector(state => state.hobbies);
   const {events} = useSelector(state => state.events);
   const {tasks} = useSelector(state => state.tasks)

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 
-export default function checkAuth(redirectTo = '/') {
+export default function useCheckAuth(redirectTo = '/') {
   const router = useRouter();
   const { user } = useSelector((state) => state.user)
 
