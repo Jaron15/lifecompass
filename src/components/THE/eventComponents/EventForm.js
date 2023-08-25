@@ -196,7 +196,7 @@ const EventForm = ({ closeAddForm }) => {
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                 />
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
                 <label className="block text-black dark:text-white font-bold mb-2" htmlFor="isRepeating">Repeats:</label>
                 <select 
                     id="isRepeating"
@@ -210,7 +210,7 @@ const EventForm = ({ closeAddForm }) => {
                     <option value="monthly">Monthly</option>
                     <option value="annually">Annually</option>
                 </select>
-            </div>
+            </div> */}
             <button 
                 onClick={eventSubmit}
                 className={`block w-full max-w-xs mx-auto bg-primary hover:bg-highlight dark:bg-highlight dark:hover:primary focus:bg-highlight text-white rounded-lg px-3 py-3 font-semibold disabled:opacity-25 ${!isSubmitEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}

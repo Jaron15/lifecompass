@@ -36,12 +36,12 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const ProductivityChart = () => {
     const initialData = [
-        { name: 'Overall', value: 100, color: '#2d7ca6', fullString: 'Overall Productivity Score'},
-        { name: 'Tasks', value: 100, color: 'rgb(202, 138, 4)', fullString: 'Tasks Completed On Time' },
-        { name: 'Hobbies', value: 100, color: 'rgb(22, 101, 52)', fullString: 'Hobbies Goals Met' },
+        { name: 'Overall', value: 100, color: '#34b5b9', fullString: 'Overall Productivity Score'},
+        { name: 'Tasks', value: 100, color: 'rgb(234 179 8)', fullString: 'Tasks Completed On Time' },
+        { name: 'Hobbies', value: 100, color: 'rgb(22 163 74)', fullString: 'Hobbies Goals Met' },
       ];
     
-//       Productivity Score
+// Productivity Score
 // Completed On Time
 // Goals Met
       

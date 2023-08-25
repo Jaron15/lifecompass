@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import {useSelector, useDispatch} from 'react-redux'
 import DayViewModal from "../../components/THE/DayViewModal";
 import Upcoming from '../../components/Upcoming';
-import SimpleLineChart from '../../components/ProductivityChart';
+import ProductivityChart from '../../components/ProductivityChart';
 import useCheckAuth from '@/src/hooks/useCheckAuth';
+import DistributionChart from '@/src/components/DistributionChart';
 
 
 
@@ -20,7 +21,7 @@ export default function Page() {
   const state = useSelector(state => state);
 
   const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const currentYear = currentDate.getFullYear();
+const currentYear = currentDate.getFullYear();
 const currentMonth = currentDate.getMonth(); 
 const formattedMonth = String(currentMonth + 1).padStart(2, '0');
 const currentDay = currentDate.getDate();
@@ -76,16 +77,20 @@ useEffect(() => {
         date={currentDateStr}
         fromHomepage={true}
 />
-
-      {/* Upcoming */}
+      {/* Productivity chart */}
       <section className="col-span-12 rounded shadow shadow-2xl border border-stroke bg-white p-3 dark:border-strokedark dark:bg-boxdark md:col-span-7 lg:col-span-6 xl:col-span-5 h-[27.5rem] xl:h-[30rem] ">
-        <SimpleLineChart />
+        <ProductivityChart />
       </section>
 
+      {/* Upcoming */}
       <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-5 lg:col-span-6 xl:col-span-5 max-h-[27.5rem]">
         <Upcoming /> 
       </section>
 
+      {/* Time Distribution chart */}
+      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-7 lg:col-span-6 xl:col-span-7 h-[27.5rem]">
+        <DistributionChart /> 
+      </section>
 
 
       </div>
