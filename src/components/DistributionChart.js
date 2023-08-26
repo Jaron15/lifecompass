@@ -14,59 +14,106 @@ const DistributionChart = () => {
   
  
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
-
+  
   //weekly numbers
   const getStartEndOfWeek = (date) => {
     const start = new Date(date);
     start.setDate(date.getDay() === 0 ? start.getDate() + 1 : start.getDate() - date.getDay() + 1); // Adjust for Sunday
     start.setHours(0, 0, 0, 0); // Set time to start of day
-
+    
     const end = new Date(start);
     end.setDate(end.getDate() + 6);
     end.setHours(23, 59, 59, 999); // Set time to end of day
-
-    console.log(start);
-    console.log(end);
     return [start, end];
+  };
+ //monthly numbers 
+ const getStartEndOfMonth = (date) => {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  start.setHours(0, 0, 0, 0);  // Set time to start of day
+  
+  const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  end.setHours(23, 59, 59, 999);  // Set time to end of day
+
+  return [start, end];
 };
-//weekly numbers
-const [startOfWeek, endOfWeek] = getStartEndOfWeek(new Date());
 
+let startDate, endDate;
+if (timePeriod === 'Weekly') {
+  [startDate, endDate] = getStartEndOfWeek(new Date());
+} else if (timePeriod === 'Monthly') {
+  [startDate, endDate] = getStartEndOfMonth(new Date());
+} else {
+  // We will handle "All Time" later
+  // For now, just use the entire range of possible dates
+  startDate = new Date(-8640000000000000);  // Earliest possible date in JS
+  endDate = new Date(8640000000000000);  // Latest possible date in JS
+}
 
-  
-  const tasksThisWeek = tasks.filter(task => {
-    if(task.type === 'singular') {
-      const taskDate = new Date(task.dueDate);
-      return taskDate >= startOfWeek && taskDate <= endOfWeek;
+const tasksForPeriod = tasks.flatMap(task => {
+  // For singular tasks
+  if(task.type === 'singular') {
+    const taskDate = new Date(task.dueDate);
+    taskDate.setHours(0, 0, 0, 0); // To ensure it's at the start of the day
+
+    if (taskDate >= startDate && taskDate <= endDate) {
+      return [task];
     }
-    if(task.type === 'recurring') {
-      // Convert recurringDay to a date for this week and check if it's in range
-      const taskDate = new Date();
-      taskDate.setDate(startOfWeek.getDate() + ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(task.recurringDay));
-      return taskDate >= startOfWeek && taskDate <= endOfWeek;
+    return [];
+  }
+  // For recurring tasks
+  else if(task.type === 'recurring') {
+    const dayIndex = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(task.recurringDay);
+    
+    let currentDate = new Date(startDate);
+    let recurringTasks = [];
+
+    while (currentDate <= endDate) {
+      if (currentDate.getDay() === dayIndex) {
+        recurringTasks.push({...task, date: currentDate.toString()}); 
+        // Clone the task with a specific date for clarity
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
     }
-  });
-  
-  const hobbyDaysThisWeek = hobbies.flatMap(hobby => {
-    const hobbyDays = hobby.daysOfWeek;
-    const daysThisWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    return hobbyDays.filter(day => daysThisWeek.includes(day));
+    return recurringTasks;
+  }
+  return [];
 });
-   
-  const eventsThisWeek = events.filter(event => {
-    const eventDate = new Date(event.date);
-    return eventDate >= startOfWeek && eventDate <= endOfWeek;
+
+
+const hobbyDaysForPeriod = hobbies.flatMap(hobby => {
+  return hobby.daysOfWeek.flatMap(dayOfWeek => {
+    const dayIndex = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(dayOfWeek);
+    
+    let currentDate = new Date(startDate);
+    let hobbySessions = [];
+
+    while (currentDate <= endDate) {
+      if (currentDate.getDay() === dayIndex) {
+        hobbySessions.push({...hobby, date: currentDate.toString()}); 
+        // Clone the hobby with a specific date for clarity
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return hobbySessions;
   });
+});
+
+
+const eventsForPeriod = events.filter(event => {
+  const [year, month, day] = event.date.split('-').map(Number);
+  const eventDate = new Date(year, month - 1, day);
+  eventDate.setHours(0, 0, 0, 0);
   
-  console.log('results: ', tasksThisWeek,hobbyDaysThisWeek, eventsThisWeek);
-  //weekly numbers
-
-
+  return eventDate >= startDate && eventDate <= endDate;
+});
+console.log(startDate, endDate);
+  console.log('results: ', tasksForPeriod,hobbyDaysForPeriod, eventsForPeriod);
+  
   const chartData = [
     
-    { name: 'Tasks', value: tasksThisWeek.length, color: 'rgb(234 179 8)' }, 
-    { name: 'Hobbies', value: hobbyDaysThisWeek.length, color: 'rgb(22 163 74)' }, 
-    { name: 'Events', value: eventsThisWeek.length, color: 'rgb(37 99 235)' } 
+    { name: 'Tasks', value: tasksForPeriod.length, color: 'rgb(234 179 8)' }, 
+    { name: 'Hobbies', value: hobbyDaysForPeriod.length, color: 'rgb(22 163 74)' }, 
+    { name: 'Events', value: eventsForPeriod.length, color: 'rgb(37 99 235)' } 
   ];
 
 
