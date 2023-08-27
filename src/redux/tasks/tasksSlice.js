@@ -6,6 +6,36 @@ import {demoSlice} from '../demo/demoSlice';
 import { generateDynamicDummyTasks } from '../../utils/demoData';
 
 
+export const calculateDailyTaskProductivity = (state) => {
+  let totalPossiblePoints = 0;
+  let pointsEarned = 0;
+  
+  const today = new Date();
+  const formattedToday = format(today, 'yyyy-MM-dd');
+
+  state.tasks.tasks.forEach(task => {
+    if (task.type === 'recurring' && today.toLocaleDateString('en-US', { weekday: 'long' }) === task.recurringDay) {
+      totalPossiblePoints += 1;
+    } else if (task.type === 'singular' && task.dueDate === formattedToday) {
+      totalPossiblePoints += 1;
+    }
+
+    // Check for completed tasks
+    const completedTask = state.tasks.completedTasks.find(completedTask => 
+      completedTask.dueDate === formattedToday && completedTask.completedDate === formattedToday
+    );
+    if (completedTask) {
+      if (completedTask.dueDate === formattedToday) {
+        pointsEarned += 1;
+      }
+    }
+  });
+
+  const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
+  return dailyProductivityScore;
+};
+
+
 export const calculateWeeklyTaskProductivity = (state) => {
   let totalPossiblePoints = 0;
   let pointsEarned = 0;

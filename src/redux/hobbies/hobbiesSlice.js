@@ -15,6 +15,48 @@ import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
 import {DUMMY_HOBBIES} from '../../utils/demoData';
 import {generateDynamicHobby} from '../../utils/demoData'
 
+export const calculateDailyHobbiesProductivity = (state) => {
+  let totalPossiblePoints = 0;
+  let pointsEarned = 0;
+
+  const today = new Date();
+  const formattedToday = format(today, 'yyyy-MM-dd');
+
+  state.hobbies.hobbies.forEach(hobby => {
+    if (hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
+      totalPossiblePoints += 1;
+      const practiceLog = hobby.practiceLog.find(log => log.date === formattedToday);
+      if (practiceLog && practiceLog.timeSpent >= hobby.practiceTimeGoal) {
+        pointsEarned += 1;
+      }
+    }
+  });
+
+  const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
+  return dailyProductivityScore;
+};
+
+export const calculateDailyProductivityForHobby = (state, hobbyId) => {
+  let totalPossiblePoints = 0;
+  let pointsEarned = 0;
+
+  const today = new Date();
+  const formattedToday = format(today, 'yyyy-MM-dd');
+
+  const hobby = state.hobbies.hobbies.find(h => h.id === hobbyId);
+  if (hobby && hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
+    totalPossiblePoints += 1;
+    const practiceLog = hobby.practiceLog.find(log => log.date === formattedToday);
+    if (practiceLog && practiceLog.timeSpent >= hobby.practiceTimeGoal) {
+      pointsEarned += 1;
+    }
+  }
+
+  const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
+  return dailyProductivityScore;
+};
+
+
 
 export const selectWeeklyProductivityScores = (state) => {
   let totalPossiblePoints = 0;
