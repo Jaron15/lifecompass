@@ -88,7 +88,7 @@ useEffect(() => {
       </section>
 
       {/* Time Distribution chart */}
-      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-7 lg:col-span-6 xl:col-span-7 h-[27.5rem]">
+      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-3 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-7 lg:col-span-6 xl:col-span-7 h-[27.5rem]">
         <DistributionChart /> 
       </section>
 
