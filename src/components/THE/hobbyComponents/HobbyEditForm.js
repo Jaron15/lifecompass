@@ -11,7 +11,8 @@ const EditHobbyForm = ({ item, onClose }) => {
       practiceTimeGoal: item.practiceTimeGoal,
       daysOfWeek: item.daysOfWeek,
       refId: item.refId,
-      practiceLog: item.practiceLog || []
+      practiceLog: item.practiceLog || [],
+      createdDate: item.createdDate
     });
     const handlenameChange = (e) => {
         const { name, value } = e.target;

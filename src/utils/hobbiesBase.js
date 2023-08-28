@@ -31,14 +31,18 @@ export function getUserHobbiesCollection(user) {
     !Array.isArray(hobby.practiceLog) || typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal < 0 || hobby.name === '') {
   throw new Error('Hobby validation failed');
 }
+const hobbyWithCreatedDate = {
+  ...hobby,
+  createdDate: new Date().toISOString().split('T')[0] 
+};
 
     try {
-      const docRef = await addDoc(hobbiesCollection, hobby);
+      const docRef = await addDoc(hobbiesCollection, hobbyWithCreatedDate);
       
       const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', docRef.id);
         await updateDoc(hobbyDocRef, { refId: docRef.id });
 
-        const newHobby = { ...hobby, refId: docRef.id };
+        const newHobby = { ...hobbyWithCreatedDate, refId: docRef.id };
 
       
       return { user, newHobby };
@@ -129,14 +133,50 @@ export async function updateHobbyInFirestore(user, hobby) {
     console.error(`No such document! ID: ${hobbyId}`);
     throw new Error(`No hobby found with this ID`);
   }
-    
+
+  // Current streak logic
+  const hobbyData = hobbyDocSnap.data();
+
+  const todayDate = new Date();
+const today = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
+
+let totalPracticeTimeToday = logEntry.timeSpent;
+
+// Check if there are other practice logs for today and sum their time
+const todayPracticeLogs = hobbyData.practiceLog.filter(log => log.date === today) || [];
+todayPracticeLogs.forEach(log => {
+    totalPracticeTimeToday += log.timeSpent;
+});
+
+const practiceTimeGoalMet = totalPracticeTimeToday >= hobbyData.practiceTimeGoal;
+
+  let updatedStreak = hobbyData.streak || 0;
+  let updatedLastPracticeDate = hobbyData.lastPracticeDate || null;
+  
+  if (practiceTimeGoalMet) {
+    if (!updatedLastPracticeDate) { 
+      //if there is no lastPracticeDate state
+      updatedStreak = 1; 
+      
+  } else if (updatedLastPracticeDate === today) {
+      // If the user has practiced today already, do not modify streak
+  } else {
+      // If the user practiced yesterday, increment streak
+      updatedStreak += 1;
+  }
+  console.log(totalPracticeTimeToday);
+  updatedLastPracticeDate = today;
+}
   try {
     await updateDoc(hobbyDocRef, {
       practiceLog: arrayUnion(logEntryWithId),
-    });
+      streak: updatedStreak,
+      lastPracticeDate: updatedLastPracticeDate
+  });
   
     // Return logEntryWithId for Redux to use
-    return logEntryWithId;
+    return { logEntry: logEntryWithId, streak: updatedStreak, lastPracticeDate: updatedLastPracticeDate };
+
   } catch (error) {
     console.error('Error adding practice log to hobby in Firestore:', error);
     if (error.code === 'unavailable' || error.code === 'deadline-exceeded') {

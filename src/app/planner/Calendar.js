@@ -144,10 +144,20 @@ const Calendar = () => {
       // console.log(currentDayName);
       const hobbyEvents = [];
       hobbies.forEach(hobby => {
-        if (hobby.daysOfWeek.includes(currentDayName)) {
+        const [yearH, monthH, dayH] = hobby.createdDate.split('-').map(Number);
+    const hobbyDate = new Date(yearH, monthH - 1, dayH); // month is 0-indexed
+
+    const [currentYearD, currentMonthD, currentDayD] = currentDateStr.split('-').map(Number);
+    const currentDayDate = new Date(currentYearD, currentMonthD - 1, currentDayD); // month is 0-indexed
+
+    console.log(hobbyDate, currentDayDate);
+
+ 
+
+        if (hobby.daysOfWeek.includes(currentDayName) && hobbyDate <= currentDayDate) {
           hobbyEvents.push({
             ...hobby,
-          category: "Hobby"
+            category: "Hobby"
           });
         }
       });

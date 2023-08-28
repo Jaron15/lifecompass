@@ -11,6 +11,10 @@ export const generateDynamicHobby = () => {
   const currentDayName = format(today, 'EEEE');
   const daysOfWeek = ['Monday', 'Wednesday', 'Friday', currentDayName];
   const uniqueDaysOfWeek = [...new Set(daysOfWeek)]; // Ensures no duplicate days
+  
+
+  today.setDate(today.getDate() - 35);
+  const adjCreatedDate = today.toISOString().split('T')[0];
 
   const daysInMonthSoFar = eachDayOfInterval({
     start: startOfMonth(today),
@@ -27,6 +31,7 @@ export const generateDynamicHobby = () => {
     daysOfWeek: uniqueDaysOfWeek,
     practiceTimeGoal: 60,
     practiceLog: practiceLog,
+    createdDate: adjCreatedDate 
   };
 };
 

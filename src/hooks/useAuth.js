@@ -55,7 +55,7 @@ export function useAuth() {
       }
     }
     
-      dispatch(signUpAsync({ email, password, name }));
+    return await dispatch(signUpAsync({ email, password, name }));
     } catch (error) {
       console.error('Failed to sign up:', error);
       throw error;

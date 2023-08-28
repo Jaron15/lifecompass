@@ -77,10 +77,10 @@ export const selectWeeklyProductivityScores = (state) => {
         
         const formattedPracticeDate = format(practiceDate, 'yyyy-MM-dd');
       
-      const practiceLog = hobby.practiceLog.find(log => {
-    
-        return log.date === formattedPracticeDate;
+        const practiceLog = (hobby.practiceLog || []).find(log => {
+          return log.date === formattedPracticeDate;
       });
+      
       
         
         if (practiceLog) {
@@ -109,7 +109,7 @@ export const selectMonthlyProductivityScores = (state) => {
       if (hobby.daysOfWeek.includes(format(day, 'EEEE'))) {
         totalPossiblePoints += 1;
         
-        const practiceLog = hobby.practiceLog.find(log => 
+        const practiceLog = (hobby.practiceLog || []).find(log => 
           log.date === format(day, 'yyyy-MM-dd')
         );
 
@@ -195,19 +195,16 @@ export const logPractice = createAsyncThunk(
     if (state.hobbies.demo) {
 
       const logEntryId = Date.now().toString();
-     
+    
       const logEntryWithId = { ...logEntry, id: logEntryId };
-      return { hobbyId, logEntry: logEntryWithId };
+      return { hobbyId, logEntry: logEntryWithId, streak: 0, lastPracticeDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) };
+
     } else {
 
     try {
-      const updatedLogEntry = await logPracticeInFirestore(
-        user,
-        hobbyId,
-        logEntry
-        );
+      const updatedData = await logPracticeInFirestore(user, hobbyId, logEntry);
         console.log('made it to slice');
-      return { hobbyId, logEntry: updatedLogEntry };
+        return { hobbyId, logEntry: updatedData.logEntry, streak: updatedData.streak, lastPracticeDate: updatedData.lastPracticeDate };
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -394,7 +391,9 @@ export const hobbiesSlice = createSlice({
         // add the log
         if (hobby) {
           hobby.practiceLog.push(action.payload.logEntry);
-        }
+          hobby.streak = action.payload.streak;
+          hobby.lastPracticeDate = action.payload.lastPracticeDate;
+        }      
       })
       .addCase(logPractice.rejected, (state, action) => {
         state.status = "idle";
