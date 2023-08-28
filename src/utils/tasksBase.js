@@ -38,7 +38,8 @@ export const addTaskToFirestore = async (userId, task) => {
       
       const initialTaskData = {
         ...task,
-        isCompleted: false
+        isCompleted: false,
+        createdDate: new Date().toISOString().split('T')[0]
       };
   
 

@@ -162,7 +162,8 @@ export const addTask = createAsyncThunk(
         id: refId, 
         ...task,
         isCompleted: false,
-        refId: refId
+        refId: refId,
+        createdDate: new Date().toISOString().split('T')[0]
       };
       return newTask;
     } else {

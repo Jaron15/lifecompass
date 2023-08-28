@@ -138,8 +138,11 @@ export const addHobby = createAsyncThunk(
     if (state.hobbies.demo) {
       const mockRefId = 'demo_' + Date.now();
       const newHobby = { ...hobby, refId: mockRefId };
-      
-      return { newHobby: newHobby };
+      const hobbyWithCreatedDate = {
+        ...newHobby,
+        createdDate: new Date().toISOString().split('T')[0] 
+      };
+      return { newHobby: hobbyWithCreatedDate };
     } else {
     try {
       const response = await addHobbyToFirestore(user, hobby);

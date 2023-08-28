@@ -85,6 +85,8 @@ export function generateDynamicDummyTasks() {
   nextSunday.setDate(pastSunday.getDate() + 7);
   const futureDate = new Date(today);
   futureDate.setDate(today.getDate() + 5);
+  today.setDate(today.getDate() - 35);
+  const adjCreatedDate = today.toISOString().split('T')[0];
   const DUMMY_TASKS = [
     {
       id: 'task1',
@@ -93,7 +95,8 @@ export function generateDynamicDummyTasks() {
       dueDate: today.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
       isCompleted: false,
       type: 'singular',
-      recurringDay: ''
+      recurringDay: '',
+      createdDate: adjCreatedDate
     },
     {
       id: 'task2',
@@ -102,7 +105,8 @@ export function generateDynamicDummyTasks() {
       recurringDay: 'Sunday',
       isCompleted: false,
       type: 'recurring',
-      dueDate: ''
+      dueDate: '',
+      createdDate: adjCreatedDate
     },
     {
       id: 'task3',
@@ -111,7 +115,8 @@ export function generateDynamicDummyTasks() {
       recurringDay: 'Sunday',
       isCompleted: false,
       type: 'recurring',
-      dueDate: ''
+      dueDate: '',
+      createdDate: adjCreatedDate
     },
     {
       id: 'task4',
@@ -120,7 +125,8 @@ export function generateDynamicDummyTasks() {
       dueDate: futureDate.toLocaleDateString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }),
       isCompleted: false,
       type: 'singular',
-      recurringDay: ''
+      recurringDay: '',
+      createdDate: adjCreatedDate
     },
   ];
 

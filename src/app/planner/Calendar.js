@@ -150,10 +150,6 @@ const Calendar = () => {
     const [currentYearD, currentMonthD, currentDayD] = currentDateStr.split('-').map(Number);
     const currentDayDate = new Date(currentYearD, currentMonthD - 1, currentDayD); // month is 0-indexed
 
-    console.log(hobbyDate, currentDayDate);
-
- 
-
         if (hobby.daysOfWeek.includes(currentDayName) && hobbyDate <= currentDayDate) {
           hobbyEvents.push({
             ...hobby,
@@ -168,13 +164,19 @@ const Calendar = () => {
       //--------------tasks-------------------
       const taskEvents = [];
       tasks.forEach(task => {
-        if (task.recurringDay && task.recurringDay.includes(currentDayName)) {
+        const [yearH, monthH, dayH] = task.createdDate.split('-').map(Number);
+      const taskDate = new Date(yearH, monthH - 1, dayH); // month is 0-indexed
+
+       const [currentYearD, currentMonthD, currentDayD] = currentDateStr.split('-').map(Number);
+       const currentDayDate = new Date(currentYearD, currentMonthD - 1, currentDayD); // month is 0-indexed
+       
+        if (task.recurringDay !== "" && task.recurringDay.includes(currentDayName) && taskDate <= currentDayDate) {
           taskEvents.push({
             ...task,
             category: "Task"
           });
         }
-        else if (task.dueDate && task.dueDate.includes(currentDateStr)) {
+        else if (task.dueDate !== "" && task.dueDate.includes(currentDateStr)) {
           taskEvents.push({
             ...task,
             category: "Task"
