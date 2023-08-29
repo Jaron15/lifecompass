@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
 import { useSelector } from 'react-redux';
-import { selectMonthlyProductivityScores, selectWeeklyProductivityScores  } from '../redux/hobbies/hobbiesSlice'
-import { calculateMonthlyTaskProductivity, calculateWeeklyTaskProductivity, selectTasksProductivityScores } from '../redux/tasks/tasksSlice';
+import { selectMonthlyHobbyProductivityScores, selectWeeklyHobbyProductivityScores, calculateMonthlyTaskProductivity, calculateWeeklyTaskProductivity,  } from '../redux/productivity/prodSlice'
+
 
 
 const CustomLegend = ({ payload }) => (
@@ -47,8 +47,8 @@ const ProductivityChart = () => {
       
   const [timePeriod, setTimePeriod] = useState('Weekly');
   const [overallProductivityScore, setOverallProductivityScore] = useState(0);
-  const hobbyProductivityScoreWeekly = useSelector(selectWeeklyProductivityScores);
-  const hobbyProductivityScoreMonthly = useSelector(selectMonthlyProductivityScores);
+  const hobbyProductivityScoreWeekly = useSelector(selectWeeklyHobbyProductivityScores);
+  const hobbyProductivityScoreMonthly = useSelector(selectMonthlyHobbyProductivityScores);
   const tasksProductivityScoreWeekly = useSelector(calculateWeeklyTaskProductivity);
   const tasksProductivityScoreMonthly = useSelector(calculateMonthlyTaskProductivity);
   

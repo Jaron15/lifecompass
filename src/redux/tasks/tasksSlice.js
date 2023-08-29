@@ -1,139 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getTasksFromFirestore, addTaskToFirestore, deleteTaskFromFirestore, markTaskAsCompletedInFirestore, addCompletedTaskToFirestore, getCompletedTasksFromFirestore, deleteCompletedTaskFromFirestore, updateTaskInFirestore, updateCompletedTaskInFirestore } from '../../utils/tasksBase';
 import { userLoggedOut } from '../user/userSlice';
-import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, format, eachWeekOfInterval, parse, isWithinInterval, eachDayOfInterval, endOfDay, isBefore, parseISO, isAfter  } from 'date-fns';
+
 import {demoSlice} from '../demo/demoSlice';
 import { generateDynamicDummyTasks } from '../../utils/demoData';
 
 
-export const calculateDailyTaskProductivity = (state) => {
-  let totalPossiblePoints = 0;
-  let pointsEarned = 0;
-  
-  const today = new Date();
-  const formattedToday = format(today, 'yyyy-MM-dd');
-
-  state.tasks.tasks.forEach(task => {
-    if (task.type === 'recurring' && today.toLocaleDateString('en-US', { weekday: 'long' }) === task.recurringDay) {
-      totalPossiblePoints += 1;
-    } else if (task.type === 'singular' && task.dueDate === formattedToday) {
-      totalPossiblePoints += 1;
-    }
-
-    // Check for completed tasks
-    const completedTask = state.tasks.completedTasks.find(completedTask => 
-      completedTask.dueDate === formattedToday && completedTask.completedDate === formattedToday
-    );
-    if (completedTask) {
-      if (completedTask.dueDate === formattedToday) {
-        pointsEarned += 1;
-      }
-    }
-  });
-
-  const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
-  return dailyProductivityScore;
-};
 
 
-export const calculateWeeklyTaskProductivity = (state) => {
-  let totalPossiblePoints = 0;
-  let pointsEarned = 0;
-  
-  const today = new Date();
-  const startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 });
-  const daysSoFarThisWeek = eachDayOfInterval({ start: startOfWeekDate, end: endOfDay(today) });
-  // Calculate Total Possible Points So Far
-  daysSoFarThisWeek.forEach(dayDate => {
-    state.tasks.tasks.forEach(task => {
-      if (task.type === 'recurring' && dayDate.toLocaleDateString('en-US', { weekday: 'long' }) === task.recurringDay) {
-        totalPossiblePoints += 1;
-      }
 
-    });
-  });
-  
-  state.tasks.tasks.forEach(task => {
-    if (task.type === 'singular' && task.dueDate) {
-      const dueDate = parseISO(task.dueDate);
-      if (isBefore(dueDate, endOfDay(today))) {
-        totalPossiblePoints += 1;
-      }
-    }
-  });
-  
 
-  // Calculate Points Earned So Far
-  daysSoFarThisWeek.forEach(dayDate => {
-    state.tasks.completedTasks.forEach(completedTask => {
-      const completedDate = parseISO(completedTask.completedDate);
-      const dueDate = parseISO(completedTask.dueDate);
-      const formatedDay = format(dayDate, 'yyyy-MM-dd');
-      
-      if (completedDate.getTime() <= dueDate.getTime() && completedTask.dueDate === formatedDay) {
-        pointsEarned += 1;
-      } else if (isAfter(completedDate, dueDate) && completedTask.dueDate === formatedDay) {
-        pointsEarned += 0.5;
-      }
-    });
-  });
-  
-  
-  // console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  // console.log('Points Earned: ', pointsEarned);
-  // Calculate Productivity Score
-  const weeklyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
-  
-  return weeklyProductivityScore;
-};
-
-export const calculateMonthlyTaskProductivity = (state) => {
-  let totalPossiblePoints = 0;
-  let pointsEarned = 0;
-  
-  const today = new Date();
-  const firstOfMonth = startOfMonth(today);
-  const daysSoFarThisMonth = eachDayOfInterval({ start: firstOfMonth, end: today });
-  
-  // Calculate Total Possible Points for This Month
-  daysSoFarThisMonth.forEach(dayDate => {
-    state.tasks.tasks.forEach(task => {
-      if (task.type === 'recurring' && dayDate.toLocaleDateString('en-US', { weekday: 'long' }) === task.recurringDay) {
-        totalPossiblePoints += 1;
-      }
-    });
-  });
-
-  state.tasks.tasks.forEach(task => {
-    if (task.type === 'singular' && task.dueDate) {
-      const dueDate = parseISO(task.dueDate);
-      if (isBefore(dueDate, endOfDay(today))) {
-        totalPossiblePoints += 1;
-      }
-    }
-  });
-
-  // Calculate Points Earned So Far for This Month
-  daysSoFarThisMonth.forEach(dayDate => {
-    state.tasks.completedTasks.forEach(completedTask => {
-      const completedDate = parseISO(completedTask.completedDate);
-      const dueDate = parseISO(completedTask.dueDate);
-      const formattedDay = format(dayDate, 'yyyy-MM-dd');
-      
-      if (completedDate.getTime() <= dueDate.getTime() && completedTask.dueDate === formattedDay) {
-        pointsEarned += 1;
-      } else if (isAfter(completedDate, dueDate) && completedTask.dueDate === formattedDay) {
-        pointsEarned += 0.5;
-      }
-    });
-  });
-  // console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  // console.log('Points Earned: ', pointsEarned);
-  // Calculate Productivity Score for This Month
-  const monthlyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
-
-  return monthlyProductivityScore;
-};
 
 
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', 

@@ -10,124 +10,15 @@ import {
 } from "../../utils/hobbiesBase";
 import { userLoggedOut } from '../user/userSlice';
 import { createSelector } from '@reduxjs/toolkit';
-import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay, startOfMonth } from 'date-fns';
+
 import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
 import {DUMMY_HOBBIES} from '../../utils/demoData';
 import {generateDynamicHobby} from '../../utils/demoData'
 
-export const calculateDailyHobbiesProductivity = (state) => {
-  let totalPossiblePoints = 0;
-  let pointsEarned = 0;
-
-  const today = new Date();
-  const formattedToday = format(today, 'yyyy-MM-dd');
-
-  state.hobbies.hobbies.forEach(hobby => {
-    if (hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
-      totalPossiblePoints += 1;
-      const practiceLog = hobby.practiceLog.find(log => log.date === formattedToday);
-      if (practiceLog && practiceLog.timeSpent >= hobby.practiceTimeGoal) {
-        pointsEarned += 1;
-      }
-    }
-  });
-
-  const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
-  return dailyProductivityScore;
-};
-
-export const calculateDailyProductivityForHobby = (state, hobbyId) => {
-  let totalPossiblePoints = 0;
-  let pointsEarned = 0;
-
-  const today = new Date();
-  const formattedToday = format(today, 'yyyy-MM-dd');
-
-  const hobby = state.hobbies.hobbies.find(h => h.id === hobbyId);
-  if (hobby && hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
-    totalPossiblePoints += 1;
-    const practiceLog = hobby.practiceLog.find(log => log.date === formattedToday);
-    if (practiceLog && practiceLog.timeSpent >= hobby.practiceTimeGoal) {
-      pointsEarned += 1;
-    }
-  }
-
-  const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
-  return dailyProductivityScore;
-};
 
 
 
-export const selectWeeklyProductivityScores = (state) => {
-  let totalPossiblePoints = 0;
-  let pointsEarned = 0;
-  
-  const today = new Date();
-  const startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 });
-  const daysSoFarThisWeek = eachDayOfInterval({ start: startOfWeekDate, end: endOfDay(today) });
-  
-  state.hobbies.hobbies.forEach(hobby => {
-    hobby.daysOfWeek.forEach((day) => {
-      const practiceDate = daysSoFarThisWeek.find(date => 
-        format(date, 'EEEE') === day
-      );
-      
-      if (practiceDate && isBefore(practiceDate, endOfDay(today))) {
-        totalPossiblePoints += 1;
-        
-        const formattedPracticeDate = format(practiceDate, 'yyyy-MM-dd');
-      
-        const practiceLog = (hobby.practiceLog || []).find(log => {
-          return log.date === formattedPracticeDate;
-      });
-      
-      
-        
-        if (practiceLog) {
-          pointsEarned += (practiceLog.timeSpent >= hobby.practiceTimeGoal) ? 1 : 0.5;
-        }
-      }
-    });
-  });
-  
-  // console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  // console.log('Points Earned: ', pointsEarned); 
-  const weeklyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
-  return weeklyProductivityScore;
-};
 
-export const selectMonthlyProductivityScores = (state) => {
-  let totalPossiblePoints = 0;
-  let pointsEarned = 0;
-  
-  const today = new Date();
-  const firstOfMonth = startOfMonth(today);
-  const daysSoFarThisMonth = eachDayOfInterval({ start: firstOfMonth, end: today });
-
-  state.hobbies.hobbies.forEach(hobby => {
-    daysSoFarThisMonth.forEach(day => {
-      if (hobby.daysOfWeek.includes(format(day, 'EEEE'))) {
-        totalPossiblePoints += 1;
-        
-        const practiceLog = (hobby.practiceLog || []).find(log => 
-          log.date === format(day, 'yyyy-MM-dd')
-        );
-
-        
-        if (practiceLog) {
-          pointsEarned += (practiceLog.timeSpent >= hobby.practiceTimeGoal) ? 1 : 0.5;
-        }
-      }
-    });
-  });
-
-  // console.log('Total Possible Points So Far: ', totalPossiblePoints);
-  // console.log('Points Earned: ', pointsEarned);
-  
-  const monthlyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
-  
-  return monthlyProductivityScore;
-};
 
 
 
