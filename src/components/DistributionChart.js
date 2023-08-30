@@ -130,8 +130,6 @@ const eventsForPeriod = events.filter(event => {
   
   return eventDate >= startDate && eventDate <= endDate;
 });
-console.log(startDate, endDate);
-  console.log('results: ', tasksForPeriod,hobbyDaysForPeriod, eventsForPeriod);
   
   const chartData = [
     
@@ -165,7 +163,6 @@ console.log(startDate, endDate);
   const CustomTooltip = ({ payload, active }) => {
     if (active && payload && payload.length) {
       const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
-      console.log(totalValue);
       return (
         <div className="bg-white p-2">
           <p className='text-black'>{`${payload[0].name}: ${getPercentage(payload[0].value, totalValue)}%`}</p>

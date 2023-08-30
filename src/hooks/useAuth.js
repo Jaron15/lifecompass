@@ -18,7 +18,7 @@ export function useAuth() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('onAuthStateChanged', user); 
+      // console.log('onAuthStateChanged', user); 
       if(!user) {
         dispatch(userLoggedOut());
       }

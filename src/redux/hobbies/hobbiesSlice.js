@@ -183,7 +183,6 @@ export const hobbiesSlice = createSlice({
     builder
     .addCase("persist/REHYDRATE", (state, action) => {
       // Initialize hobbies if it's undefined after rehydration
-      console.log("Rehydrated State", action.payload);
 
       if (!state.hobbies) {
         state.hobbies = [];

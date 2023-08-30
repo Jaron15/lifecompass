@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay, startOfMonth, parseISO, isAfter,  } from 'date-fns';
+import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay, startOfMonth, parseISO, isAfter, formatISO, isToday, isYesterday} from 'date-fns';
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {db} from '../../utils/firebase'
 
-// Initial state
 const initialState = {
   overallStreak: 0,
-  dailyProductivity: 0, // For example
-  weeklyProductivity: [], // For example
+  dailyProductivity: 0, 
+  weeklyProductivity: [], 
   status: 'idle',
   error: null,
 };
@@ -182,7 +183,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
       
         const today = new Date();
         const formattedToday = format(today, 'yyyy-MM-dd');
-      
+      console.log(formattedToday);
         state.hobbies.hobbies.forEach(hobby => {
           if (hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
             totalPossiblePoints += 1;
@@ -202,7 +203,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         
         const today = new Date();
         const formattedToday = format(today, 'yyyy-MM-dd');
-      
+        console.log(formattedToday);
         state.tasks.tasks.forEach(task => {
           if (task.type === 'recurring' && today.toLocaleDateString('en-US', { weekday: 'long' }) === task.recurringDay) {
             totalPossiblePoints += 1;
@@ -229,7 +230,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
       export const calculateDailyProductivityForHobby = (state, hobbyId) => {
         let totalPossiblePoints = 0;
         let pointsEarned = 0;
-      
+     
         const today = new Date();
         const formattedToday = format(today, 'yyyy-MM-dd');
       
@@ -248,6 +249,66 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
       //-----for an individual hobby------
     //-----------daily----------
 
+    //--------overall----------
+    export const calculateOverallStreak = createAsyncThunk(
+        'productivity/calculateOverallStreak',
+        async ({ user }, thunkAPI) => {
+            const state = thunkAPI.getState();
+            const uid = user.uid;
+          const streakDocRef = doc(db, 'users', uid, 'productivity', 'streaks');
+          const streakDocSnap = await getDoc(streakDocRef);
+          console.log(state);
+          let currentStreak = 0;
+          let lastUpdatedDate = null;
+          if (!streakDocSnap.exists()) {
+            await setDoc(streakDocRef, {
+              overallStreak: 0,
+              lastUpdatedDate: null,  // Initialize to null
+            });
+          } else {
+            currentStreak = streakDocSnap.data().overallStreak;
+            lastUpdatedDate = streakDocSnap.data().lastUpdatedDate ? parseISO(streakDocSnap.data().lastUpdatedDate) : null;
+          }
+        
+          console.log(isToday(lastUpdatedDate));
+          console.log('still going'); 
+          // Skip further processing if the streak has already been updated today
+            if (lastUpdatedDate && isToday(lastUpdatedDate)) {
+                return currentStreak;
+            }
+
+            if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
+                currentStreak = 0;
+            } 
+
+            let streakChanged = false;  
+          // Calculate streak based on today's activities
+          const dailyHobbyProductivity = calculateDailyHobbiesProductivity(state);
+          const dailyTaskProductivity = calculateDailyTaskProductivity(state);
+          console.log(dailyHobbyProductivity);
+          console.log(dailyTaskProductivity);
+          if (dailyHobbyProductivity >= 100 && dailyTaskProductivity >= 100) {
+            // If productivity for both hobbies and tasks is at least 100%
+            if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
+                currentStreak += 1;  // Increment if last update was yesterday
+              } else {
+                currentStreak = 1;  // Reset streak to 1 if last update was NOT yesterday
+              }
+              streakChanged = true;
+            } 
+         
+      
+          // Save the updated overallStreak and lastUpdatedDate back to Firebase
+          if (streakChanged) {
+            const todayDateISO = format(new Date(), 'yyyy-MM-dd');
+            await setDoc(streakDocRef, { overallStreak: currentStreak, lastUpdatedDate: todayDateISO });
+          }      
+      
+          return currentStreak;  // Return the updated streak
+        }
+      );
+      
+      
 
 const productivitySlice = createSlice({
   name: 'productivity',
@@ -259,7 +320,9 @@ const productivitySlice = createSlice({
     // Add other reducers for daily and weekly productivity here
   },
   extraReducers: (builder) => {
-    // Add extra reducers here (if needed)
+    builder.addCase(calculateOverallStreak.fulfilled, (state, action) => {
+        state.overallStreak = action.payload;
+      });
   },
 });
 

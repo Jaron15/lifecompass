@@ -6,12 +6,6 @@ import {demoSlice} from '../demo/demoSlice';
 import { generateDynamicDummyTasks } from '../../utils/demoData';
 
 
-
-
-
-
-
-
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', 
   async (userId, thunkAPI) => { 
     const state = thunkAPI.getState();

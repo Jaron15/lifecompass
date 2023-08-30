@@ -7,7 +7,6 @@ function TaskItem({item, date, isRecurringTaskCompletedForDate, isSingularTaskCo
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.user)
     const handleCompletion = (task, date) => {
-        console.log(task);
         if (task.type === 'recurring'){
         dispatch(addCompletedTask({userId: user.uid, task:task, dueDate:date})); 
        } else {

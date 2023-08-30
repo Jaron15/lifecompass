@@ -9,19 +9,22 @@ import hobbiesReducer from './hobbies/hobbiesSlice';
 import eventsReducer from './events/eventsSlice';
 import tasksReducer from './tasks/tasksSlice';
 import demoReducer from './demo/demoSlice'; 
+import productivityReducer from './productivity/prodSlice';  
+
 
 const rootReducer = combineReducers({
   user: userReducer,
   hobbies: hobbiesReducer,
   events: eventsReducer,
   tasks: tasksReducer,
-  demo: demoReducer
+  demo: demoReducer,
+  productivity: productivityReducer,  
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['hobbies', 'tasks', 'events', 'user', 'demo']
+  whitelist: ['hobbies', 'tasks', 'events', 'user', 'demo', 'productivity']
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

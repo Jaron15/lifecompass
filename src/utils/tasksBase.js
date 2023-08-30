@@ -148,7 +148,6 @@ export const deleteTaskFromFirestore = async (userId, taskId) => {
           const formattedDate = `${year}-${month}-${day}`;
 
 
-          console.log(formattedDate);
         const taskRef = doc(db, 'users', userId, 'tasks', taskId);
         const taskSnap = await getDoc(taskRef);
         
@@ -233,7 +232,6 @@ export const addCompletedTaskToFirestore = async (userId, task, dueDate) => {
       const taskRef = doc(db, 'users', userId, 'completedTasks', taskId);
       console.log(taskRef);
       await deleteDoc(taskRef);
-      console.log(`Task with ID ${taskId} deleted from Firestore`);
 
     } catch (error) {
       console.error('Error deleting completed task', error);
