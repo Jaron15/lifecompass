@@ -178,7 +178,7 @@ const eventsForPeriod = events.filter(event => {
 
       <button className='absolute -right-4 top-60 p-3 flex justify-center items-center z-30 disabled:hidden !mt-0' disabled={offset === 1} onClick={() => setOffset(prev => prev + 1)}><FaArrowRight /></button>
     <div className="flex items-center justify-between w-full p-4 bg-gray-100 border-b border-gray-300">
-      <h2 className="text-lg font-semibold">Time Distribution Chart</h2>
+      <h2 className="text-lg font-semibold">Time Distribution</h2>
       <select
         value={timePeriod}
         onChange={handleTimePeriodChange}

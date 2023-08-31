@@ -2,13 +2,16 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { startOfWeek, eachDayOfInterval, format, isBefore, endOfDay, startOfMonth, parseISO, isAfter, formatISO, isToday, isYesterday} from 'date-fns';
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 import {db} from '../../utils/firebase'
+import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
 
 const initialState = {
   overallStreak: 0,
   dailyProductivity: 0, 
+  overallLastUpdatedDate: null,
   weeklyProductivity: [], 
   status: 'idle',
   error: null,
+  demoMode: false,
 };
 
 //---------weekly/monthly scores-----------
@@ -194,37 +197,46 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
           }
         });
       
-        const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
-        return dailyProductivityScore;
+        const dailyProductivityScore = (totalPossiblePoints > 0) 
+        ? (pointsEarned / totalPossiblePoints) * 100 
+        : 100;  
+  
+    return dailyProductivityScore;
+
       };
+
       export const calculateDailyTaskProductivity = (state) => {
         let totalPossiblePoints = 0;
         let pointsEarned = 0;
-        
+      
         const today = new Date();
         const formattedToday = format(today, 'yyyy-MM-dd');
-        console.log(formattedToday);
+      
         state.tasks.tasks.forEach(task => {
           if (task.type === 'recurring' && today.toLocaleDateString('en-US', { weekday: 'long' }) === task.recurringDay) {
             totalPossiblePoints += 1;
           } else if (task.type === 'singular' && task.dueDate === formattedToday) {
             totalPossiblePoints += 1;
           }
-      
-          // Check for completed tasks
-          const completedTask = state.tasks.completedTasks.find(completedTask => 
-            completedTask.dueDate === formattedToday && completedTask.completedDate === formattedToday
-          );
-          if (completedTask) {
-            if (completedTask.dueDate === formattedToday) {
-              pointsEarned += 1;
-            }
-          }
         });
       
-        const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
-        return dailyProductivityScore;
+        // Moved this section out of the previous loop
+        state.tasks.completedTasks.forEach(completedTask => {
+          if (completedTask.dueDate === formattedToday && completedTask.completedDate === formattedToday) {
+            console.log(completedTask);
+            pointsEarned += 1;
+          }
+        });
+        console.log(totalPossiblePoints);
+        console.log(pointsEarned);
+        const dailyProductivityScore = (totalPossiblePoints > 0) 
+        ? (pointsEarned / totalPossiblePoints) * 100 
+        : 100;  
+  
+    return dailyProductivityScore;
+
       };
+      
       
       //-----for an individual hobby------
       export const calculateDailyProductivityForHobby = (state, hobbyId) => {
@@ -254,10 +266,29 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         'productivity/calculateOverallStreak',
         async ({ user }, thunkAPI) => {
             const state = thunkAPI.getState();
+            console.log(state);
+            if (state.demo.enabled) {  // Assuming demo mode is enabled from demoSlice
+                currentStreak = state.productivity.overallStreak;
+                lastUpdatedDate = state.productivity.lastUpdatedDate ? parseISO(state.productivity.lastUpdatedDate) : null;
+          
+                // Demo logic here
+                const dailyHobbyProductivity = calculateDailyHobbiesProductivity(state);
+                const dailyTaskProductivity = calculateDailyTaskProductivity(state);
+          
+                if (dailyHobbyProductivity >= 100 && dailyTaskProductivity >= 100) {
+                  if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
+                    currentStreak += 1;
+                  } else {
+                    currentStreak = 1;
+                  }
+                }
+          
+                return { overallStreak: currentStreak, lastUpdatedDate: formatISO(new Date()) };
+              } 
             const uid = user.uid;
           const streakDocRef = doc(db, 'users', uid, 'productivity', 'streaks');
           const streakDocSnap = await getDoc(streakDocRef);
-          console.log(state);
+          
           let currentStreak = 0;
           let lastUpdatedDate = null;
           if (!streakDocSnap.exists()) {
@@ -274,7 +305,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
           console.log('still going'); 
           // Skip further processing if the streak has already been updated today
             if (lastUpdatedDate && isToday(lastUpdatedDate)) {
-                return currentStreak;
+                return {overallStreak: currentStreak, lastUpdatedDate:lastUpdatedDate};
             }
 
             if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
@@ -304,7 +335,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
             await setDoc(streakDocRef, { overallStreak: currentStreak, lastUpdatedDate: todayDateISO });
           }      
       
-          return currentStreak;  // Return the updated streak
+          return { overallStreak: currentStreak, lastUpdatedDate: formatISO(new Date()) };
         }
       );
       
@@ -315,13 +346,30 @@ const productivitySlice = createSlice({
   initialState,
   reducers: {
     setOverallStreak: (state, action) => {
-      state.overallStreak = action.payload;
-    },
+        state.overallStreak = action.payload.overallStreak;
+        state.lastUpdatedDate = action.payload.lastUpdatedDate;  
+      },
+  
     // Add other reducers for daily and weekly productivity here
   },
   extraReducers: (builder) => {
     builder.addCase(calculateOverallStreak.fulfilled, (state, action) => {
-        state.overallStreak = action.payload;
+      state.overallStreak = action.payload.overallStreak;
+      state.overallLastUpdatedDate = action.payload.lastUpdatedDate;  
+    })
+    .addCase(demoSlice.actions.toggleDemoMode, (state, action) => {
+        state.demo = !state.demo;
+        if (state.demo) {
+          // Initialize with dummy streak data
+          state.overallStreak = 5; // You can generate this dynamically if you want
+          state.lastUpdatedDate = '2023-08-29'; // Dummy date
+        } else {
+          // Clear demo data
+          state.overallStreak = 0;
+          state.lastUpdatedDate = null;
+          state.status = 'idle';
+          state.error = null;
+        }
       });
   },
 });

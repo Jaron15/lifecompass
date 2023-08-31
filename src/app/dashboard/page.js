@@ -83,20 +83,20 @@ useEffect(() => {
         <ProductivityChart />
       </section>
 
+      {/* Overall Streak */}
+      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white  pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark  md:col-span-5 lg:col-span-6 xl:col-span-4 max-h-[27.5rem] flex">
+        <StreakTracker /> 
+      </section>
       {/* Upcoming */}
-      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-5 lg:col-span-6 xl:col-span-5 max-h-[27.5rem]">
+      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-5 lg:col-span-6 xl:col-span-4 max-h-[27.5rem]">
         <Upcoming /> 
       </section>
 
       {/* Time Distribution chart */}
-      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-3 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-7 lg:col-span-6 xl:col-span-7 h-[27.5rem]">
+      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-3 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-7 lg:col-span-6 xl:col-span-4 h-[27.5rem]">
         <DistributionChart /> 
       </section>
 
-      {/* Overall Streak */}
-      <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white  pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark  md:col-span-5 lg:col-span-6 xl:col-span-5 max-h-[27.5rem] flex">
-        <StreakTracker /> 
-      </section>
 
       </div>
 

@@ -71,7 +71,6 @@ export function useAuth() {
       dispatch(userLoggedOut());
       persistor.purge(); 
       console.log("User signed out");
-      console.log("Current State After Logout: ", store.getState());
     } catch (error) {
       console.error("Sign out Error", error);
     }

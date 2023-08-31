@@ -221,7 +221,7 @@ module.exports = {
         65: '.65',
       },
       backgroundImage: {
-        video: "url('../images/video/video.png')",
+        'radial-gradient': 'radial-gradient(circle, #FEF189, #F7531C)',
       },
       content: {
         'icon-copy': 'url("../images/icon/icon-copy-alt.svg")',

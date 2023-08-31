@@ -9,18 +9,9 @@ import {
   updateHobbyInFirestore,
 } from "../../utils/hobbiesBase";
 import { userLoggedOut } from '../user/userSlice';
-import { createSelector } from '@reduxjs/toolkit';
-
 import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
 import {DUMMY_HOBBIES} from '../../utils/demoData';
 import {generateDynamicHobby} from '../../utils/demoData'
-
-
-
-
-
-
-
 
 export const addHobby = createAsyncThunk(
   "hobbies/addHobby",
