@@ -186,7 +186,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
       
         const today = new Date();
         const formattedToday = format(today, 'yyyy-MM-dd');
-      console.log(formattedToday);
+      
         state.hobbies.hobbies.forEach(hobby => {
           if (hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
             totalPossiblePoints += 1;
@@ -223,12 +223,11 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         // Moved this section out of the previous loop
         state.tasks.completedTasks.forEach(completedTask => {
           if (completedTask.dueDate === formattedToday && completedTask.completedDate === formattedToday) {
-            console.log(completedTask);
+            
             pointsEarned += 1;
           }
         });
-        console.log(totalPossiblePoints);
-        console.log(pointsEarned);
+        
         const dailyProductivityScore = (totalPossiblePoints > 0) 
         ? (pointsEarned / totalPossiblePoints) * 100 
         : 100;  
@@ -266,7 +265,6 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         'productivity/calculateOverallStreak',
         async ({ user }, thunkAPI) => {
             const state = thunkAPI.getState();
-            console.log(state);
            
             const uid = user.uid;
             let streakChanged = false;  
@@ -278,7 +276,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
             currentStreak = state.productivity.overallStreak;
             lastUpdatedDate = state.productivity.overallLastUpdatedDate || null;
 
-            console.log(lastUpdatedDate);
+            
       
             if (lastUpdatedDate && isToday(lastUpdatedDate)) {
               return { overallStreak: currentStreak, lastUpdatedDate: lastUpdatedDate };
@@ -290,8 +288,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
       
             const dailyHobbyProductivity = calculateDailyHobbiesProductivity(state);
             const dailyTaskProductivity = calculateDailyTaskProductivity(state);
-      console.log(dailyHobbyProductivity);
-      console.log(dailyTaskProductivity);
+      
             if (dailyHobbyProductivity >= 100 && dailyTaskProductivity >= 100) {
               if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
                 currentStreak += 1;
@@ -302,7 +299,6 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
               }
               streakChanged = true;
             }
-      console.log(currentStreak);
             if (streakChanged) {
               const todayDateISO = format(new Date(), 'yyyy-MM-dd');
               // Update local state only, no Firestore calls in demo mode
@@ -324,7 +320,6 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
             lastUpdatedDate = streakDocSnap.data().lastUpdatedDate ? parseISO(streakDocSnap.data().lastUpdatedDate) : null;
           }
         
-          console.log(isToday(lastUpdatedDate));
           // Skip further processing if the streak has already been updated today
           if (lastUpdatedDate && isToday(lastUpdatedDate)) {
               return {overallStreak: currentStreak, lastUpdatedDate:lastUpdatedDate};
@@ -334,16 +329,10 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
                 currentStreak = 0;
             } 
             
-            console.log('Streak: ', currentStreak);
-            console.log('Last date: ', lastUpdatedDate);
-            
           // Calculate streak based on today's activities
           const dailyHobbyProductivity = calculateDailyHobbiesProductivity(state);
           const dailyTaskProductivity = calculateDailyTaskProductivity(state);
-          console.log(dailyHobbyProductivity);
-          console.log(dailyTaskProductivity);
           if (dailyHobbyProductivity >= 100 && dailyTaskProductivity >= 100) {
-            console.log('met for the day');
             // If productivity for both hobbies and tasks is at least 100%
             if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
                 currentStreak += 1;  // Increment if last update was yesterday
@@ -352,8 +341,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
               }
               streakChanged = true;
             }   
-         
-            console.log('still going'); 
+          
           // Save the updated overallStreak and lastUpdatedDate back to Firebase
           if (streakChanged) {
             const todayDateISO = format(new Date(), 'yyyy-MM-dd');
@@ -380,7 +368,7 @@ const productivitySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(calculateOverallStreak.fulfilled, (state, action) => {
-        console.log(action.payload);
+        
       state.overallStreak = action.payload.overallStreak;
       state.overallLastUpdatedDate = action.payload.lastUpdatedDate;  
     })
