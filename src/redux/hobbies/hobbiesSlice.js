@@ -119,7 +119,7 @@ export const deletePracticeLog = createAsyncThunk(
 export const updatePracticeLog = createAsyncThunk(
   "hobbies/updatePracticeLog",
   async ({ user, hobbyId, logEntryId, newLogEntry }, thunkAPI) => {
-    const state = thunkAPI.getState();
+    const state = thunkAPI.getState(); 
     if (state.hobbies.demo) {
       // In demo mode, we find the correct log entry in our Redux state and update it.
       const hobby = state.hobbies.hobbies.find(h => h.refId === hobbyId);

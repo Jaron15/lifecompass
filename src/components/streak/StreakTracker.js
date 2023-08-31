@@ -22,12 +22,12 @@ const calculateBubbles = (overallStreak, lastUpdatedDate) => {
     
     if (!isToday(lastUpdatedDateObj )) {
       // If last updated date was not today, start filling from yesterday
-      console.log('is true');
+      console.log('is not today');
       console.log(lastUpdatedDate);
       startingIndex = todayDayIndex - 1;
       fillCount = Math.min(fillCount, startingIndex + 1);
     } else {
-        console.log('isnt true');
+        console.log('is today');
 
       // If last updated date was today, start filling from today
       fillCount = Math.min(fillCount, todayDayIndex + 1);
@@ -50,7 +50,7 @@ const StreakTracker = ({
     const dispatch = useDispatch();
   const {user} = useSelector((state) => state.user)
   const {hobbies} = useSelector((state) => state.hobbies)
-  const {completedTasks} = useSelector((state) => state.tasks.completedTasks);
+  const completedTasks = useSelector((state) => state.tasks.completedTasks);
   const {tasks} = useSelector((state) => state.tasks)
   // Select the overallStreak value from the Redux store
   const overallStreak = useSelector((state) => state.productivity.overallStreak);
