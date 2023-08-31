@@ -5,7 +5,7 @@ const DayBubble = ({ isCompleted, dayName }) => {
     const bubbleColor = isCompleted ? 'bg-radial-gradient' : 'bg-gray-300';
 
     return (
-        <div className={`shrink text-center px-3 py-1  rounded-full`}>
+        <div className={`shrink text-center px-3 py-1  rounded-full text-black dark:text-current`}>
            <div>
             {dayName}
            </div>

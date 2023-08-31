@@ -8,7 +8,7 @@ const StreakMessage = ({ streakCount, maxStreak }) => {
         message = 'Keep it up!'
     }
     return (
-        <div className="flex text-center px-4 mt-4 text-xl mt-2">
+        <div className="flex text-center px-4 mt-4 text-xl mt-2 text-black dark:text-current">
             {message}
         </div>
     );
