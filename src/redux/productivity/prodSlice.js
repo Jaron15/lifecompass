@@ -265,7 +265,6 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         'productivity/calculateOverallStreak',
         async ({ user }, thunkAPI) => {
             const state = thunkAPI.getState();
-           
             const uid = user.uid;
             let streakChanged = false;  
           let currentStreak = 0;
@@ -274,24 +273,22 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
           if (state.demo.enabled) {  // Assuming demo mode is enabled from demoSlice
                 console.log('-----demo mode entered------');
             currentStreak = state.productivity.overallStreak;
-            lastUpdatedDate = state.productivity.overallLastUpdatedDate || null;
 
-            
-      
+            lastUpdatedDate = state.productivity.overallLastUpdatedDate ? parseISO(state.productivity.overallLastUpdatedDate) : null;
+       
             if (lastUpdatedDate && isToday(lastUpdatedDate)) {
               return { overallStreak: currentStreak, lastUpdatedDate: lastUpdatedDate };
             }
 
             if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
-              currentStreak = 0;
+              currentStreak = 0; 
             }
       
             const dailyHobbyProductivity = calculateDailyHobbiesProductivity(state);
             const dailyTaskProductivity = calculateDailyTaskProductivity(state);
-      
             if (dailyHobbyProductivity >= 100 && dailyTaskProductivity >= 100) {
               if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
-                currentStreak += 1;
+                currentStreak += 1; 
                 console.log('increased');
               } else {
                 console.log('reset to 1');
@@ -304,9 +301,10 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
               // Update local state only, no Firestore calls in demo mode
               return { overallStreak: currentStreak, lastUpdatedDate: formatISO(new Date())  };
             }
-            return {overallStreak: currentStreak, lastUpdatedDate: lastUpdatedDate}
+            return {overallStreak: currentStreak, lastUpdatedDate: formatISO(lastUpdatedDate)}
           } else {
           //---------demo-----------
+
 
           const streakDocRef = doc(db, 'users', uid, 'productivity', 'streaks');
           const streakDocSnap = await getDoc(streakDocRef);
@@ -377,15 +375,15 @@ const productivitySlice = createSlice({
         if (state.demo) {
           // Initialize with dummy streak data
           const today = new Date();
+          console.log(today);
 const yesterday = new Date(today);
-
+console.log(yesterday);
 yesterday.setDate(today.getDate() - 1);
 yesterday.setHours(0, 0, 0, 0);
 
 
-
           state.overallStreak = 10; // You can generate this dynamically if you want
-          state.overallLastUpdatedDate = yesterday; // Dummy date
+          state.overallLastUpdatedDate = formatISO(yesterday); // Dummy date
         } else {
           // Clear demo data
           state.overallStreak = 0;
