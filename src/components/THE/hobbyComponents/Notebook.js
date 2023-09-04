@@ -4,7 +4,9 @@ import { useState } from "react";
 const Notebook = () => {
     const controls = useAnimation();
     const parentControls = useAnimation();
-
+    const sPageRender = useAnimation();
+    const [isOpen, setIsOpen] = useState(false)
+console.log(isOpen);
     const openBook = () => {
       controls.start({ 
         rotateY: -180, 
@@ -19,6 +21,11 @@ const Notebook = () => {
         duration: 0.75, 
         ease: "easeInOut"
       } });
+      sPageRender.start({
+        opacity: 1,
+        transition: { delay: .25, ease: "easeInOut" }
+    })
+      setIsOpen(true)
     };
   
     const closeBook = () => {
@@ -35,7 +42,11 @@ const Notebook = () => {
         duration: 0.75, 
         ease: "easeInOut"
       } });
-
+      sPageRender.start({
+        opacity: 0,
+        transition: { delay: .50, ease: "easeInOut" }
+    })
+      setIsOpen(false)
     };
   
     return (
@@ -43,18 +54,41 @@ const Notebook = () => {
         className="flex flex-col w-2/4 h-3/5 xl:h-4/5 2xl:w-2/5 items-center relative"
         animate={parentControls}
       >
-        {/* This is the "cover" of the notebook */}
         <motion.div
-          className="w-full h-full bg-blue-500 absolute z-10"
+          className="w-full h-full bg-white absolute z-10"
           initial={{ rotateY: 0, transformOrigin: "left" }}
           animate={controls}
         >
-          {/* Contents of the notebook would go here */}
+        
+        <motion.div 
+            className="w-full h-full"
+            style={{
+                backgroundImage: 'url("/compbackground.png")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+            initial={{ 
+                backgroundImage: 'url("/compbackground.png")',
+                borderRight: '0px solid transparent'
+            }}
+            animate={{ 
+                backgroundImage: isOpen ? "" : 'url("/compbackground.png")',
+                backgroundColor: 'white', 
+                borderRight: isOpen ? "2px solid black" : "0px solid transparent",
+                transition: { delay: 0.45, ease: "easeInOut" }
+            }}
+            >
+        </motion.div>
+            
+          {/* cover/page1 */}
         </motion.div>
         {/* This is the "back" of the notebook */}
-        <div className="w-full h-full bg-red-500 absolute z-0">
-          {/* Contents of the notebook's back would go here */}
-        </div>
+        <motion.div 
+        initial={{opacity: 0}}
+        animate={sPageRender}
+        className="w-full h-full bg-white absolute z-0">
+         {/* the page 2 */}
+        </motion.div>
         {/* These are the "buttons" to open and close the notebook */}
         <button onClick={openBook} className="z-20 relative">Open Notebook</button>
         <button onClick={closeBook} className="z-20 relative">Close Notebook</button>
