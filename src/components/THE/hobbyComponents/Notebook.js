@@ -51,42 +51,88 @@ console.log(isOpen);
   
     return (
         <motion.div 
-        className="flex flex-col w-2/4 h-3/5 xl:h-4/5 2xl:w-2/5 items-center relative"
+        className="flex flex-col w-10/12 h-4/6 sm:w-2/4 sm:h-3/5 md:h-4/6 xl:h-4/5 2xl:w-2/5 items-center relative rounded-md shadow shadow-2xl
+
+        "
         animate={parentControls}
       >
         <motion.div
-          className="w-full h-full bg-white absolute z-10"
+          className="w-full h-full bg-white absolute z-10 rounded-md "
           initial={{ rotateY: 0, transformOrigin: "left" }}
           animate={controls}
         >
         
         <motion.div 
-            className="w-full h-full"
+            className="w-full h-full bg-contain md:bg-cover rounded-md shadow shadow-2xl"
             style={{
                 backgroundImage: 'url("/compbackground.png")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+              
+                backgroundPosition: 'left',
             }}
             initial={{ 
                 backgroundImage: 'url("/compbackground.png")',
-                borderRight: '0px solid transparent'
+                borderLeft: '0px solid transparent'
             }}
             animate={{ 
                 backgroundImage: isOpen ? "" : 'url("/compbackground.png")',
                 backgroundColor: 'white', 
-                borderRight: isOpen ? "2px solid black" : "0px solid transparent",
+                borderLeft: isOpen ? "2px solid grey" : "0px solid transparent",
                 transition: { delay: 0.45, ease: "easeInOut" }
             }}
             >
+
+<motion.div 
+initial={{
+    opacity: 1
+}}
+animate={{
+    opacity: isOpen ? 0 : 1,
+    transition: { delay: isOpen ? .25 : .45, ease: "easeInOut" }
+}}
+className="absolute top-14 left-[23%] w-4/6 h-1/3 bg-white border border-black rounded-md overflow-clip">
+        <div className="m-2 flex-col justify-center items-center text-center h-[90%]">
+            <div className="text-center text-black uppercase font-bold mb-2  ">
+                Subject
+            </div>
+            <div className="text-center text-gray-700  self-center mx-auto flex items-center overflow-hidden h-[80%] break-words w-[90%]">
+                <div className="h-full w-full text-center md:pt-4 break-words font-handwritten text-black text-4xl xsm:text-5xl xl:text-6xl">
+                Drumming
+                </div>
+            </div>
+        </div>
+    </motion.div>
+
+{isOpen && (
+  <motion.div
+    className="w-full h-full z-20 rounded-md flex flex-col justify-between p-4 py-24 items-center text-2xl border border-black"
+    initial={{ opacity: 0 }}
+    animate={{
+      opacity: 1,
+      transition: { delay: 0.6},
+    }}
+  >
+    {["Overview", "Goals", "Progress", "Streaks", "Notes"].map((text, index) => (
+      <motion.div
+        key={index}
+        className="text-black cursor-pointer"
+        style={{ transform: 'rotateY(180deg)' }}
+        initial={{ opacity: 0, }}
+        animate={{ opacity: 1, }}
+        transition={{ delay: 0.8 + index * 0.20 , duration: .25}}   // Incrementing delay based on index
+      >
+        {text}
+      </motion.div>
+    ))}
+  </motion.div>
+)}
         </motion.div>
-            
           {/* cover/page1 */}
         </motion.div>
         {/* This is the "back" of the notebook */}
         <motion.div 
         initial={{opacity: 0}}
         animate={sPageRender}
-        className="w-full h-full bg-white absolute z-0">
+        className="w-full h-full bg-white absolute z-0 rounded-md shadow shadow-2xl border border-black">
          {/* the page 2 */}
         </motion.div>
         {/* These are the "buttons" to open and close the notebook */}

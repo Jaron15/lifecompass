@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <meta name='theme-color' content='#24303F' />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-
+      <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
       <body className={inter.className}>
        <Providers>
        <div className="dark:bg-boxdark-2 dark:text-bodydark">

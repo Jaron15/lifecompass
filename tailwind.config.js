@@ -12,6 +12,7 @@ module.exports = {
   theme: {
     fontFamily: {
       satoshi: ['Satoshi', 'sans-serif'],
+      handwritten: ['Caveat', 'cursive']
     },
     screens: {
       '2xsm': '375px',
