@@ -7,6 +7,7 @@ import ProductivityChart from '../../components/ProductivityChart';
 import useCheckAuth from '@/src/hooks/useCheckAuth';
 import DistributionChart from '@/src/components/DistributionChart';
 import StreakTracker from '../../components/streak/StreakTracker'
+import OverallStreak from '../../components/THE/OverallStreak';
 
 
 
@@ -85,7 +86,7 @@ useEffect(() => {
 
       {/* Overall Streak */}
       <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white  pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark  md:col-span-5 lg:col-span-6 xl:col-span-4 max-h-[27.5rem] flex">
-        <StreakTracker /> 
+        <OverallStreak /> 
       </section>
       {/* Upcoming */}
       <section className="col-span-12 rounded-sm border shadow shadow-2xl border-stroke bg-white px-5 pt-7.5 pb-5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 md:col-span-5 lg:col-span-6 xl:col-span-4 max-h-[27.5rem]">

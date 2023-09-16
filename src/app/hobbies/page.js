@@ -1,7 +1,7 @@
 'use client'
 import PlaceholderPage from '@/src/components/PlaceholderPage'
 import React from 'react'
-import Notebook from '../../components/THE/hobbyComponents/Notebook'
+import Notebook from '../../components/THE/hobbyComponents/notebook/Notebook'
 
 function page() {
   return (

@@ -15,9 +15,13 @@ function TaskItem({item, date, isRecurringTaskCompletedForDate, isSingularTaskCo
     };
     const handleUndo = (task, date) => {
       if (task.type === 'recurring') {
-      const completedTaskForUndo = completedTasks.find(ctask => ctask.refId === task.refId && ctask.dueDate === date);
-      const taskId = completedTaskForUndo.docId
-      dispatch(deleteCompletedTask({userId: user.uid, taskId: taskId }))
+        console.log(task);
+        const completedTaskForUndo = completedTasks.find(ctask => ctask.refId === task.refId && ctask.dueDate === date);
+        console.log(completedTaskForUndo.id);
+        const taskId = completedTaskForUndo.docId
+        
+        dispatch(deleteCompletedTask({userId: user.uid, taskId: taskId, ctId: completedTaskForUndo.id }))
+        
     }
     else {
       dispatch(updateTask({

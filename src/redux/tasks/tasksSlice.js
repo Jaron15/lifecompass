@@ -170,10 +170,11 @@ export const addCompletedTask = createAsyncThunk('tasks/addCompletedTask',
 
 export const deleteCompletedTask = createAsyncThunk(
   'tasks/deleteCompletedTask',
-  async ({userId, taskId}, thunkAPI) => {
+  async ({userId, taskId, ctId}, thunkAPI) => {
     const state = thunkAPI.getState();
     if (state.tasks.demo) {
-      return taskId;
+      console.log(taskId);
+      return ctId;
     } else {
     try {
       await deleteCompletedTaskFromFirestore(userId, taskId);

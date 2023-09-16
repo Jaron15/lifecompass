@@ -36,19 +36,18 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
           
           const formattedPracticeDate = format(practiceDate, 'yyyy-MM-dd');
         
-          const practiceLog = (hobby.practiceLog || []).find(log => {
-            return log.date === formattedPracticeDate;
-        });
-        
-        
-          
-          if (practiceLog) {
-            pointsEarned += (practiceLog.timeSpent >= hobby.practiceTimeGoal) ? 1 : 0.5;
-          }
+          const totalPracticeTimeOnDate = (hobby.practiceLog || [])
+          .filter(log => log.date === formattedPracticeDate)
+          .reduce((acc, log) => acc + log.timeSpent, 0);
+
+        if (totalPracticeTimeOnDate >= hobby.practiceTimeGoal) {
+          pointsEarned += 1;
+        } else if (totalPracticeTimeOnDate > 0) {
+          pointsEarned += 0.5;
         }
-      });
+      }
     });
-    
+  });
 
     const weeklyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
     return weeklyProductivityScore;
@@ -66,18 +65,22 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
       daysSoFarThisMonth.forEach(day => {
         if (hobby.daysOfWeek.includes(format(day, 'EEEE'))) {
           totalPossiblePoints += 1;
-          
-          const practiceLog = (hobby.practiceLog || []).find(log => 
-            log.date === format(day, 'yyyy-MM-dd')
-          );
   
-          
-          if (practiceLog) {
-            pointsEarned += (practiceLog.timeSpent >= hobby.practiceTimeGoal) ? 1 : 0.5;
+          const formattedDay = format(day, 'yyyy-MM-dd');
+          // Aggregate the total time spent on this day
+          const totalPracticeTimeOnDate = (hobby.practiceLog || [])
+            .filter(log => log.date === formattedDay)
+            .reduce((acc, log) => acc + log.timeSpent, 0);
+  
+          if (totalPracticeTimeOnDate >= hobby.practiceTimeGoal) {
+            pointsEarned += 1;
+          } else if (totalPracticeTimeOnDate > 0) {
+            pointsEarned += 0.5;
           }
         }
       });
     });
+  
 
     const monthlyProductivityScore = (pointsEarned / totalPossiblePoints) * 100 || 0;
     
@@ -190,20 +193,23 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         state.hobbies.hobbies.forEach(hobby => {
           if (hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
             totalPossiblePoints += 1;
-            const practiceLog = hobby.practiceLog.find(log => log.date === formattedToday);
-            if (practiceLog && practiceLog.timeSpent >= hobby.practiceTimeGoal) {
-              pointsEarned += 1;
-            }
-          }
-        });
-      
-        const dailyProductivityScore = (totalPossiblePoints > 0) 
-        ? (pointsEarned / totalPossiblePoints) * 100 
-        : 100;  
-  
-    return dailyProductivityScore;
+            const totalPracticeTimeOnDate = (hobby.practiceLog || [])
+          .filter(log => log.date === formattedToday)
+          .reduce((acc, log) => acc + log.timeSpent, 0);
 
-      };
+        if (totalPracticeTimeOnDate >= hobby.practiceTimeGoal) {
+          pointsEarned += 1;
+        }
+      }
+    });
+  
+    const dailyProductivityScore = (totalPossiblePoints > 0) 
+      ? (pointsEarned / totalPossiblePoints) * 100 
+      : 100;
+
+    return dailyProductivityScore;
+};
+
 
       export const calculateDailyTaskProductivity = (state) => {
         let totalPossiblePoints = 0;
@@ -246,17 +252,112 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         const formattedToday = format(today, 'yyyy-MM-dd');
       
         const hobby = state.hobbies.hobbies.find(h => h.id === hobbyId);
-        if (hobby && hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
-          totalPossiblePoints += 1;
-          const practiceLog = hobby.practiceLog.find(log => log.date === formattedToday);
-          if (practiceLog && practiceLog.timeSpent >= hobby.practiceTimeGoal) {
-            pointsEarned += 1;
-          }
+    if (hobby && hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
+        totalPossiblePoints += 1;
+
+        // Aggregate the total time spent on this day for the hobby
+        const totalPracticeTimeOnDate = (hobby.practiceLog || [])
+          .filter(log => log.date === formattedToday)
+          .reduce((acc, log) => acc + log.timeSpent, 0);
+
+        if (totalPracticeTimeOnDate >= hobby.practiceTimeGoal) {
+          pointsEarned += 1;
         }
-      
-        const dailyProductivityScore = (totalPossiblePoints > 0) ? (pointsEarned / totalPossiblePoints) * 100 : 0;
+    }
+  
+        const dailyProductivityScore = (totalPossiblePoints > 0) 
+          ? (pointsEarned / totalPossiblePoints) * 100 
+          : 0;
+
         return dailyProductivityScore;
-      };
+    };
+
+    export const calculateHobbyStreak = createAsyncThunk(
+      'hobbies/calculateHobbyStreak',
+      async ({ user, hobbyId }, thunkAPI) => {
+          const state = thunkAPI.getState();
+          const uid = user.uid;
+          let streakChanged = false;  
+          let currentStreak = 0;
+          let lastUpdatedDate = null;
+  
+          //---------demo-----------
+          if (state.demo.enabled) {
+              // Assuming hobby streak is available in demoSlice for the particular hobby
+              currentStreak = state.demo.hobbyStreaks[hobbyId] || 0;
+  
+              lastUpdatedDate = state.demo.hobbyLastUpdatedDates[hobbyId] ? parseISO(state.demo.hobbyLastUpdatedDates[hobbyId]) : null;
+  
+              if (lastUpdatedDate && isToday(lastUpdatedDate)) {
+                  return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate };
+              }
+  
+              if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
+                  currentStreak = 0;
+              }
+  
+              const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
+              if (dailyHobbyProductivity >= 100) {
+                  if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
+                      currentStreak += 1;
+                  } else {
+                      currentStreak = 1;
+                  }
+                  streakChanged = true;
+              }
+  
+              if (streakChanged) {
+                  const todayDateISO = format(new Date(), 'yyyy-MM-dd');
+                  // Update local state only, no Firestore calls in demo mode
+                  return { streak: currentStreak, lastUpdatedDate: todayDateISO };
+              }
+              return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate };
+  
+          } else {
+           
+            const hobbyStreakDocRef = doc(db, 'users', uid, 'hobbies', hobbyId, 'streak');
+        const hobbyStreakDocSnap = await getDoc(hobbyStreakDocRef);
+        
+        if (!hobbyStreakDocSnap.exists()) {
+            await setDoc(hobbyStreakDocRef, {
+              streak: 0,
+              lastUpdatedDate: null,
+            });
+        } else {
+            currentStreak = hobbyStreakDocSnap.data().streak;
+            lastUpdatedDate = hobbyStreakDocSnap.data().lastUpdatedDate ? parseISO(hobbyStreakDocSnap.data().lastUpdatedDate) : null;
+        }
+
+        if (lastUpdatedDate && isToday(lastUpdatedDate)) {
+            return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate };
+        }
+
+        if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
+            currentStreak = 0;
+        }
+
+        const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
+        if (dailyHobbyProductivity >= 100) {
+            if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
+                currentStreak += 1;
+            } else {
+                currentStreak = 1;
+            }
+            streakChanged = true;
+        }
+
+        if (streakChanged) {
+            const todayDateISO = format(new Date(), 'yyyy-MM-dd');
+            await setDoc(hobbyStreakDocRef, { streak: currentStreak, lastUpdatedDate: todayDateISO });
+            return { streak: currentStreak, lastUpdatedDate: formatISO(new Date()) };
+        }
+        
+      }
+        return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate }
+    }
+);
+
+  
       //-----for an individual hobby------
     //-----------daily----------
 
@@ -271,7 +372,6 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
           let lastUpdatedDate = null;
             //---------demo-----------
           if (state.demo.enabled) {  // Assuming demo mode is enabled from demoSlice
-                console.log('-----demo mode entered------');
             currentStreak = state.productivity.overallStreak;
 
             lastUpdatedDate = state.productivity.overallLastUpdatedDate ? parseISO(state.productivity.overallLastUpdatedDate) : null;
