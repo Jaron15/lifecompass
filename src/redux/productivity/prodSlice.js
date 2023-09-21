@@ -251,7 +251,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         const today = new Date();
         const formattedToday = format(today, 'yyyy-MM-dd');
       
-        const hobby = state.hobbies.hobbies.find(h => h.id === hobbyId);
+        const hobby = state.hobbies.hobbies.find(h => h.refId === hobbyId);
     if (hobby && hobby.daysOfWeek.includes(format(today, 'EEEE'))) {
         totalPossiblePoints += 1;
 
@@ -272,90 +272,7 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
         return dailyProductivityScore;
     };
 
-    export const calculateHobbyStreak = createAsyncThunk(
-      'hobbies/calculateHobbyStreak',
-      async ({ user, hobbyId }, thunkAPI) => {
-          const state = thunkAPI.getState();
-          const uid = user.uid;
-          let streakChanged = false;  
-          let currentStreak = 0;
-          let lastUpdatedDate = null;
-  
-          //---------demo-----------
-          if (state.demo.enabled) {
-              // Assuming hobby streak is available in demoSlice for the particular hobby
-              currentStreak = state.demo.hobbyStreaks[hobbyId] || 0;
-  
-              lastUpdatedDate = state.demo.hobbyLastUpdatedDates[hobbyId] ? parseISO(state.demo.hobbyLastUpdatedDates[hobbyId]) : null;
-  
-              if (lastUpdatedDate && isToday(lastUpdatedDate)) {
-                  return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate };
-              }
-  
-              if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
-                  currentStreak = 0;
-              }
-  
-              const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
-              if (dailyHobbyProductivity >= 100) {
-                  if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
-                      currentStreak += 1;
-                  } else {
-                      currentStreak = 1;
-                  }
-                  streakChanged = true;
-              }
-  
-              if (streakChanged) {
-                  const todayDateISO = format(new Date(), 'yyyy-MM-dd');
-                  // Update local state only, no Firestore calls in demo mode
-                  return { streak: currentStreak, lastUpdatedDate: todayDateISO };
-              }
-              return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate };
-  
-          } else {
-           
-            const hobbyStreakDocRef = doc(db, 'users', uid, 'hobbies', hobbyId, 'streak');
-        const hobbyStreakDocSnap = await getDoc(hobbyStreakDocRef);
-        
-        if (!hobbyStreakDocSnap.exists()) {
-            await setDoc(hobbyStreakDocRef, {
-              streak: 0,
-              lastUpdatedDate: null,
-            });
-        } else {
-            currentStreak = hobbyStreakDocSnap.data().streak;
-            lastUpdatedDate = hobbyStreakDocSnap.data().lastUpdatedDate ? parseISO(hobbyStreakDocSnap.data().lastUpdatedDate) : null;
-        }
-
-        if (lastUpdatedDate && isToday(lastUpdatedDate)) {
-            return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate };
-        }
-
-        if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
-            currentStreak = 0;
-        }
-
-        const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
-        if (dailyHobbyProductivity >= 100) {
-            if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
-                currentStreak += 1;
-            } else {
-                currentStreak = 1;
-            }
-            streakChanged = true;
-        }
-
-        if (streakChanged) {
-            const todayDateISO = format(new Date(), 'yyyy-MM-dd');
-            await setDoc(hobbyStreakDocRef, { streak: currentStreak, lastUpdatedDate: todayDateISO });
-            return { streak: currentStreak, lastUpdatedDate: formatISO(new Date()) };
-        }
-        
-      }
-        return { streak: currentStreak, lastUpdatedDate: lastUpdatedDate }
-    }
-);
+    
 
   
       //-----for an individual hobby------
@@ -373,17 +290,18 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
             //---------demo-----------
           if (state.demo.enabled) {  // Assuming demo mode is enabled from demoSlice
             currentStreak = state.productivity.overallStreak;
-
+           console.log(state.productivity.overallLastUpdatedDate);
+           console.log(formatISO(new Date(), 'yyyy-MM-dd'));
             lastUpdatedDate = state.productivity.overallLastUpdatedDate ? parseISO(state.productivity.overallLastUpdatedDate) : null;
        
             if (lastUpdatedDate && isToday(lastUpdatedDate)) {
-              return { overallStreak: currentStreak, lastUpdatedDate: lastUpdatedDate };
+              return { overallStreak: currentStreak, lastUpdatedDate: state.productivity.overallLastUpdatedDate };
             }
 
             if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
               currentStreak = 0; 
             }
-      
+            console.log("date before: " + lastUpdatedDate);
             const dailyHobbyProductivity = calculateDailyHobbiesProductivity(state);
             const dailyTaskProductivity = calculateDailyTaskProductivity(state);
             if (dailyHobbyProductivity >= 100 && dailyTaskProductivity >= 100) {
@@ -397,11 +315,14 @@ export const selectWeeklyHobbyProductivityScores = (state) => {
               streakChanged = true;
             }
             if (streakChanged) {
-              const todayDateISO = format(new Date(), 'yyyy-MM-dd');
+              const todayDateISO = formatISO(new Date(), 'yyyy-MM-dd');
               // Update local state only, no Firestore calls in demo mode
-              return { overallStreak: currentStreak, lastUpdatedDate: formatISO(new Date())  };
+              console.log('isodate today: ' + todayDateISO);
+              return { overallStreak: currentStreak, lastUpdatedDate: todayDateISO };
             }
-            return {overallStreak: currentStreak, lastUpdatedDate: formatISO(lastUpdatedDate)}
+            console.log('STATE DATE: ' + state.productivity.overallLastUpdatedDate);
+            
+            return {overallStreak: currentStreak, lastUpdatedDate: state.productivity.overallLastUpdatedDate }
           } else {
           //---------demo-----------
 
@@ -466,7 +387,8 @@ const productivitySlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(calculateOverallStreak.fulfilled, (state, action) => {
-        
+        console.log('RIGHT HERE NOW ' + state.overallLastUpdatedDate);
+        console.log('RIGHT HERE NOW CHANGED' + action.payload.lastUpdatedDate);
       state.overallStreak = action.payload.overallStreak;
       state.overallLastUpdatedDate = action.payload.lastUpdatedDate;  
     })
@@ -482,7 +404,7 @@ yesterday.setDate(today.getDate() - 1);
 yesterday.setHours(0, 0, 0, 0);
 
 
-          state.overallStreak = 10; // You can generate this dynamically if you want
+          state.overallStreak = 10; 
           state.overallLastUpdatedDate = formatISO(yesterday); // Dummy date
         } else {
           // Clear demo data

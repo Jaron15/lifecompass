@@ -1,5 +1,7 @@
+import StreakTracker from "@/src/components/streak/StreakTracker";
 import { motion, useAnimation } from "framer-motion";
 import { useState } from "react";
+import Overview from "./overview/Overview";
 
 const Notebook = () => {
     const controls = useAnimation();
@@ -134,6 +136,9 @@ className="absolute top-14 left-[23%] w-4/6 h-1/3 bg-white border border-black r
         animate={sPageRender}
         className="w-full h-full bg-white absolute z-0 rounded-md shadow shadow-2xl border border-black">
          {/* the page 2 */}
+         <div className="overflow-scroll h-full w-full overflow-x-clip py-6">
+         <Overview />
+         </div>
         </motion.div>
         {/* These are the "buttons" to open and close the notebook */}
         <button onClick={openBook} className="z-20 relative">Open Notebook</button>

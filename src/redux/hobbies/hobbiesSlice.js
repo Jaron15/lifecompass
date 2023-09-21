@@ -12,6 +12,8 @@ import { userLoggedOut } from '../user/userSlice';
 import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
 import {DUMMY_HOBBIES} from '../../utils/demoData';
 import {generateDynamicHobby} from '../../utils/demoData'
+import { calculateDailyProductivityForHobby } from "../productivity/prodSlice";
+import {  format,  parseISO, formatISO, isToday, isYesterday} from 'date-fns';
 
 export const addHobby = createAsyncThunk(
   "hobbies/addHobby",
@@ -82,14 +84,14 @@ export const logPractice = createAsyncThunk(
       const logEntryId = Date.now().toString();
     
       const logEntryWithId = { ...logEntry, id: logEntryId };
-      return { hobbyId, logEntry: logEntryWithId, streak: 0, lastPracticeDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }) };
+      return { hobbyId, logEntry: logEntryWithId };
 
     } else {
 
     try {
       const updatedData = await logPracticeInFirestore(user, hobbyId, logEntry);
         console.log('made it to slice');
-        return { hobbyId, logEntry: updatedData.logEntry, streak: updatedData.streak, lastPracticeDate: updatedData.lastPracticeDate };
+        return { hobbyId, logEntry: updatedData.logEntry };
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -153,6 +155,104 @@ export const updatePracticeLog = createAsyncThunk(
   }
 }
 );
+
+export const calculateHobbyStreak = createAsyncThunk(
+  'hobbies/calculateHobbyStreak',
+  async ({ user, hobbyId }, thunkAPI) => {
+      const state = thunkAPI.getState();
+      const uid = user.uid;
+      let streakChanged = false;  
+      let currentStreak = 0;
+      let bestStreak = 0;
+      let lastUpdatedDate = null;
+console.log('CALCULATING');
+      //---------demo-----------
+      if (state.demo) {
+        console.log('ENTERED DEMO');
+        const hobby = state.hobbies.hobbies.find(h => h.refId === hobbyId);
+        console.log(hobby);
+        if (!hobby) {
+          console.log('hobby doesnt exisst');
+            return { streak: 0, lastUpdatedDate: null, bestStreak: 0 };
+        }
+        console.log(hobby.lastUpdatedDate);
+        currentStreak = hobby.streak || 0;
+        bestStreak = hobby.bestStreak || 0;
+        lastUpdatedDate = hobby.lastUpdatedDate ? parseISO(hobby.lastUpdatedDate) : null;
+        if (lastUpdatedDate && isToday(lastUpdatedDate)) {
+          return { streak: currentStreak, bestStreak, lastUpdatedDate: lastUpdatedDate };
+        }
+        
+        if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
+          currentStreak = 0;
+        }
+        console.log('--------STILL INNNN------');
+
+          const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
+          console.log(dailyHobbyProductivity);
+          if (dailyHobbyProductivity >= 100) {
+              if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
+                console.log('increased');
+                  currentStreak += 1;
+                  bestStreak = Math.max(bestStreak, currentStreak);
+              } else {
+                  currentStreak = 1;
+              }
+              streakChanged = true;
+          }
+          if (streakChanged) {
+              const todayDateISO = format(new Date(), 'yyyy-MM-dd');
+              return { streak: currentStreak, bestStreak, lastUpdatedDate: todayDateISO };
+          }
+          console.log(lastUpdatedDate);
+          return { streak: currentStreak, bestStreak, lastUpdatedDate: lastUpdatedDate };
+
+      } else {
+        const hobbyStreakDocRef = doc(db, 'users', uid, 'hobbies', hobbyId, 'streak');
+        const hobbyStreakDocSnap = await getDoc(hobbyStreakDocRef);
+        
+        if (!hobbyStreakDocSnap.exists()) {
+            await setDoc(hobbyStreakDocRef, {
+              streak: 0,
+              bestStreak: 0,
+              lastUpdatedDate: null,
+            });
+        } else {
+            currentStreak = hobbyStreakDocSnap.data().streak;
+            bestStreak = hobbyStreakDocSnap.data().bestStreak;
+            lastUpdatedDate = hobbyStreakDocSnap.data().lastUpdatedDate ? parseISO(hobbyStreakDocSnap.data().lastUpdatedDate) : null;
+        }
+
+        if (lastUpdatedDate && isToday(lastUpdatedDate)) {
+            return { streak: currentStreak, bestStreak, lastUpdatedDate: lastUpdatedDate };
+        }
+
+        if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
+            currentStreak = 0;
+        }
+
+        const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
+        if (dailyHobbyProductivity >= 100) {
+            if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
+                currentStreak += 1;
+                bestStreak = Math.max(bestStreak, currentStreak);
+            } else {
+                currentStreak = 1;
+            }
+            streakChanged = true;
+        }
+
+        if (streakChanged) {
+            const todayDateISO = format(new Date(), 'yyyy-MM-dd');
+            await setDoc(hobbyStreakDocRef, { streak: currentStreak, bestStreak, lastUpdatedDate: todayDateISO });
+            return { streak: currentStreak, bestStreak, lastUpdatedDate: formatISO(new Date()) };
+        }
+        
+        return { streak: currentStreak, bestStreak, lastUpdatedDate: lastUpdatedDate };
+      }
+  }
+);
+
 
 export const hobbiesSlice = createSlice({
   name: "hobbies",
@@ -275,8 +375,6 @@ export const hobbiesSlice = createSlice({
         // add the log
         if (hobby) {
           hobby.practiceLog.push(action.payload.logEntry);
-          hobby.streak = action.payload.streak;
-          hobby.lastPracticeDate = action.payload.lastPracticeDate;
         }      
       })
       .addCase(logPractice.rejected, (state, action) => {
@@ -330,9 +428,20 @@ export const hobbiesSlice = createSlice({
         } else {
           state.error = action.error;
         }
-      });
+      })
 
     //-------practicLog--------
+    //-------Streak-----------
+    .addCase(calculateHobbyStreak.fulfilled, (state, action) => {
+      const { streak, bestStreak, lastUpdatedDate } = action.payload;
+      const hobby = state.hobbies.find(h => h.refId === action.meta.arg.hobbyId);
+      if (hobby) {
+          hobby.streak = streak;
+          hobby.bestStreak = bestStreak;
+          hobby.lastUpdatedDate = lastUpdatedDate;
+      }
+  })
+
   },
 });
 

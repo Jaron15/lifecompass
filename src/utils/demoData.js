@@ -31,7 +31,10 @@ export const generateDynamicHobby = () => {
     daysOfWeek: uniqueDaysOfWeek,
     practiceTimeGoal: 60,
     practiceLog: practiceLog,
-    createdDate: adjCreatedDate 
+    createdDate: adjCreatedDate, 
+    streak: 10, 
+    bestStreak: 10, 
+    lastUpdatedDate: format(subDays(new Date(), 1), 'yyyy-MM-dd') 
   };
 };
 
@@ -166,36 +169,6 @@ export function generateDynamicDummyTasks() {
 }
 
 
-
-  // const DUMMY_TASKS = [
-  //   {
-  //     id: 'task1',
-  //     refId: 'task1',
-  //     name: 'clean the house',
-  //     dueDate: '2023-08-15',
-  //     isCompleted: false,
-  //     type: 'singular',
-  //     recurringDay: ''
-  //   },
-  //   {
-  //     id: 'task2',
-  //     refId: 'task2',
-  //     name: 'wash car',
-  //     dueDate: '2023-08-16',
-  //     isCompleted: false,
-  //     type: 'singular',
-  //     recurringDay: ''
-  //   },
-  //   {
-  //     id: 'task3',
-  //     refId: 'task3',
-  //     name: 'Laundry',
-  //     recurringDay: 'Sunday',
-  //     isCompleted: false,
-  //     type: 'recurring',
-  //     dueDate: ''
-  //   },
-  // ];
   export const DUMMY_EVENTS = [
     {
       id: 'event1',

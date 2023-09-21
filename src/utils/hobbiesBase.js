@@ -120,8 +120,6 @@ export async function updateHobbyInFirestore(user, hobby) {
     throw new Error('Invalid or missing log entry time spent');
   }
 
-
-    
     // Generate unique logEntryId
     const logEntryId = Date.now().toString();
     
@@ -134,48 +132,14 @@ export async function updateHobbyInFirestore(user, hobby) {
     throw new Error(`No hobby found with this ID`);
   }
 
-  // Current streak logic
-  const hobbyData = hobbyDocSnap.data();
-
-  const todayDate = new Date();
-const today = `${todayDate.getFullYear()}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${String(todayDate.getDate()).padStart(2, '0')}`;
-
-let totalPracticeTimeToday = logEntry.timeSpent;
-
-// Check if there are other practice logs for today and sum their time
-const todayPracticeLogs = hobbyData.practiceLog.filter(log => log.date === today) || [];
-todayPracticeLogs.forEach(log => {
-    totalPracticeTimeToday += log.timeSpent;
-});
-
-const practiceTimeGoalMet = totalPracticeTimeToday >= hobbyData.practiceTimeGoal;
-
-  let updatedStreak = hobbyData.streak || 0;
-  let updatedLastPracticeDate = hobbyData.lastPracticeDate || null;
-  
-  if (practiceTimeGoalMet) {
-    if (!updatedLastPracticeDate) { 
-      //if there is no lastPracticeDate state
-      updatedStreak = 1; 
-      
-  } else if (updatedLastPracticeDate === today) {
-      // If the user has practiced today already, do not modify streak
-  } else {
-      // If the user practiced yesterday, increment streak
-      updatedStreak += 1;
-  }
-  console.log(totalPracticeTimeToday);
-  updatedLastPracticeDate = today;
-}
+ 
   try {
     await updateDoc(hobbyDocRef, {
       practiceLog: arrayUnion(logEntryWithId),
-      streak: updatedStreak,
-      lastPracticeDate: updatedLastPracticeDate
   });
   
     // Return logEntryWithId for Redux to use
-    return { logEntry: logEntryWithId, streak: updatedStreak, lastPracticeDate: updatedLastPracticeDate };
+    return { logEntry: logEntryWithId };
 
   } catch (error) {
     console.error('Error adding practice log to hobby in Firestore:', error);
