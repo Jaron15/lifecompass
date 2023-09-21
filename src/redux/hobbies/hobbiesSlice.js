@@ -180,7 +180,7 @@ console.log('CALCULATING');
         bestStreak = hobby.bestStreak || 0;
         lastUpdatedDate = hobby.lastUpdatedDate ? parseISO(hobby.lastUpdatedDate) : null;
         if (lastUpdatedDate && isToday(lastUpdatedDate)) {
-          return { streak: currentStreak, bestStreak, lastUpdatedDate: lastUpdatedDate };
+          return { streak: currentStreak, bestStreak, lastUpdatedDate: hobby.lastUpdatedDate };
         }
         
         if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
@@ -201,12 +201,12 @@ console.log('CALCULATING');
               streakChanged = true;
           }
           if (streakChanged) {
-              const todayDateISO = format(new Date(), 'yyyy-MM-dd');
+              const todayDateISO = formatISO(new Date(), 'yyyy-MM-dd');
               return { streak: currentStreak, bestStreak, lastUpdatedDate: todayDateISO };
           }
           console.log(lastUpdatedDate);
-          return { streak: currentStreak, bestStreak, lastUpdatedDate: lastUpdatedDate };
-
+          return { streak: currentStreak, bestStreak, lastUpdatedDate: hobby.lastUpdatedDate };
+            //--------DEMO end-----------
       } else {
         const hobbyStreakDocRef = doc(db, 'users', uid, 'hobbies', hobbyId, 'streak');
         const hobbyStreakDocSnap = await getDoc(hobbyStreakDocRef);
