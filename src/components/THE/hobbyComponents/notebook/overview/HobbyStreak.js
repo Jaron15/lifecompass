@@ -5,8 +5,7 @@ import { calculateHobbyStreak } from '@/src/redux/hobbies/hobbiesSlice';
 
 
 function HobbyStreak({hobby}) {
-console.log('SEE WHATS IN HERE: ', hobby);
-  // const demoHobby = useSelector(state => state.hobbies.hobbies[0]);
+
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch();
   
@@ -15,7 +14,6 @@ console.log('SEE WHATS IN HERE: ', hobby);
   const { lastUpdatedDate } = hobby;
 
 
-  console.log(streak);
   useEffect(() => {
     dispatch(calculateHobbyStreak({ user:user, hobbyId:hobby.refId }));
 }, [hobby]);

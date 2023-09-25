@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import Notebook from '../../components/THE/hobbyComponents/notebook/Notebook'
 import { useDispatch, useSelector } from 'react-redux';
 
-function page() {
+function Page() {
   const hobbies = useSelector(state => state.hobbies.hobbies);
   const [currentHobbyIndex, setCurrentHobbyIndex] = useState(0);
 
@@ -49,4 +49,4 @@ console.log(hobbies[currentHobbyIndex]);
   );
 }
 
-export default page;
+export default Page;
