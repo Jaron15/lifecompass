@@ -1,10 +1,10 @@
 import React from 'react'
 import HobbyStreak from './HobbyStreak'
 
-function Overview() {
+function Overview({hobby}) {
   return (
     <div>
-        <HobbyStreak />
+        <HobbyStreak hobby={hobby} />
     </div>
   )
 }

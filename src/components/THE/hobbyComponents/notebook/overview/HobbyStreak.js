@@ -3,17 +3,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import StreakTracker from '@/src/components/streak/StreakTracker';
 import { calculateHobbyStreak } from '@/src/redux/hobbies/hobbiesSlice';
 
-function HobbyStreak() {
 
-  const demoHobby = useSelector(state => state.hobbies.hobbies[0]);
+function HobbyStreak({hobby}) {
+console.log('SEE WHATS IN HERE: ', hobby);
+  // const demoHobby = useSelector(state => state.hobbies.hobbies[0]);
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch();
   
-  const { streak, lastUpdatedDate } = demoHobby;
+  // If streak is undefined, set it to 0
+  const streak = hobby.streak !== undefined ? hobby.streak : 0;
+  const { lastUpdatedDate } = hobby;
+
+
   console.log(streak);
   useEffect(() => {
-    dispatch(calculateHobbyStreak({ user:user, hobbyId:demoHobby.refId }));
-}, []);
+    dispatch(calculateHobbyStreak({ user:user, hobbyId:hobby.refId }));
+}, [hobby]);
 
   return (
     <StreakTracker streak={streak} lastUpdatedDate={lastUpdatedDate} />

@@ -3,7 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useState } from "react";
 import Overview from "./overview/Overview";
 
-const Notebook = () => {
+const Notebook = ({hobby}) => {
     const controls = useAnimation();
     const parentControls = useAnimation();
     const sPageRender = useAnimation();
@@ -50,7 +50,7 @@ console.log(isOpen);
     })
       setIsOpen(false)
     };
-  
+  console.log('BEFORE: ', hobby);
     return (
         <motion.div 
         className="flex flex-col w-10/12 h-4/6 sm:w-2/4 sm:h-3/5 md:h-4/6 xl:h-4/5 2xl:w-2/5 items-center relative rounded-md shadow shadow-2xl
@@ -97,8 +97,8 @@ className="absolute top-14 left-[23%] w-4/6 h-1/3 bg-white border border-black r
                 Subject
             </div>
             <div className="text-center text-gray-700  self-center mx-auto flex items-center overflow-hidden h-[80%] break-words w-[90%]">
-                <div className="h-full w-full text-center md:pt-4 break-words font-handwritten text-black text-4xl xsm:text-5xl xl:text-6xl">
-                Drumming
+                <div className="h-full w-full text-center md:pt-4 break-words font-handwritten text-black sm:text-3xl md:text-4xl xsm:text-5xl xl:text-6xl">
+                {hobby.name}
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@ className="absolute top-14 left-[23%] w-4/6 h-1/3 bg-white border border-black r
         className="w-full h-full bg-white absolute z-0 rounded-md shadow shadow-2xl border border-black">
          {/* the page 2 */}
          <div className="overflow-scroll h-full w-full overflow-x-clip py-6">
-         <Overview />
+         <Overview hobby={hobby} />
          </div>
         </motion.div>
         {/* These are the "buttons" to open and close the notebook */}
