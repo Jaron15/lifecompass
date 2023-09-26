@@ -19,7 +19,10 @@ function HobbyStreak({hobby}) {
 }, [hobby]);
 
   return (
+    <div className='full flex justify-center text-lg text-center flex-col'>
+    <div className='w-full font-semibold underline'>Current Streak:</div>
     <StreakTracker streak={streak} lastUpdatedDate={lastUpdatedDate} />
+    </div>
   );
 }
 
