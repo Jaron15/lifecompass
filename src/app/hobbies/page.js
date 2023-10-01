@@ -4,9 +4,12 @@ import React, { useState } from 'react'
 import Notebook from '../../components/THE/hobbyComponents/notebook/Notebook'
 import { useDispatch, useSelector } from 'react-redux';
 
+import OverviewTab from './OverviewTab';
+
 function Page() {
   const hobbies = useSelector(state => state.hobbies.hobbies);
   const [currentHobbyIndex, setCurrentHobbyIndex] = useState(0);
+  const [selectedTab, setSelectedTab] = useState('Overview');
 
   const handleNextHobby = () => {
     if (currentHobbyIndex < hobbies.length - 1) {
@@ -19,31 +22,52 @@ function Page() {
       setCurrentHobbyIndex(currentHobbyIndex - 1);
     }
   };
-
+const hobby = hobbies[currentHobbyIndex]
 console.log(hobbies[currentHobbyIndex]);
+const renderTabContent = () => {
+  switch (selectedTab) {
+    case "Overview":
+      return <div>Overview Content</div>;
+    case "Goals":
+      return <div>Goals Content</div>;
+    case "Progress":
+      return <div>Progress Content</div>;
+    case "Notes":
+      return <div>Notes Content</div>;
+    default:
+      return <div>Overview Content</div>;
+  }
+};
+
   return (
-    <div 
-      className="w-full flex flex-col justify-center items-center relative border border-white"
-      style={{
-        height: `calc(100vh - 68px)`,
-        '@media (min-width: 1024px)': {
-          height: `calc(100vh - 0px)`,
-        },
-      }}
-    >
-          <div className="flex w-full justify-between px-20 py-2 absolute top-10 left-0">
-      {currentHobbyIndex > 0 ? (
-        <button onClick={handlePreviousHobby}>Previous</button>
-      ) : (
-        <div style={{ width: 'fit-content' }}></div>
-      )}
-      {currentHobbyIndex < hobbies.length - 1 ? (
-        <button onClick={handleNextHobby}>Next</button>
-      ) : (
-        <div style={{ width: 'fit-content' }}></div>
-      )}
-    </div>
-    <Notebook hobby={hobbies[currentHobbyIndex]} />
+   
+    <div className="mx-auto w-screen-2xl bg-gradient-to-t from-transparent via-whiten to-white dark:bg-black dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10">
+    {/* Header */}
+  <header className="flex justify-center items-center p-4 text-white ">
+      <span onClick={handlePreviousHobby} className="text-4xl cursor-pointer text-black dark:text-current">&#8592;</span> {/* Left Arrow */}
+      <h1 className="text-center sm:text-5xl text-3xl font-bold text-black dark:text-current mx-20">
+        {hobby.name}
+      </h1>
+      <span onClick={handleNextHobby} className="text-4xl cursor-pointer text-black dark:text-current">&#8594;</span> {/* Right Arrow */}
+    </header>
+    <div className="flex justify-center mb-8 border-b my-4 ">
+        {["Overview", "Goals", "Progress", "Notes"].map((tabName) => (
+          <span
+            key={tabName}
+            className={`cursor-pointer px-4 py-2 mr-2 ${selectedTab === tabName ? "border-b-2 border-blue-600" : ""}`}
+            onClick={() => setSelectedTab(tabName)}
+          >
+            {tabName}
+          </span>
+        ))}
+      </div>
+
+   <OverviewTab hobby={hobby}/>
+
+    {/* Footer */}
+    <footer className=" p-4 text-white">
+      {/* This is where the footer content, like quick links, will go */}
+    </footer>
   </div>
 
   );

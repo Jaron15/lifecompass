@@ -201,6 +201,30 @@ export async function updateHobbyInFirestore(user, hobby) {
     }
   }
   
+  export async function addGoalToHobbyInFirestore(user, hobbyId, goal) {
+    const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+    await updateDoc(hobbyDocRef, {
+      goals: arrayUnion(goal),
+    });
+  }
+
+  export async function removeGoalFromHobbyInFirestore(user, hobbyId, goal) {
+    const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+    await updateDoc(hobbyDocRef, {
+      goals: arrayRemove(goal),
+    });
+  }
+
+  export async function updateGoalInHobbyInFirestore(user, hobbyId, oldGoal, newGoal) {
+    const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+    await updateDoc(hobbyDocRef, {
+      goals: arrayRemove(oldGoal),
+    });
+    await updateDoc(hobbyDocRef, {
+      goals: arrayUnion(newGoal),
+    });
+  }  
+  
   
   
   

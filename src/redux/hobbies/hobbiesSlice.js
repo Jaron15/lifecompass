@@ -7,6 +7,9 @@ import {
   updatePracticeLogInFirestore,
   deleteHobbyFromFirestore,
   updateHobbyInFirestore,
+  addGoalToHobbyInFirestore,
+  removeGoalFromHobbyInFirestore,
+  updateGoalInHobbyInFirestore,
 } from "../../utils/hobbiesBase";
 import { userLoggedOut } from '../user/userSlice';
 import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
@@ -15,6 +18,7 @@ import {generateDynamicHobby} from '../../utils/demoData'
 import { calculateDailyProductivityForHobby } from "../productivity/prodSlice";
 import {  format,  parseISO, formatISO, isToday, isYesterday} from 'date-fns';
 
+//----------hobby core------------
 export const addHobby = createAsyncThunk(
   "hobbies/addHobby",
   async ({ user, hobby }, thunkAPI) => {
@@ -74,7 +78,9 @@ export const updateHobby = createAsyncThunk(
   }
 }
 );
+//----------hobby core------------
 
+//----------practice logs------------
 export const logPractice = createAsyncThunk(
   "hobbies/logPractice",
   async ({ user, hobbyId, logEntry }, thunkAPI) => {
@@ -155,7 +161,9 @@ export const updatePracticeLog = createAsyncThunk(
   }
 }
 );
+//----------practice logs------------
 
+//----------streaks------------
 export const calculateHobbyStreak = createAsyncThunk(
   'hobbies/calculateHobbyStreak',
   async ({ user, hobbyId }, thunkAPI) => {
@@ -168,7 +176,6 @@ export const calculateHobbyStreak = createAsyncThunk(
 console.log('CALCULATING');
       //---------demo-----------
       if (state.demo) {
-        console.log('ENTERED DEMO');
         const hobby = state.hobbies.hobbies.find(h => h.refId === hobbyId);
         console.log(hobby);
         if (!hobby) {
@@ -186,8 +193,6 @@ console.log('CALCULATING');
         if (lastUpdatedDate && !isYesterday(lastUpdatedDate) && !isToday(lastUpdatedDate)) {
           currentStreak = 0;
         }
-        console.log('--------STILL INNNN------');
-
           const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
           console.log(dailyHobbyProductivity);
           if (dailyHobbyProductivity >= 100) {
@@ -204,7 +209,7 @@ console.log('CALCULATING');
               const todayDateISO = formatISO(new Date(), 'yyyy-MM-dd');
               return { streak: currentStreak, bestStreak, lastUpdatedDate: todayDateISO };
           }
-          console.log(lastUpdatedDate);
+          
           return { streak: currentStreak, bestStreak, lastUpdatedDate: hobby.lastUpdatedDate };
             //--------DEMO end-----------
       } else {
@@ -250,6 +255,68 @@ console.log('CALCULATING');
         
         return { streak: currentStreak, bestStreak, lastUpdatedDate: lastUpdatedDate };
       }
+  }
+);
+//----------streaks------------
+
+//----------goals------------
+export const addGoal = createAsyncThunk(
+  "hobbies/addGoal",
+  async ({ user, hobbyId, goal }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      return { hobbyId, goal };  
+    } else {
+      try {
+        await addGoalToHobbyInFirestore(user, hobbyId, goal);
+        return { user, hobbyId, goal };
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    }
+  }
+);
+
+
+
+export const removeGoal = createAsyncThunk(
+  "hobbies/removeGoal",
+  async ({ user, hobbyId, goal }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      // Directly remove the goal from the hobby in the Redux state
+      const hobby = state.hobbies.hobbies.find(h => h.refId === hobbyId);
+      if (!hobby || !hobby.goals) {
+        throw new Error('Hobby or hobby goals not found');
+      }
+      hobby.goals = hobby.goals.filter(g => g.goalName !== goal.goalName);
+      return { hobbyId, goal };
+    } else {
+      try {
+        await removeGoalFromHobbyInFirestore(user, hobbyId, goal);
+        return { user, hobbyId, goal };
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    }
+  }
+);
+
+
+export const updateGoal = createAsyncThunk(
+  "hobbies/updateGoal",
+  async ({ user, hobbyId, goal }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      return { hobbyId, goal };
+    } else {
+      try {
+        await updateGoalInHobbyInFirestore(user, hobbyId, goal);
+        return { user, hobbyId, goal };
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    }
   }
 );
 
@@ -441,9 +508,63 @@ export const hobbiesSlice = createSlice({
           hobby.lastUpdatedDate = lastUpdatedDate;
       }
   })
+  //-------Goal--------
+.addCase(addGoal.fulfilled, (state, action) => {
+  const { hobbyId, goal } = action.payload;
+  const hobby = state.hobbies.find(h => h.refId === hobbyId);
+  if (hobby) {
+    hobby.goals = hobby.goals || [];
+    hobby.goals.push(goal);
+  }
+})
 
-  },
+.addCase(removeGoal.fulfilled, (state, action) => {
+  const { hobbyId, goal } = action.payload;
+  const hobby = state.hobbies.find(h => h.refId === hobbyId);
+  if (hobby && hobby.goals) {
+    hobby.goals = hobby.goals.filter(g => g.goalName !== goal.goalName);
+  }
+})
+.addCase(updateGoal.fulfilled, (state, action) => {
+  const { hobbyId, goal } = action.payload;
+  const hobby = state.hobbies.find(h => h.refId === hobbyId);
+  if (hobby && hobby.goals) {
+    const goalIndex = hobby.goals.findIndex(g => g.id === goal.id);
+    if (goalIndex !== -1) {
+      hobby.goals[goalIndex] = goal;
+    }
+  }
+})
+.addCase(addGoal.rejected, (state, action) => {
+  state.status = "idle";
+  if (action.payload) {
+    state.error = action.payload.error;
+  } else {
+    state.error = action.error;
+  }
+})
+
+.addCase(removeGoal.rejected, (state, action) => {
+  state.status = "idle";
+  if (action.payload) {
+    state.error = action.payload.error;
+  } else {
+    state.error = action.error;
+  }
+})
+
+.addCase(updateGoal.rejected, (state, action) => {
+  state.status = "idle";
+  if (action.payload) {
+    state.error = action.payload.error;
+  } else {
+    state.error = action.error;
+  }
 });
+//-------Goal--------;
+  },
+})
+
 
 export const { setHobbies, clearError, setDemo  } = hobbiesSlice.actions;
 

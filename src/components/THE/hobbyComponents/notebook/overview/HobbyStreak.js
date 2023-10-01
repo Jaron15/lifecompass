@@ -20,7 +20,7 @@ function HobbyStreak({hobby}) {
 
   return (
     <div className='full flex justify-center text-lg text-center flex-col'>
-    <div className='w-full font-semibold underline'>Current Streak:</div>
+    <div className='w-full font-semibold underline mb-4'>Current Streak:</div>
     <StreakTracker streak={streak} lastUpdatedDate={lastUpdatedDate} />
     </div>
   );
