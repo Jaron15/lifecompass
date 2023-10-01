@@ -247,6 +247,7 @@ module.exports = {
         7: '-5px 0 0 #313D4A, 5px 0 0 #313D4A',
         8: '1px 0 0 #313D4A, -1px 0 0 #313D4A, 0 1px 0 #313D4A, 0 -1px 0 #313D4A, 0 3px 13px rgb(0 0 0 / 8%)',
         glow: '0 0 13px var(--tw-shadow-color)',
+        glowSm: '0 0 7px var(--tw-shadow-color)',
       },
       dropShadow: {
         1: '0px 1px 0px #E2E8F0',

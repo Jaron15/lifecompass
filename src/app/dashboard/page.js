@@ -65,7 +65,7 @@ useEffect(() => {
 }
 
   return (
-    <div className="mx-auto w-screen-2xl  bg-gradient-to-t from-transparent via-whiten to-white dark:bg-black dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10">
+    <div className="mx-auto w-screen-2xl  bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10">
       {/* Header */}
       <header className=" p-4 text-white ">
         <h1 className="text-center sm:text-4xl text-3xl font-bold text-black dark:text-current ">{formattedDate}</h1>

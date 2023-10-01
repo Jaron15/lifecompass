@@ -41,8 +41,8 @@ const renderTabContent = () => {
 
   return (
    
-    <div className="mx-auto w-screen-2xl bg-gradient-to-t from-transparent via-whiten to-white dark:bg-black dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10">
-    {/* Header */}
+    <div className="mx-auto w-screen-2xl bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10 h-full text-black dark:text-current">
+    {/* Header */} 
   <header className="flex justify-center items-center p-4 text-white ">
       <span onClick={handlePreviousHobby} className="text-4xl cursor-pointer text-black dark:text-current">&#8592;</span> {/* Left Arrow */}
       <h1 className="text-center sm:text-5xl text-3xl font-bold text-black dark:text-current mx-20">
@@ -69,7 +69,6 @@ const renderTabContent = () => {
       {/* This is where the footer content, like quick links, will go */}
     </footer>
   </div>
-
   );
 }
 
