@@ -66,7 +66,7 @@ const renderTabContent = () => {
 
     {/* Footer */}
     <footer className=" p-4 text-white">
-      {/* This is where the footer content, like quick links, will go */}
+    
     </footer>
   </div>
   );

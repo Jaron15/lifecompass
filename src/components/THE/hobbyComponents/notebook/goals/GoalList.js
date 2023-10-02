@@ -10,7 +10,6 @@ function GoalList({ hobbyId, term = 'both'  }) {
     state.hobbies.hobbies.find(hobby => hobby.refId === hobbyId)?.goals || []
   );
 
-  // Filter the goals based on the term
   const goals = allGoals.filter(goal => {
     if (term === 'both') return true;
     return goal.type === term;
@@ -34,21 +33,14 @@ function GoalList({ hobbyId, term = 'both'  }) {
      
       {goals.map(goal => (
         <div key={goal.id} >
-            {goal.name}
-          <input
-          className='mr-2 cursor-pointer ' 
-            type="checkbox" 
-            checked={goal.isCompleted}
-            onChange={() => handleGoalToggle(goal)}
-          />
-          <br />
-          <button  onClick={() => handleRemoveGoal(goal.id)}>Remove</button>
-          {/* <GoalItem 
+          <GoalItem 
+          goal={goal}
           name={goal.name}
           checked={goal.isCompleted}
-          onToggle={() => handleGoalToggle}
-          onRemove={() => handleRemoveGoal}
-          /> */}
+          id={goal.id}
+          onToggle={(goal) => handleGoalToggle(goal)}
+          onRemove={(goalId) => handleRemoveGoal(goalId)}
+          />
         </div>
       ))}
       
