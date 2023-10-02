@@ -5,6 +5,7 @@ import Notebook from '../../components/THE/hobbyComponents/notebook/Notebook'
 import { useDispatch, useSelector } from 'react-redux';
 
 import OverviewTab from './OverviewTab';
+import GoalsTab from './GoalsTab';
 
 function Page() {
   const hobbies = useSelector(state => state.hobbies.hobbies);
@@ -27,9 +28,9 @@ console.log(hobbies[currentHobbyIndex]);
 const renderTabContent = () => {
   switch (selectedTab) {
     case "Overview":
-      return <div>Overview Content</div>;
+      return  <OverviewTab hobby={hobby}/>
     case "Goals":
-      return <div>Goals Content</div>;
+      return <GoalsTab hobby={hobby}/>;
     case "Progress":
       return <div>Progress Content</div>;
     case "Notes":
@@ -40,8 +41,7 @@ const renderTabContent = () => {
 };
 
   return (
-   
-    <div className="mx-auto w-screen-2xl bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10 h-full text-black dark:text-current">
+    <div className="mx-auto w-screen-2xl bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10 h-full sm:mb-8 text-black dark:text-current hide-scrollbar">
     {/* Header */} 
   <header className="flex justify-center items-center p-4 text-white ">
       <span onClick={handlePreviousHobby} className="text-4xl cursor-pointer text-black dark:text-current">&#8592;</span> {/* Left Arrow */}
@@ -62,7 +62,7 @@ const renderTabContent = () => {
         ))}
       </div>
 
-   <OverviewTab hobby={hobby}/>
+  {renderTabContent()}
 
     {/* Footer */}
     <footer className=" p-4 text-white">

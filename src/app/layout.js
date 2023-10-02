@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
        <Providers>
        <div className="dark:bg-boxdark-2 dark:text-bodydark">
       {/* <!-- ===== Page Wrapper Start ===== --> */}
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden ">
         {/* <!-- ===== Sidebar Start ===== --> */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         {/* <!-- ===== Sidebar End ===== --> */}
@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
-          <div  className=' '>
+          <div  className=''>
         {children}
         </div>
          {/* <!-- ===== Main Content End ===== --> */}

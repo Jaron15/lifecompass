@@ -7,13 +7,13 @@ function LastActivity({ hobby }) {
   const lastPracticeLog = practiceLog[practiceLog.length - 1];
 
   return (
-    <div className='w-4/5 flex justify-center text-lg text-center flex-col'>
+    <div className='w-4/5 flex justify-center text-lg sm:text-lg text-center flex-col'>
         <div className='w-full font-semibold underline'>Last Activity:</div>
-        <div className='w-full'>
+        <div className='w-full '>
           {lastUpdatedDate && lastPracticeLog ? (
             <>
-              <div>Date: {lastPracticeLog.date}</div>
-              <div>Time Spent: {lastPracticeLog.timeSpent} minutes</div>
+              <div>Date: <br className='sm:hidden' /> {lastPracticeLog.date}</div>
+              <div>Time Spent:  <br className='sm:hidden' /> {lastPracticeLog.timeSpent} minutes</div>
             </>
           ) : (
             <div>No practice session recorded yet.</div>

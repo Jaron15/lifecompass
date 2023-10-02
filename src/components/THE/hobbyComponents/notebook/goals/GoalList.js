@@ -4,11 +4,18 @@ import { addGoal, removeGoal, updateGoal } from '../../../../../redux/hobbies/ho
 import AddGoal from './AddGoal';
 
 
-function GoalList({ hobbyId }) {
-  const goals = useSelector(state => 
+function GoalList({ hobbyId, term = 'both'  }) {
+  const allGoals = useSelector(state => 
     state.hobbies.hobbies.find(hobby => hobby.refId === hobbyId)?.goals || []
   );
+
+  // Filter the goals based on the term
+  const goals = allGoals.filter(goal => {
+    if (term === 'both') return true;
+    return goal.type === term;
+  });
   
+
   const {user} = useSelector(state => state.user)
   const dispatch = useDispatch();
 
@@ -23,7 +30,7 @@ function GoalList({ hobbyId }) {
 
   return (
     <div className='space-y-4'>
-      <h2>Goals</h2>
+     
       {goals.map(goal => (
         <div key={goal.id} >
           <input
@@ -37,7 +44,7 @@ function GoalList({ hobbyId }) {
           <button  onClick={() => handleRemoveGoal(goal.id)}>Remove</button>
         </div>
       ))}
-      <AddGoal user={user} hobbyId={hobbyId} />
+      {/* <AddGoal user={user} hobbyId={hobbyId} /> */}
     </div>
   );
 }
