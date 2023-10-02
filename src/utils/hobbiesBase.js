@@ -208,22 +208,52 @@ export async function updateHobbyInFirestore(user, hobby) {
     });
   }
 
-  export async function removeGoalFromHobbyInFirestore(user, hobbyId, goal) {
+  export async function removeGoalFromHobbyInFirestore(user, hobbyId, goalId) {
     const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+    
+    // Fetch the current hobby document
+    const hobbySnapshot = await getDoc(hobbyDocRef);
+    if (!hobbySnapshot.exists()) {
+        throw new Error("Hobby not found");
+    }
+
+    const hobbyData = hobbySnapshot.data();
+    const updatedGoals = hobbyData.goals.filter(goal => goal.id !== goalId);
+
+    // Update the hobby document with the modified goals array
     await updateDoc(hobbyDocRef, {
-      goals: arrayRemove(goal),
+        goals: updatedGoals
     });
+}
+
+
+export async function updateGoalInHobbyInFirestore(user, hobbyId, updatedGoal) {
+  const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+  
+  // Fetch the current hobby document
+  const hobbySnapshot = await getDoc(hobbyDocRef);
+  if (!hobbySnapshot.exists()) {
+      throw new Error("Hobby not found");
   }
 
-  export async function updateGoalInHobbyInFirestore(user, hobbyId, oldGoal, newGoal) {
-    const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
-    await updateDoc(hobbyDocRef, {
-      goals: arrayRemove(oldGoal),
-    });
-    await updateDoc(hobbyDocRef, {
-      goals: arrayUnion(newGoal),
-    });
-  }  
+  const hobbyData = hobbySnapshot.data();
+  const goals = hobbyData.goals || [];
+
+  // Find the index of the goal to be updated
+  const goalIndex = goals.findIndex(goal => goal.id === updatedGoal.id);
+
+  if (goalIndex === -1) {
+      throw new Error("Goal not found");
+  }
+
+  // Replace the old goal with the updated one
+  goals[goalIndex] = updatedGoal;
+
+  // Update the hobby document with the modified goals array
+  await updateDoc(hobbyDocRef, {
+      goals: goals
+  });
+}
   
   
   

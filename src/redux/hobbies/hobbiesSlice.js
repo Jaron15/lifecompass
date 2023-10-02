@@ -281,20 +281,13 @@ export const addGoal = createAsyncThunk(
 
 export const removeGoal = createAsyncThunk(
   "hobbies/removeGoal",
-  async ({ user, hobbyId, goal }, thunkAPI) => {
-    const state = thunkAPI.getState();
-    if (state.hobbies.demo) {
-      // Directly remove the goal from the hobby in the Redux state
-      const hobby = state.hobbies.hobbies.find(h => h.refId === hobbyId);
-      if (!hobby || !hobby.goals) {
-        throw new Error('Hobby or hobby goals not found');
-      }
-      hobby.goals = hobby.goals.filter(g => g.goalName !== goal.goalName);
-      return { hobbyId, goal };
+  async ({ user, hobbyId, goalId }, thunkAPI) => {
+    if (thunkAPI.getState().hobbies.demo) {
+      return { hobbyId, goalId };
     } else {
       try {
-        await removeGoalFromHobbyInFirestore(user, hobbyId, goal);
-        return { user, hobbyId, goal };
+        await removeGoalFromHobbyInFirestore(user, hobbyId, goalId);
+        return { user, hobbyId, goalId };
       } catch (error) {
         return thunkAPI.rejectWithValue({ error: error.message });
       }
@@ -319,7 +312,7 @@ export const updateGoal = createAsyncThunk(
     }
   }
 );
-
+//----------goals------------
 
 export const hobbiesSlice = createSlice({
   name: "hobbies",
@@ -519,10 +512,10 @@ export const hobbiesSlice = createSlice({
 })
 
 .addCase(removeGoal.fulfilled, (state, action) => {
-  const { hobbyId, goal } = action.payload;
+  const { hobbyId, goalId } = action.payload;
   const hobby = state.hobbies.find(h => h.refId === hobbyId);
   if (hobby && hobby.goals) {
-    hobby.goals = hobby.goals.filter(g => g.goalName !== goal.goalName);
+    hobby.goals = hobby.goals.filter(g => g.id !== goalId);
   }
 })
 .addCase(updateGoal.fulfilled, (state, action) => {

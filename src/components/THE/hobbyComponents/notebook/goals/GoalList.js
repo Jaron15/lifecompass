@@ -1,7 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addGoal, removeGoal, updateGoal } from '../../../../../redux/hobbies/hobbiesSlice';
-import AddGoal from './AddGoal';
+import GoalItem from './GoalItem';
+
 
 
 function GoalList({ hobbyId, term = 'both'  }) {
@@ -33,18 +34,24 @@ function GoalList({ hobbyId, term = 'both'  }) {
      
       {goals.map(goal => (
         <div key={goal.id} >
+            {goal.name}
           <input
           className='mr-2 cursor-pointer ' 
             type="checkbox" 
             checked={goal.isCompleted}
             onChange={() => handleGoalToggle(goal)}
           />
-          {goal.name}
           <br />
           <button  onClick={() => handleRemoveGoal(goal.id)}>Remove</button>
+          {/* <GoalItem 
+          name={goal.name}
+          checked={goal.isCompleted}
+          onToggle={() => handleGoalToggle}
+          onRemove={() => handleRemoveGoal}
+          /> */}
         </div>
       ))}
-      {/* <AddGoal user={user} hobbyId={hobbyId} /> */}
+      
     </div>
   );
 }
