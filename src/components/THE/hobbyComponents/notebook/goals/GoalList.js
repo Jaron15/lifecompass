@@ -29,7 +29,7 @@ function GoalList({ hobbyId, term = 'both'  }) {
   };
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-4 '>
      
       {goals.map(goal => (
         <div key={goal.id} >

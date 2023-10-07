@@ -24,7 +24,7 @@ function AddGoal({ user, hobbyId }) {
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col items-center justify-center space-y-3'>
-        <label className='text-white text-2xl font-semibold'>Add Goal</label>
+        <label className=' text-2xl font-semibold text-black dark:text-current'>Add Goal</label>
      <div className="relative w-10/12 lg:w-1/2">
         <input 
           type="text"
