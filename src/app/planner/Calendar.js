@@ -233,7 +233,7 @@ const Calendar = () => {
 
   
   return (
-    <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-[calc(100vh - 56px)] overflow-hidden" {...handlers} > 
+    <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-screen sm:h-full overflow-auto hide-scrollbar pb-10 sm:pb-0" {...handlers} > 
     {/* {isModalOpen && (
       // <Modal
       //   isOpen={isModalOpen}

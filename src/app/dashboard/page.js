@@ -65,13 +65,13 @@ useEffect(() => {
 }
 
   return (
-    <div className="mx-auto w-screen-2xl  bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10">
+    <div className="mx-auto w-screen-2xl  bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10 h-screen overflow-auto hide-scrollbar">
       {/* Header */}
       <header className=" p-4 text-white ">
         <h1 className="text-center sm:text-4xl text-3xl font-bold text-black dark:text-current ">{formattedDate}</h1>
         { user ? <p className="text-center text-xl mt-2 text-black dark:text-current ">{getGreeting()}, {user.displayName}!</p> : <p className="text-center text-xl mt-2 text-black dark:text-current ">{getGreeting()}, Guest!</p>}
       </header>
-    <div className='mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5'>
+    <div className='mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5 pb-10'>
       {/* Day at a Glance */}
         <DayViewModal 
         items={[ ...(currentEvents  || []), ...(currentHobbies  || []), ...(currentTasks || [])]}

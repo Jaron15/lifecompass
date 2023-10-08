@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
         {/* <!-- ===== Sidebar End ===== --> */}
 
         {/* <!-- ===== Content Area Start ===== --> */}
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden lg:hide-scrollbar">
+        <div className="relative flex flex-1 flex-col overflow-y-clip overflow-x-hidden lg:hide-scrollbar">
           {/* <!-- ===== Header Start ===== --> */}
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
           {/* <!-- ===== Header End ===== --> */}

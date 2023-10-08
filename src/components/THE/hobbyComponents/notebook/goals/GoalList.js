@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addGoal, removeGoal, updateGoal } from '../../../../../redux/hobbies/hobbiesSlice';
 import GoalItem from './GoalItem';
 
-
-
 function GoalList({ hobbyId, term = 'both'  }) {
   const allGoals = useSelector(state => 
     state.hobbies.hobbies.find(hobby => hobby.refId === hobbyId)?.goals || []
