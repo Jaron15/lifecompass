@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addGoal, removeGoal, updateGoal } from '../../../../../redux/hobbies/hobbiesSlice';
+import { removeGoal, updateGoal } from '../../../../../redux/hobbies/hobbiesSlice';
 import GoalItem from './GoalItem';
-import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 function GoalList({ hobbyId, term = 'both', view = 'uncompleted'   }) {
-  const controls = useAnimation();
+
 
   const allGoals = useSelector(state => 
     state.hobbies.hobbies.find(hobby => hobby.refId === hobbyId)?.goals || []
@@ -19,15 +19,11 @@ function GoalList({ hobbyId, term = 'both', view = 'uncompleted'   }) {
     return false;
   });
   
-  
   const {user} = useSelector(state => state.user)
   const dispatch = useDispatch();
 
   const handleGoalToggle = async (goal) => {
-    // Update the checked state immediately
     dispatch(updateGoal({ user, hobbyId, goal: { ...goal, isCompleted: !goal.isCompleted }}));
-    await controls.start({ opacity: 1 });  // Ensure the item is fully visible
-  await controls.start({ transition: { delay: 0.3 }, opacity: 0 }); 
   };
   
   

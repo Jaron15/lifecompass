@@ -9,8 +9,8 @@ function GoalItem({ name, checked, goal, onToggle, onRemove, id }) {
   const borderColor =
     goal.type === "short" ? "border-blue-400" : "border-green-400";
     const handleCheckboxClick = () => {
-      setIsChecked(!isChecked); // immediate visual feedback
-      onToggle(goal); // trigger the redux update and other effects
+      setIsChecked(!isChecked); 
+      onToggle(goal);
   };
 
   return (
