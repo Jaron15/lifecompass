@@ -1,6 +1,17 @@
+import { useEffect, useState } from "react";
+
 function GoalItem({ name, checked, goal, onToggle, onRemove, id }) {
+  const [isChecked, setIsChecked] = useState(goal.isCompleted);
+  useEffect(() => {
+    setIsChecked(goal.isCompleted);
+}, [goal.isCompleted]);
+
   const borderColor =
     goal.type === "short" ? "border-blue-400" : "border-green-400";
+    const handleCheckboxClick = () => {
+      setIsChecked(!isChecked); // immediate visual feedback
+      onToggle(goal); // trigger the redux update and other effects
+  };
 
   return (
     <div
@@ -10,8 +21,9 @@ function GoalItem({ name, checked, goal, onToggle, onRemove, id }) {
       <input
         className="cursor-pointer ml-4"
         type="checkbox"
-        checked={checked}
-        onChange={() => onToggle(goal)}
+        checked={isChecked}
+        onChange={handleCheckboxClick} 
+
       />
       {/* Commented out remove button for now
             <button onClick={() => onRemove(id)}>Remove</button>
