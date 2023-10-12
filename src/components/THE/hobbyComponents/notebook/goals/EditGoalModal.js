@@ -1,7 +1,8 @@
 import { RadioButton } from "@/src/app/hobbies/GoalsTab";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import GoalList from "./GoalList";
+import { removeGoal, updateGoal } from "@/src/redux/hobbies/hobbiesSlice";
 
 function GoalSelector({ onSelectGoal, initialTerm, closeModal, hobbyId }) {
     console.log(hobbyId);
@@ -63,26 +64,103 @@ console.log(allGoals);
   }
   
   
-  function GoalEditor({ goal }) {
-      const [goalName, setGoalName] = useState(goal.name);
-      const [goalType, setGoalType] = useState(goal.type);
-      
-      const handleSave = () => {
-          // Update the goal...
+  function GoalEditor({ goal, onBack, closeModal, hobbyId}) {
+    const [goalName, setGoalName] = useState(goal.name);
+    const [goalType, setGoalType] = useState(goal.type);
+    const [isComplete, setIsComplete] = useState(goal.isCompleted); 
+
+    const {user} = useSelector(state => state.user)
+  const dispatch = useDispatch();
+
+    const handleSave = () => {
+      console.log(goal);
+      const updatedGoal = {
+        ...goal, 
+        name: goalName,
+        type: goalType,
+        isCompleted: isComplete
     };
-  
+    console.log(updatedGoal);
+    dispatch(updateGoal({ user: user, hobbyId: hobbyId, goal: updatedGoal }));
+    closeModal()
+    };
+
     const handleDelete = () => {
-      // Delete the goal...
+      dispatch(removeGoal({ user: user, hobbyId: hobbyId, goalId: goal.id }));
+      closeModal()
     };
-  
+
     return (
-      <div>
-        {/* Input for name */}
-        {/* Radio buttons for type */}
-        {/* Save and Delete buttons */}
-      </div>
+        <div className="flex flex-col space-y-4 h-5/6">
+            {/* Back Button */}
+            <button className='underline' onClick={onBack}> <span className="text-xl cursor-pointer text-black dark:text-current">&#8592;</span> Back To All Goals</button>
+
+            {/* Goal Name */}
+            <div className=" w-full h-full  flex  items-center flex-col">
+                <div className="w-full md:w-[36rem] flex flex-col items-center space-y-9 md:space-y-9 h-full justify-center">
+            <div className="flex flex-col space-y-2 w-full text-center">
+                <label htmlFor="goalName">Goal Name:</label>
+                <input
+                    id="goalName"
+                    type="text"
+                    value={goalName}
+                    onChange={(e) => setGoalName(e.target.value)}
+                    className="border rounded p-2"
+                    maxLength={50} 
+                />
+            </div>
+
+            {/* Goal Type (Short or Long term) */}
+            <div className="flex items-center space-x-4 ">
+                <label>
+                    <input
+                        type="radio"
+                        name="goalType"
+                        value="short"
+                        checked={goalType === "short"}
+                        onChange={() => setGoalType("short")}
+                        className="mr-2"
+                    />
+                    Short-term
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        name="goalType"
+                        value="long"
+                        checked={goalType === "long"}
+                        onChange={() => setGoalType("long")}
+                        className="mr-2"
+                    />
+                    Long-term
+                </label>
+            </div>
+
+            {/* Goal Completion Status */}
+            <div className="flex items-center space-x-4">
+                <input
+                    type="checkbox"
+                    checked={isComplete}
+                    onChange={(e) => setIsComplete(e.target.checked)}
+                />
+                <label>Is Complete?</label>
+            </div>
+
+            {/* Save and Delete Buttons */}
+            <div className="flex flex-col space-y-4 w-5/6 ">
+                <button onClick={handleSave} className="bg-blue-500 text-white rounded p-2">
+                    Save
+                </button>
+                <button onClick={handleDelete} className="bg-red-500 text-white rounded p-2">
+                    Delete Goal
+                </button>
+                </div>
+                </div>
+            </div>
+        </div>
     );
 }
+
 
 function EditGoalModal({ closeModal, term, hobbyId }) {
     const [selectedGoal, setSelectedGoal] = useState(null);
@@ -99,7 +177,7 @@ function EditGoalModal({ closeModal, term, hobbyId }) {
             Edit Goal
         </div>
           {selectedGoal ? (
-            <GoalEditor goal={selectedGoal} />
+            <GoalEditor goal={selectedGoal} onBack={() => setSelectedGoal(null)} closeModal={handleCloseModal} hobbyId={hobbyId} />
           ) : (
             <GoalSelector onSelectGoal={setSelectedGoal} initialTerm={term} closeModal={handleCloseModal} hobbyId={hobbyId}/>
           )}

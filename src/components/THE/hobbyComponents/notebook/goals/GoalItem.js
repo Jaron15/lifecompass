@@ -8,7 +8,7 @@ function GoalItem({ name, checked, goal, onToggle, onRemove, id }) {
     >
       <span>{name}</span>
       <input
-        className="cursor-pointer"
+        className="cursor-pointer ml-4"
         type="checkbox"
         checked={checked}
         onChange={() => onToggle(goal)}

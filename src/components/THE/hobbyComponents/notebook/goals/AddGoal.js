@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addGoal } from '../../../../../redux/hobbies/hobbiesSlice';
 import {GiBullseye} from 'react-icons/gi'
+import {GiArcher} from 'react-icons/gi'
 
 function AddGoal({ user, hobbyId }) {
   const [goalName, setGoalName] = useState('');
@@ -25,13 +26,17 @@ function AddGoal({ user, hobbyId }) {
   return (
     <form onSubmit={handleSubmit} className='flex flex-col items-center justify-center space-y-3'>
         <label className=' text-2xl font-semibold text-black dark:text-current'>Add Goal</label>
-     <div className="relative w-10/12 lg:w-1/2">
-        <input 
+     <div className="relative w-10/12 lg:w-1/2 bg-white rounded border h-11 flex justify-center items-center">
+     <GiArcher className="absolute text-black left-2 top-1/2 transform -translate-y-1/2 text-xl " />
+        <textarea 
           type="text"
           value={goalName}
+          rows="2" 
+          wrap="soft" 
           onChange={e => setGoalName(e.target.value)}
           placeholder="Add a new goal..."
-          className='rounded border p-1 w-full text-black'
+          className='p-1 flex text-black text-center items-center resize-none hide-scrollbar h-full focus:outline-none  justify-center w-5/6 py-2'
+          maxLength={50} 
         />
         <GiBullseye className="absolute text-black right-2 top-1/2 transform -translate-y-1/2 text-xl" />
       </div>

@@ -72,8 +72,10 @@ function GoalsTab({ hobby }) {
     onClick={() => handleOpenModal('short')}
      />
     <h2 className="text-xl mb-2 text-center sticky top-0 bg-white dark:bg-boxdark z-10 pb-2">Short-term Goals</h2>
-    <div className="h-[22rem] overflow-auto hide-scrollbar">
+    <div className='flex justify-center'>
+    <div className="h-[22rem] w-full overflow-auto hide-scrollbar xl:w-3/4 2xl:w-3/5">
         <GoalList hobbyId={hobbyId} term={'short'} />
+    </div>
     </div>
 </div>
 
@@ -83,9 +85,11 @@ function GoalsTab({ hobby }) {
     onClick={() => handleOpenModal('long')}
     />
     <h2 className="text-xl mb-2 text-center sticky top-0 bg-white dark:bg-boxdark z-10 pb-2">Long-term Goals</h2>
-    <div className="h-[22rem] overflow-auto hide-scrollbar">
+    <div className='flex justify-center'>
+    <div className="h-[22rem] w-full overflow-auto hide-scrollbar xl:w-3/4 2xl:w-3/5">
         <GoalList hobbyId={hobbyId} term={'long'} 
         />
+    </div>
     </div>
 </div>
 
