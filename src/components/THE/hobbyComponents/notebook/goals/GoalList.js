@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function GoalList({ hobbyId, term = 'both', view = 'uncompleted'   }) {
 
-
   const allGoals = useSelector(state => 
     state.hobbies.hobbies.find(hobby => hobby.refId === hobbyId)?.goals || []
     );

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import OverviewTab from './OverviewTab';
 import GoalsTab from './GoalsTab';
+import ProgressTab from './ProgressTab';
 
 function Page() {
   const hobbies = useSelector(state => state.hobbies.hobbies);
@@ -32,7 +33,7 @@ const renderTabContent = () => {
     case "Goals":
       return <GoalsTab hobby={hobby}/>;
     case "Progress":
-      return <div>Progress Content</div>;
+      return <ProgressTab hobby={hobby}/>;
     case "Notes":
       return <div>Notes Content</div>;
     default:

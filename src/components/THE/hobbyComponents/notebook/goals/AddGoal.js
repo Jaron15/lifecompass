@@ -35,7 +35,7 @@ function AddGoal({ user, hobbyId }) {
           wrap="soft" 
           onChange={e => setGoalName(e.target.value)}
           placeholder="Add a new goal..."
-          className='p-1 flex text-black text-center items-center resize-none hide-scrollbar h-full focus:outline-none  justify-center w-5/6 py-2'
+          className='p-1 flex text-black text-center items-center resize-none hide-scrollbar h-full focus:outline-none  justify-center w-5/6 py-2 overflow-y-clip'
           maxLength={50} 
         />
         <GiBullseye className="absolute text-black right-2 top-1/2 transform -translate-y-1/2 text-xl" />
