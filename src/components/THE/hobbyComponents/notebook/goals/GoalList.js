@@ -12,7 +12,7 @@ function GoalList({ hobbyId, term = 'both', view = 'uncompleted'   }) {
     );
     
     const goals = allGoals.filter(goal => {
-      if (term === 'both') return true;
+      if (term === 'both') return !goal.isCompleted;;
     if (view === 'uncompleted') return goal.type === term && !goal.isCompleted;
     if (view === 'completed') return goal.type === term && goal.isCompleted;
     return false;
