@@ -17,10 +17,10 @@ function WeeklyChart({ data, goal }) {
         return abbreviations[day];
     }
     
-    // 2. Rounding the X-Axis Max Value
+    
     const getMaxValue = (data) => {
         const maxTimeSpent = Math.max(...data.map(item => item.timeSpent));
-        return Math.ceil(maxTimeSpent / 10) * 10;  // Rounding up to the nearest 10
+        return Math.ceil(maxTimeSpent / 10) * 10; 
     }
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
