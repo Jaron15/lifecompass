@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { FaPencilAlt } from 'react-icons/fa';
 import EditGoalModal from '@/src/components/THE/hobbyComponents/notebook/goals/EditGoalModal';
-import { FaAngleDown } from "react-icons/fa"; 
+ 
 
 export function RadioButton({ options, value, onChange }) {
     return (

@@ -1,9 +1,6 @@
 'use client'
-import PlaceholderPage from '@/src/components/PlaceholderPage'
 import React, { useState } from 'react'
-import Notebook from '../../components/THE/hobbyComponents/notebook/Notebook'
 import { useDispatch, useSelector } from 'react-redux';
-
 import OverviewTab from './OverviewTab';
 import GoalsTab from './GoalsTab';
 import ProgressTab from './ProgressTab';

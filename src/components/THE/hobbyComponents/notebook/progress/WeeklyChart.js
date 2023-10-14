@@ -1,6 +1,5 @@
-import { logDOM } from '@testing-library/react';
 import React from 'react'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,ReferenceLine, LabelList, Label  } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,ReferenceLine, Label  } from 'recharts';
 
 
 function WeeklyChart({ data, goal }) {
