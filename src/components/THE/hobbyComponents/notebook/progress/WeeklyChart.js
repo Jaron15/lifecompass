@@ -24,7 +24,7 @@ function WeeklyChart({ data, goal }) {
     }
     const getCustomTicks = (data, goal) => {
         const maxValue = getMaxValue(data);
-        const interval = 10; // Adjust this value based on your data range.
+        const interval = 10; 
         let ticks = [];
         for(let i = 0; i <= maxValue; i += interval) {
             ticks.push(i);
