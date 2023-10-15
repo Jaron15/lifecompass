@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer,ReferenceLine, Label  } from 'recharts';
-import useColorMode from '../../../../../hooks/useColorMode';
 
 
 function WeeklyChart({ data, goal }) {

@@ -102,7 +102,7 @@ function ProgressTab({hobby}) {
                 <div  className='w-full text-center h-4/6 flex items-center justify-center text-7xl my-4 sm:my-0 xl:h-1/2 xl:my-2 '>
                     <Counter targetCount={totalDaysMeetingGoal} />
                 </div>
-                <div className='w-full text-center text-lg '>Total times you've met your practice goal!</div>
+                <div className='w-full text-center text-lg '>{"Total times you've met your practice goal!"}</div>
               </div>
           
               {/* Best Streak Box */}
