@@ -32,7 +32,7 @@ function GoalList({ hobbyId, term = 'both', view = 'uncompleted'   }) {
   };
 
   return (
-    <div className='space-y-4 '>
+    <div className='space-y-4 w-full'>
       <AnimatePresence>
     {goals.map(goal => (
         <motion.div

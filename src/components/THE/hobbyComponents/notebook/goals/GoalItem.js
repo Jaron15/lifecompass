@@ -17,7 +17,7 @@ function GoalItem({ name, checked, goal, onToggle, onRemove, id }) {
     <div
       className={`border min-w-1/2  max-w-full rounded p-2 flex justify-between items-center ${borderColor}`}
     >
-      <span>{name}</span>
+      <span className="w-[90%] truncate ">{name}</span>
       <input
         className="cursor-pointer ml-4"
         type="checkbox"
