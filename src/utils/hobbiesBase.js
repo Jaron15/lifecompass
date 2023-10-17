@@ -255,6 +255,64 @@ export async function updateGoalInHobbyInFirestore(user, hobbyId, updatedGoal) {
   });
 }
   
+export async function addNoteToFirestore(user, hobbyId, note) {
+  const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
   
+
+  if (typeof note.header !== 'string' || typeof note.body !== 'string') {
+      throw new Error('Note validation failed');
+  }
+
+
+  const noteWithId = { ...note, id: Date.now().toString() };
+
+
+  await updateDoc(hobbyDocRef, {
+      notes: arrayUnion(noteWithId),
+  });
+
+  return noteWithId;
+}
+
+export async function updateNoteInFirestore(user, hobbyId, noteId, updatedNote) {
+  const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+  
+  const hobbySnapshot = await getDoc(hobbyDocRef);
+  if (!hobbySnapshot.exists()) {
+      throw new Error("Hobby not found");
+  }
+
+  const hobbyData = hobbySnapshot.data();
+  const notes = hobbyData.notes || [];
+  
+  const noteIndex = notes.findIndex(note => note.id === noteId);
+
+  if (noteIndex === -1) {
+      throw new Error("Note not found");
+  }
+
+  notes[noteIndex] = updatedNote;
+
+  await updateDoc(hobbyDocRef, {
+      notes: notes
+  });
+}
+
+export async function deleteNoteFromFirestore(user, hobbyId, noteId) {
+  const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
+  
+  const hobbySnapshot = await getDoc(hobbyDocRef);
+  if (!hobbySnapshot.exists()) {
+      throw new Error("Hobby not found");
+  }
+
+  const hobbyData = hobbySnapshot.data();
+  const updatedNotes = hobbyData.notes.filter(note => note.id !== noteId);
+
+  await updateDoc(hobbyDocRef, {
+      notes: updatedNotes
+  });
+}
+
   
   

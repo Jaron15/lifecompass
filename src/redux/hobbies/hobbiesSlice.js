@@ -10,6 +10,9 @@ import {
   addGoalToHobbyInFirestore,
   removeGoalFromHobbyInFirestore,
   updateGoalInHobbyInFirestore,
+  deleteNoteFromFirestore,
+  updateNoteInFirestore,
+  addNoteToFirestore,
 } from "../../utils/hobbiesBase";
 import { userLoggedOut } from '../user/userSlice';
 import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
@@ -313,6 +316,58 @@ export const updateGoal = createAsyncThunk(
   }
 );
 //----------goals------------
+//----------Notes------------
+export const addNote = createAsyncThunk(
+  "hobbies/addNote",
+  async ({ user, hobbyId, note }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      return { hobbyId, note };
+    } else {
+      try {
+        await addNoteToFirestore(user, hobbyId, note);
+        return { user, hobbyId, note };
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    }
+  }
+);
+
+export const updateNote = createAsyncThunk(
+  "hobbies/updateNote",
+  async ({ user, hobbyId, noteId, updatedNote }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      return { hobbyId, noteId, updatedNote };
+    } else {
+      try {
+        await updateNoteInFirestore(user, hobbyId, noteId, updatedNote);
+        return { user, hobbyId, noteId, updatedNote };
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    }
+  }
+);
+
+export const deleteNote = createAsyncThunk(
+  "hobbies/deleteNote",
+  async ({ user, hobbyId, noteId }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    if (state.hobbies.demo) {
+      return { hobbyId, noteId };
+    } else {
+      try {
+        await deleteNoteFromFirestore(user, hobbyId, noteId);
+        return { user, hobbyId, noteId };
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    }
+  }
+);
+//----------Notes------------
 
 export const hobbiesSlice = createSlice({
   name: "hobbies",
@@ -553,8 +608,36 @@ export const hobbiesSlice = createSlice({
   } else {
     state.error = action.error;
   }
-});
+})
 //-------Goal--------;
+//-------Notes--------;
+.addCase(addNote.fulfilled, (state, action) => {
+  const hobby = state.hobbies.find(hobby => hobby.refId === action.payload.hobbyId);
+  if (hobby) {
+    if (!hobby.notes) {  
+      hobby.notes = []; 
+    }
+    hobby.notes.push(action.payload.note);
+  
+  }
+})
+.addCase(updateNote.fulfilled, (state, action) => {
+  const { hobbyId, updatedNote, noteId } = action.payload;
+  console.log(updatedNote);
+  const hobby = state.hobbies.find(h => h.refId === hobbyId);
+  if (hobby) {
+    const noteIndex = hobby.notes.findIndex(n => n.id === noteId);
+    if (noteIndex !== -1) {
+      hobby.notes[noteIndex] = updatedNote;
+    }
+  }
+})
+.addCase(deleteNote.fulfilled, (state, action) => {
+  const hobby = state.hobbies.find(hobby => hobby.refId === action.payload.hobbyId);
+  if (hobby) {
+    hobby.notes = hobby.notes.filter(note => note.id !== action.payload.noteId);
+  }
+});
   },
 })
 
