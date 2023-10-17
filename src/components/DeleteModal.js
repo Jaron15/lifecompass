@@ -20,6 +20,9 @@ console.log(item);
         message = 'Are you sure you want to delete this task? The calendar item and its details will be permanently deleted.';
       }
       break;
+      case 'note':
+      message = 'Are you sure you want to delete this note? It will be permanently removed.';
+      break;
     default:
       break;
   }
