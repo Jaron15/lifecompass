@@ -27,12 +27,12 @@ function Notes({ hobby }) {
     const [viewNote, setViewNote] = useState(null); 
   
     const handleAddNote = () => {
-      if (noteHeader.trim() && noteBody.trim()) {
-        const newNote = {
-          id: Date.now().toString(),  
-          header: noteHeader.trim(),
-          body: noteBody.trim()
-        };
+        if (noteHeader.trim() || noteBody.trim()) {
+            const newNote = {
+                id: Date.now().toString(),  
+                header: noteHeader.trim() || "Header",
+                body: noteBody.trim() || "Body..."
+              };      
         dispatch(addNote({ 
           user, 
           hobbyId: hobby.refId, 

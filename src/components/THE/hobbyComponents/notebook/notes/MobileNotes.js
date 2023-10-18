@@ -10,9 +10,10 @@ import DeleteModal from '@/src/components/DeleteModal';
 
 function MobileNotes({ hobby }) {
   const dispatch = useDispatch();
-  const allNotes = useSelector(state => 
-    state.hobbies.hobbies.find(h => h.refId === hobby.refId)?.notes || []
-  );
+  const allNotes = useSelector(state => {
+    const notes = state.hobbies.hobbies.find(h => h.refId === hobby.refId)?.notes || [];
+    return [...notes].sort((a, b) => b.id - a.id);
+});
 
   const { user } = useSelector(state => state.user);
   const [noteHeader, setNoteHeader] = useState('');
@@ -24,12 +25,12 @@ function MobileNotes({ hobby }) {
   const [viewNote, setViewNote] = useState(null); 
 
   const handleAddNote = () => {
-    if (noteHeader.trim() && noteBody.trim()) {
-      const newNote = {
-        id: Date.now().toString(),  
-        header: noteHeader.trim(),
-        body: noteBody.trim()
-      };
+    if (noteHeader.trim() || noteBody.trim()) {
+        const newNote = {
+            id: Date.now().toString(),  
+            header: noteHeader.trim() || "Header",
+            body: noteBody.trim() || "Body..."
+          };      
       dispatch(addNote({ 
         user, 
         hobbyId: hobby.refId, 
