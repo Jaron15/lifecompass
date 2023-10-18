@@ -200,6 +200,7 @@ function MobileNotes({ hobby }) {
         </div>
       ) : (
         <>
+        {allNotes.length > 0 ? (
           <ul className='overflow-y-scroll h-full hide-scrollbar pb-28 '>
             {allNotes.map(note => (
               <li key={note.id} className="flex justify-between items-start bg-white p-4 rounded mb-2 shadow dark:bg-boxdark text-black dark:text-current" >
@@ -211,10 +212,17 @@ function MobileNotes({ hobby }) {
               </li>
             ))}
           </ul>
+           ) : (
+            <div className="h-full flex flex-col justify-center items-center">
+                <div className="text-4xl mb-4 cursor-pointer" onClick={handleCreateNew}>+</div>
+                <p>Create your first note</p>
+            </div>
+        )}
           <div className="fixed bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4 rounded-t flex justify-between items-center z-10">
             <div className="text-white">{allNotes.length} Notes</div>
             <button onClick={handleCreateNew} className="bg-blue-500 text-white px-4 py-2 rounded">+</button>
           </div>
+          
         </>
       )}
     </div>

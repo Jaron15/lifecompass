@@ -118,8 +118,10 @@ function Notes({ hobby }) {
 
             <div className="flex space-x-2 h-full">
                 {/* Left Side - List of Notes */}
-                <div className="w-1/3 overflow-y-scroll hide-scrollbar h-full">
-                    <ul>
+                <div className="w-1/3 overflow-y-scroll hide-scrollbar h-full ">
+                   
+                {allNotes.length > 0 ? ( 
+                <ul>
                     {allNotes.map(note => (
                         <li key={note.id} onClick={() => handleNoteClick(note)} className="flex justify-between items-start bg-white p-4 rounded mb-2 shadow cursor-pointer dark:bg-boxdark text-black dark:text-current">
                             <div className='felx flex-col w-full' >
@@ -129,7 +131,12 @@ function Notes({ hobby }) {
                         </li>
                     ))}
                 </ul>
-               
+                ) : (
+                    <div className="h-full flex flex-col justify-center items-center dark:bg-boxdark bg-white text-black dark:text-current">
+                        <div className="text-4xl mb-4 cursor-pointer" onClick={handleCreateNew}>+</div>
+                        <p>Create your first note</p>
+                    </div>
+                )}
             </div>
 
             {/* Right Side - Note Content */}
