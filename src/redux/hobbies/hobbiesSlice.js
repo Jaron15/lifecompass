@@ -335,10 +335,6 @@ export const addNote = createAsyncThunk(
 export const updateNote = createAsyncThunk(
   "hobbies/updateNote",
   async ({ user, hobbyId, noteId, updatedNote }, thunkAPI) => {
-    console.log(user);
-    console.log(hobbyId);
-    console.log(noteId);
-    console.log(updatedNote);
     const state = thunkAPI.getState();
     if (state.hobbies.demo) {
       return { hobbyId, noteId, updatedNote };
