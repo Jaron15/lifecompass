@@ -93,6 +93,8 @@ function NotesTab({ hobby }) {
   }
 
   const handleCreateNew = () => {
+    setNoteHeader('');
+      setNoteBody('');
     setCreating(true);
     setEditing(false);
     setViewNote(null);
@@ -104,7 +106,7 @@ function NotesTab({ hobby }) {
   };
 
   return (
-    <div className="bg-gray-100 p-6 rounded shadow-md h-[70%] w-full">
+    <div className="bg-gray-100 p-6 rounded shadow-md h-[70%] w-screen -mt-6 -ml-4 -mr-10 sm:w-full">
       <DeleteModal 
         isOpen={showDeleteModal} 
         type={'note'} 
@@ -117,22 +119,24 @@ function NotesTab({ hobby }) {
           <div className="flex justify-between items-center mb-4">
             <button onClick={() => setCreating(false)}>&larr; Back</button>
           </div>
-          <input 
+          <textarea 
             type="text" 
             value={noteHeader}
             onChange={(e) => setNoteHeader(e.target.value)} 
             placeholder="Header" 
-            className="w-full p-2 bg-transparent text-3xl font-bold mb-4 focus:border-none"
+            className="w-full p-2 bg-transparent text-3xl font-bold mb-4 focus:border-none outline-none resize-none"
           />
           <textarea 
             value={noteBody}
             onChange={(e) => setNoteBody(e.target.value)}
             placeholder="Body..."
-            className="w-full p-2 border rounded mb-4"
+            className="w-full p-2 rounded mb-4 bg-transparent border-none outline-none resize-none"
           />
+          <div className='w-full flex justify-center'>
           <button className='bg-blue-500 rounded p-2' onClick={handleSaveNewNote}>
             Save
           </button>
+        </div>
         </div>
       ) : viewNote ? (
         <div className='h-full'>
@@ -157,7 +161,8 @@ function NotesTab({ hobby }) {
             }
           </div>
           {editing ? (
-            <div className='h-full'>
+            <div className='h-full overflow-clip'>
+                <div className='h-[80%] overflow-y-scroll overflow-x-clip'>
               <div 
                 className="text-3xl font-bold focus:outline-none" 
                 contentEditable={true} 
@@ -174,6 +179,7 @@ function NotesTab({ hobby }) {
               >
                 {viewNote.body}
               </div>
+              </div>
               <div className='flex w-full justify-center space-x-6 mt-6'>
                 <button className='bg-blue-500 rounded p-2' onClick={() => handleConfirmEdit(viewNote.id)}>
                   Confirm 
@@ -185,14 +191,16 @@ function NotesTab({ hobby }) {
             </div>
           ) : (
             <>
+            <div className='overflow-y-scroll  h-[95%]'>
               <h3 className="text-3xl font-bold">{viewNote.header}</h3>
               <p className="text-black mt-4">{viewNote.body}</p>
+              </div>
             </>
           )}
         </div>
       ) : (
         <>
-          <ul>
+          <ul className='overflow-y-scroll h-full hide-scrollbar pb-28 '>
             {allNotes.map(note => (
               <li key={note.id} className="flex justify-between items-start bg-white p-4 rounded mb-2 shadow " >
                 <div className='w-[95%]' onClick={() => handleNoteClick(note)} >
