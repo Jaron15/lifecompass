@@ -23,7 +23,6 @@ function Page() {
     }
   };
 const hobby = hobbies[currentHobbyIndex]
-console.log(hobbies[currentHobbyIndex]);
 const renderTabContent = () => {
   switch (selectedTab) {
     case "Overview":

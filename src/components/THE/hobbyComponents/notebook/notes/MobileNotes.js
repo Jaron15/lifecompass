@@ -61,11 +61,11 @@ function MobileNotes({ hobby }) {
   };
 
   const handleConfirmEdit = (noteId) => {
-    if (noteHeader.trim() && noteBody.trim()) {
+    if (noteHeader.trim() || noteBody.trim()) {
       const updatedNote = {
         id: noteId,
-        header: noteHeader.trim(),
-        body: noteBody.trim()
+        header: noteHeader.trim() || "Header",
+            body: noteBody.trim() || "Body..."
       };
       dispatch(updateNote({
         user,
@@ -80,13 +80,6 @@ function MobileNotes({ hobby }) {
       setEditing(false);
     }
   };
-
-  const handleCancelEdit = () => {
-    setNoteHeader('');
-    setNoteBody('');
-    setEditingNoteId(null);
-  };
-
   
 
   const handleNoteClick = (note) => {

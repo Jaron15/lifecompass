@@ -185,7 +185,6 @@ console.log('CALCULATING');
           console.log('hobby doesnt exisst');
             return { streak: 0, lastUpdatedDate: null, bestStreak: 0 };
         }
-        console.log(hobby.lastUpdatedDate);
         currentStreak = hobby.streak || 0;
         bestStreak = hobby.bestStreak || 0;
         lastUpdatedDate = hobby.lastUpdatedDate ? parseISO(hobby.lastUpdatedDate) : null;
@@ -197,7 +196,6 @@ console.log('CALCULATING');
           currentStreak = 0;
         }
           const dailyHobbyProductivity = calculateDailyProductivityForHobby(state, hobbyId);
-          console.log(dailyHobbyProductivity);
           if (dailyHobbyProductivity >= 100) {
               if (lastUpdatedDate && isYesterday(lastUpdatedDate)) {
                 console.log('increased');
@@ -337,6 +335,10 @@ export const addNote = createAsyncThunk(
 export const updateNote = createAsyncThunk(
   "hobbies/updateNote",
   async ({ user, hobbyId, noteId, updatedNote }, thunkAPI) => {
+    console.log(user);
+    console.log(hobbyId);
+    console.log(noteId);
+    console.log(updatedNote);
     const state = thunkAPI.getState();
     if (state.hobbies.demo) {
       return { hobbyId, noteId, updatedNote };

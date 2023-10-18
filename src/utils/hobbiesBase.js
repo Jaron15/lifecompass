@@ -263,34 +263,32 @@ export async function addNoteToFirestore(user, hobbyId, note) {
       throw new Error('Note validation failed');
   }
 
-
-  const noteWithId = { ...note, id: Date.now().toString() };
-
-
   await updateDoc(hobbyDocRef, {
-      notes: arrayUnion(noteWithId),
+      notes: arrayUnion(note),
   });
-
-  return noteWithId;
+console.log(note);
+  return note;
 }
 
 export async function updateNoteInFirestore(user, hobbyId, noteId, updatedNote) {
   const hobbyDocRef = doc(db, 'users', user.uid, 'hobbies', hobbyId);
   
+  console.log("HERES YOURE NOTEID: " + noteId);
   const hobbySnapshot = await getDoc(hobbyDocRef);
   if (!hobbySnapshot.exists()) {
-      throw new Error("Hobby not found");
+    throw new Error("Hobby not found");
   }
-
+  
   const hobbyData = hobbySnapshot.data();
   const notes = hobbyData.notes || [];
-  
+  console.log(notes);
   const noteIndex = notes.findIndex(note => note.id === noteId);
-
+  console.log(noteIndex);
   if (noteIndex === -1) {
-      throw new Error("Note not found");
+    throw new Error("Note not found");
   }
-
+  // console.log(' STILL  STILL hitting the firestore function?? ');
+console.log(notes);
   notes[noteIndex] = updatedNote;
 
   await updateDoc(hobbyDocRef, {

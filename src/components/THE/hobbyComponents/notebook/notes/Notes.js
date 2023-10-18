@@ -63,12 +63,12 @@ function Notes({ hobby }) {
     };
   
     const handleConfirmEdit = (noteId) => {
-      if (noteHeader.trim() && noteBody.trim()) {
-        const updatedNote = {
-          id: noteId,
-          header: noteHeader.trim(),
-          body: noteBody.trim()
-        };
+        if (noteHeader.trim() || noteBody.trim()) {
+            const updatedNote = {
+              id: noteId,
+              header: noteHeader.trim() || "Header",
+                  body: noteBody.trim() || "Body..."
+            };
         dispatch(updateNote({
           user,
           hobbyId: hobby.refId,
@@ -82,14 +82,6 @@ function Notes({ hobby }) {
         setEditing(false);
       }
     };
-  
-    const handleCancelEdit = () => {
-      setNoteHeader('');
-      setNoteBody('');
-      setEditingNoteId(null);
-    };
-  
-    
   
     const handleNoteClick = (note) => {
       setViewNote(note);
