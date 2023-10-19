@@ -3,7 +3,7 @@ import PlaceholderPage from '@/src/components/PlaceholderPage'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-function page() {
+function Page() {
   const {user} = useSelector((state) => state.user)
   const {hobbies} = useSelector(state => state.hobbies);
   const {tasks} = useSelector(state => state.tasks)
@@ -126,4 +126,4 @@ const totalCommitments = getWeeklyCommitments(hobbies, tasks);
   );
 }
 
-export default page
+export default Page
