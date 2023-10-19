@@ -3,10 +3,13 @@ import PlaceholderPage from '@/src/components/PlaceholderPage'
 import HobbyDetails from '@/src/components/THE/hobbyComponents/notebook/overview/HobbyDetails'
 import React, { useState } from 'react'
 import { FaPencilAlt } from 'react-icons/fa'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import ImageSelector from './ImageSelector'
+import { updateUserProfile } from '@/src/redux/user/userSlice'
+import useCheckAuth from '@/src/hooks/useCheckAuth';
 
 function Page() {
+  useCheckAuth()
   const {user} = useSelector((state) => state.user)
   const {hobbies} = useSelector(state => state.hobbies);
   const {tasks} = useSelector(state => state.tasks)
@@ -14,11 +17,20 @@ function Page() {
   const completedTasks = useSelector((state) => state.tasks.completedTasks);
   const [selectedHobby, setSelectedHobby] = useState(null);
   const [showImageSelector, setShowImageSelector] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(user.profileImageNumber || 3 );
+    const [selectedImage, setSelectedImage] = useState(user.photoURL || 3 );
+console.log(user);
+const dispatch = useDispatch();
 
     const handleImageSelect = (imageNumber) => {
       setSelectedImage(imageNumber);
       setShowImageSelector(false);
+      dispatch(updateUserProfile({ 
+        uid: user.uid, 
+        newName: user.displayName, 
+        newImageNumber: imageNumber 
+    }));
+
+
   }
 
   const handleHobbyClick = (refId) => {
@@ -35,7 +47,6 @@ function Page() {
       return total + (hobby.daysOfWeek ? hobby.daysOfWeek.length : 0);
     }, 0);
   
-   console.log(hobbyCommitments);
     const taskCommitments = tasks.filter(task => task.type === "recurring").length;
   
     return hobbyCommitments + taskCommitments;
@@ -92,8 +103,20 @@ const recentActivities = getRecentActivities(completedTasks, hobbies);
 const eventsCount = getUpcomingEventsCount(events);
 const totalCommitments = getWeeklyCommitments(hobbies, tasks);
 
+const onNameChange = (newName) => {
+  // Dispatch the update to the Redux store and Firestore
+  dispatch(updateUserProfile({ 
+    uid: user.uid, 
+    newName: newName, 
+    newImageNumber: selectedImage 
+}));
+
+  setShowImageSelector(false);
+}
+
+
   return (
-    <div className="p-4 overflow-y-auto hide-scrollbar h-full">
+    <div className="p-4 overflow-y-auto hide-scrollbar h-screen bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent text-black dark:text-current">
       {/* Profile Picture and Bio */}
       <div className="text-center md:text-left mb-6 flex flex-col w-full items-center">
         <div className="flex justify-center md:justify-start relative px-12 ">
@@ -108,7 +131,7 @@ const totalCommitments = getWeeklyCommitments(hobbies, tasks);
       >
           <FaPencilAlt />
       </div>
-           {showImageSelector && <ImageSelector onSelect={handleImageSelect} onClose={() => setShowImageSelector(false)} />}
+           {showImageSelector && <ImageSelector onSelect={handleImageSelect} onClose={() => setShowImageSelector(false)} onNameChange={onNameChange} />}
         </div>
         <h2 className="text-2xl font-bold">{user.displayName}</h2>
         <p>Number of hobbies: {hobbies.length}</p>
@@ -117,9 +140,9 @@ const totalCommitments = getWeeklyCommitments(hobbies, tasks);
       </div>
 
       {/* Recent Activity and List of Hobbies */}
-      <div className="flex flex-col items-center  space-y-4 text-center sm:space-y-0 sm:space-y-4 !overflow-y-auto hide-scrollbar h-full ">
+      <div className="flex flex-col items-center  space-y-4 text-center sm:space-y-0 sm:space-y-4 !overflow-y-auto hide-scrollbar h-full  ">
         {/* Recent Activity */}
-        <div className="sm:w-1/2 bg-white dark:bg-boxdark rounded w-full">
+        <div className="sm:w-1/2 bg-white dark:bg-boxdark rounded w-full shadow shadow-md">
           <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
           {recentActivities.map((activity, index) => (
         <div key={index} className={`p-2 rounded mb-2 flex flex-col w-full items-center ${activity.item === 'hobby' ? 'border-green-400 border-l-4' : 'border-orange-400 border-l-4'}`}>
@@ -136,7 +159,7 @@ const totalCommitments = getWeeklyCommitments(hobbies, tasks);
         </div>
 
         {/* List of Hobbies */}
-        <div className="overflow-y-auto max-h-[400px] sm:max-h-[500px] sm:w-1/2 bg-white dark:bg-boxdark rounded hide-scrollbar w-full">
+        <div className="overflow-y-auto max-h-[400px] sm:max-h-[500px] sm:w-1/2 bg-white dark:bg-boxdark rounded hide-scrollbar w-full shadow shadow-md">
       <h2 className="text-xl font-bold mb-4">List of Hobbies</h2>
       {hobbies.map(hobby => (
         <div key={hobby.refId} className="mb-4">

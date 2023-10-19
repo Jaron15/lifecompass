@@ -12,7 +12,7 @@ import OverallStreak from '../../components/THE/OverallStreak';
 
 
 export default function Page() {
-    useCheckAuth('/')
+    useCheckAuth()
   const currentDate = new Date();
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);

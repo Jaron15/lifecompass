@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getFirestore, updateDoc } from "firebase/firestore";
 import {db} from '../../utils/firebase'
 import { getHobbiesFromFirestore } from "../../utils/hobbiesBase";
 import { setHobbies } from "../hobbies/hobbiesSlice";
@@ -10,6 +10,7 @@ import { getEventsFromFirestore } from "@/src/utils/eventsBase";
 import { setEvents } from "../events/eventsSlice";
 import { DUMMY_USER } from "@/src/utils/demoData";
 import {demoSlice} from "../demo/demoSlice";
+
 
 
 const initialState = {
@@ -26,7 +27,7 @@ export const signInAsync = createAsyncThunk(
     try {
       const userCredential = await signInWithEmailAndPassword(auth, inputEmail, password);
       const firebaseUser = userCredential.user;
-      const { displayName, email: firebaseEmail, uid } = firebaseUser;
+      const { displayName, email: firebaseEmail, uid, photoURL } = firebaseUser;
       
       const hobbies = await getHobbiesFromFirestore(firebaseUser);
       const tasks = await getTasksFromFirestore(firebaseUser.uid)
@@ -37,7 +38,7 @@ export const signInAsync = createAsyncThunk(
       thunkAPI.dispatch(setCompletedTasks(completedTasks))
       thunkAPI.dispatch(setEvents(events))
       // Instead of dispatching the action, return the user object
-      return { displayName, email: firebaseEmail, uid };
+      return { displayName, email: firebaseEmail, uid, photoURL };
     } catch (error) {
       console.error('Error during signInAsync:', error);
       return thunkAPI.rejectWithValue({ error: 'Invalid email or password. Please try again.' });
@@ -54,13 +55,16 @@ export const signUpAsync = createAsyncThunk(
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
       // Setting the user's name
-      await updateProfile(userCredential.user, { displayName: name });
+      await updateProfile(userCredential.user, { 
+        displayName: name,
+        photoURL: "3" });
 
       // Return the user object instead of dispatching the action 
       return {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
-        displayName: name
+        displayName: name,
+        photoURL: "3"
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -68,6 +72,37 @@ export const signUpAsync = createAsyncThunk(
   }
 );
 
+export const updateUserProfile = createAsyncThunk(
+  'user/updateUserProfile',
+  async ({ uid, newName, newImageNumber }, thunkAPI) => {
+    if (uid === "demo_user") {
+      // Bypass the update in demo mode and just return the new values.
+      return {
+        displayName: newName,
+        photoURL: newImageNumber
+      };
+    }
+
+    try {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (currentUser && currentUser.uid === uid) {
+        await updateProfile(currentUser, { 
+            displayName: newName,
+            photoURL: String(newImageNumber)
+        });
+        return {
+          displayName: newName,
+          photoURL: newImageNumber
+        };
+      }
+      throw new Error("User not found");
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
 
   
 const userSlice = createSlice({
@@ -116,6 +151,12 @@ const userSlice = createSlice({
         state.status = 'succeeded';
         // Update the user state with the returned user object
         state.user = action.payload;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.displayName = action.payload.displayName;
+          state.user.photoURL = action.payload.photoURL;
+        }
       })
   
       

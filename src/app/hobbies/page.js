@@ -5,8 +5,10 @@ import OverviewTab from './OverviewTab';
 import GoalsTab from './GoalsTab';
 import ProgressTab from './ProgressTab';
 import NotesTab from './NotesTab';
+import useCheckAuth from '@/src/hooks/useCheckAuth';
 
 function Page() {
+  useCheckAuth()
   const hobbies = useSelector(state => state.hobbies.hobbies);
   const [currentHobbyIndex, setCurrentHobbyIndex] = useState(0);
   const [selectedTab, setSelectedTab] = useState('Overview');
@@ -22,7 +24,7 @@ function Page() {
       setCurrentHobbyIndex(currentHobbyIndex - 1);
     }
   };
-const hobby = hobbies[currentHobbyIndex]
+const hobby = hobbies[currentHobbyIndex]  || "Hobbies"
 const renderTabContent = () => {
   switch (selectedTab) {
     case "Overview":
