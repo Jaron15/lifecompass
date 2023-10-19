@@ -14,6 +14,7 @@ function HobbyDetails({hobby}) {
 
     const [editing, setEditing] = useState(false);
     const [selectedDays, setSelectedDays] = useState(hobby.daysOfWeek);
+    const [practiceTime, setPracticeTime] = useState(hobby.practiceTimeGoal);
 
     const toggleDay = (day) => {
         if (selectedDays.includes(day)) {
@@ -24,7 +25,7 @@ function HobbyDetails({hobby}) {
     }
 
     const saveChanges = () => {
-        dispatch(updateHobby({user:user, hobby:{...hobby, daysOfWeek: selectedDays}})); 
+      dispatch(updateHobby({user:user, hobby:{...hobby, daysOfWeek: selectedDays, practiceTimeGoal: practiceTime}})); 
         setEditing(false);
     }
 
@@ -67,9 +68,18 @@ function HobbyDetails({hobby}) {
           ))}
         </div>
         <div className='underline font-semibold text-lg pt-4'>Practice Time Goal</div>
-        <div>
-            {hobby.practiceTimeGoal} Minutes
-        </div>
+    <div>
+      {editing ? 
+        <input 
+          type="number" 
+          value={practiceTime} 
+          onChange={(e) => setPracticeTime(Number(e.target.value))}
+          className="border rounded p-1 text-center w-24"
+        /> 
+        : 
+        `${hobby.practiceTimeGoal} Minutes`
+      }
+    </div>
         </div>
       </div>
     );
