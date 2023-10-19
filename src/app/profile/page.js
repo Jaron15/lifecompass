@@ -2,7 +2,9 @@
 import PlaceholderPage from '@/src/components/PlaceholderPage'
 import HobbyDetails from '@/src/components/THE/hobbyComponents/notebook/overview/HobbyDetails'
 import React, { useState } from 'react'
+import { FaPencilAlt } from 'react-icons/fa'
 import { useSelector } from 'react-redux'
+import ImageSelector from './ImageSelector'
 
 function Page() {
   const {user} = useSelector((state) => state.user)
@@ -11,12 +13,19 @@ function Page() {
   const {events} = useSelector(state => state.events);
   const completedTasks = useSelector((state) => state.tasks.completedTasks);
   const [selectedHobby, setSelectedHobby] = useState(null);
+  const [showImageSelector, setShowImageSelector] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(user.profileImageNumber || 3 );
+
+    const handleImageSelect = (imageNumber) => {
+      setSelectedImage(imageNumber);
+      setShowImageSelector(false);
+  }
 
   const handleHobbyClick = (refId) => {
     if (selectedHobby === refId) {
-      setSelectedHobby(null); // Collapse if the same hobby is clicked again
+      setSelectedHobby(null); 
     } else {
-      setSelectedHobby(refId); // Expand the clicked hobby's details
+      setSelectedHobby(refId); 
     }
   };
 
@@ -80,23 +89,26 @@ const getRecentActivities = (completedTasks, hobbies) => {
 }
 
 const recentActivities = getRecentActivities(completedTasks, hobbies);
-console.log(recentActivities);
-
-
-
 const eventsCount = getUpcomingEventsCount(events);
 const totalCommitments = getWeeklyCommitments(hobbies, tasks);
 
   return (
     <div className="p-4 overflow-y-auto hide-scrollbar h-full">
       {/* Profile Picture and Bio */}
-      <div className="text-center md:text-left mb-6 flex flex-col w-full items-center ">
-        <div className="flex justify-center md:justify-start">
+      <div className="text-center md:text-left mb-6 flex flex-col w-full items-center">
+        <div className="flex justify-center md:justify-start relative px-12 ">
           <img
-            src="/path/to/profile-pic.jpg"
+            src={`/profilepics/${selectedImage}.png`}
             alt="Profile"
-            className="w-32 h-32 rounded-full mb-4 border"
+            className="w-32 h-32 rounded-full mb-4 border object-cover object-center "
           />
+          <div 
+          className="absolute top-2 right-2 cursor-pointer"
+          onClick={() => setShowImageSelector(prev => !prev)}
+      >
+          <FaPencilAlt />
+      </div>
+           {showImageSelector && <ImageSelector onSelect={handleImageSelect} onClose={() => setShowImageSelector(false)} />}
         </div>
         <h2 className="text-2xl font-bold">{user.displayName}</h2>
         <p>Number of hobbies: {hobbies.length}</p>
