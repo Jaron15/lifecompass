@@ -1,6 +1,7 @@
 'use client'
 import PlaceholderPage from '@/src/components/PlaceholderPage'
-import React from 'react'
+import HobbyDetails from '@/src/components/THE/hobbyComponents/notebook/overview/HobbyDetails'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 function Page() {
@@ -9,8 +10,16 @@ function Page() {
   const {tasks} = useSelector(state => state.tasks)
   const {events} = useSelector(state => state.events);
   const completedTasks = useSelector((state) => state.tasks.completedTasks);
-console.log(tasks);
-console.log(completedTasks);
+  const [selectedHobby, setSelectedHobby] = useState(null);
+
+  const handleHobbyClick = (refId) => {
+    if (selectedHobby === refId) {
+      setSelectedHobby(null); // Collapse if the same hobby is clicked again
+    } else {
+      setSelectedHobby(refId); // Expand the clicked hobby's details
+    }
+  };
+
   function getWeeklyCommitments(hobbies, tasks) {
 
     const hobbyCommitments = hobbies.reduce((total, hobby) => {
@@ -39,8 +48,8 @@ const getUpcomingEventsCount = (events) => {
 
 const getRecentActivities = (completedTasks, hobbies) => {
   // Grabbing the most recent three completed tasks and adding 'item' property
-  const recentTasks = completedTasks
-    .sort((a, b) => new Date(b.completedDate) - new Date(a.completedDate))
+  const recentTasks = [...completedTasks]
+  .sort((a, b) => new Date(b.completedDate) - new Date(a.completedDate))
     .slice(0, 3)
     .map(task => ({ ...task, item: 'task' })); // Add 'item' property
 
@@ -79,7 +88,7 @@ const eventsCount = getUpcomingEventsCount(events);
 const totalCommitments = getWeeklyCommitments(hobbies, tasks);
 
   return (
-    <div className="p-4">
+    <div className="p-4 overflow-y-auto hide-scrollbar h-full">
       {/* Profile Picture and Bio */}
       <div className="text-center md:text-left mb-6 flex flex-col w-full items-center ">
         <div className="flex justify-center md:justify-start">
@@ -96,12 +105,12 @@ const totalCommitments = getWeeklyCommitments(hobbies, tasks);
       </div>
 
       {/* Recent Activity and List of Hobbies */}
-      <div className="flex flex-col items-center  sm:space-x-6 sm:space-y-6 text-center w-full">
+      <div className="flex flex-col items-center  space-y-4 text-center sm:space-y-0 sm:space-y-4 !overflow-y-auto hide-scrollbar h-full ">
         {/* Recent Activity */}
-        <div className="sm:w-1/2 dark:bg-boxdark">
+        <div className="sm:w-1/2 bg-white dark:bg-boxdark rounded w-full">
           <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
           {recentActivities.map((activity, index) => (
-        <div key={index} className={`p-2 rounded mb-2 ${activity.item === 'hobby' ? 'border-green-400 border-l-4' : 'border-orange-400 border-l-4'}`}>
+        <div key={index} className={`p-2 rounded mb-2 flex flex-col w-full items-center ${activity.item === 'hobby' ? 'border-green-400 border-l-4' : 'border-orange-400 border-l-4'}`}>
             <p className="text-sm text-gray-600">
                 {new Date(activity.item === 'hobby' ? activity.date : activity.completedDate).toLocaleDateString()}
             </p>
@@ -115,12 +124,21 @@ const totalCommitments = getWeeklyCommitments(hobbies, tasks);
         </div>
 
         {/* List of Hobbies */}
-        <div className="mt-6 sm:mt-0 sm:w-1/2">
-          <h2 className="text-xl font-bold mb-4">List of Hobbies</h2>
-          {/* Sample hobby */}
-          <div className="bg-gray-100 p-2 rounded mb-2">Gardening</div>
-          <div className="bg-gray-100 p-2 rounded mb-2">Playing Guitar</div>
+        <div className="overflow-y-auto max-h-[400px] sm:max-h-[500px] sm:w-1/2 bg-white dark:bg-boxdark rounded hide-scrollbar w-full">
+      <h2 className="text-xl font-bold mb-4">List of Hobbies</h2>
+      {hobbies.map(hobby => (
+        <div key={hobby.refId} className="mb-4">
+          <div 
+            className="bg-gray-100 p-2 rounded mb-2 flex justify-between items-center cursor-pointer border-b"
+            onClick={() => handleHobbyClick(hobby.refId)}
+          >
+            <span>{hobby.name}</span>
+            <span>{selectedHobby === hobby.refId ? '▲' : '▼'}</span> {/* Change arrow based on expansion */}
+          </div>
+          {selectedHobby === hobby.refId && <HobbyDetails hobby={hobby} />}
         </div>
+      ))}
+    </div>
       </div>
     </div>
   );
