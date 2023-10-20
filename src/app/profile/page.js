@@ -143,37 +143,51 @@ const onNameChange = (newName) => {
       <div className="flex flex-col items-center  space-y-4 text-center sm:space-y-0 sm:space-y-4 !overflow-y-auto hide-scrollbar h-full  ">
         {/* Recent Activity */}
         <div className="sm:w-1/2 bg-white dark:bg-boxdark rounded w-full shadow shadow-md">
-          <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
-          {recentActivities.map((activity, index) => (
-        <div key={index} className={`p-2 rounded mb-2 flex flex-col w-full items-center ${activity.item === 'hobby' ? 'border-green-400 border-l-4' : 'border-orange-400 border-l-4'}`}>
-            <p className="text-sm text-gray-600">
-                {new Date(activity.item === 'hobby' ? activity.date : activity.completedDate).toLocaleDateString()}
-            </p>
-            {activity.item === 'hobby' ? (
-                <p>Practiced {activity.hobbyName} for {activity.timeSpent} minutes</p>
-            ) : (
-                <p>Task completed: {activity.name}</p>
-            )}
+    <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
+    {recentActivities.length === 0 ? (
+        <div className="text-center my-6 px-4">
+            <p className="text-lg font-semibold">No recent activity.</p>
+            <p>Start practicing a hobby or completing tasks to see updates here!</p>
         </div>
-    ))}
-        </div>
+    ) : (
+        recentActivities.map((activity, index) => (
+            <div key={index} className={`p-2 rounded mb-2 flex flex-col w-full items-center ${activity.item === 'hobby' ? 'border-green-400 border-l-4' : 'border-orange-400 border-l-4'}`}>
+                <p className="text-sm text-gray-600">
+                    {new Date(activity.item === 'hobby' ? activity.date : activity.completedDate).toLocaleDateString()}
+                </p>
+                {activity.item === 'hobby' ? (
+                    <p>Practiced {activity.hobbyName} for {activity.timeSpent} minutes</p>
+                ) : (
+                    <p>Task completed: {activity.name}</p>
+                )}
+            </div>
+        ))
+    )}
+</div>
 
         {/* List of Hobbies */}
         <div className="overflow-y-auto max-h-[400px] sm:max-h-[500px] sm:w-1/2 bg-white dark:bg-boxdark rounded hide-scrollbar w-full shadow shadow-md">
-      <h2 className="text-xl font-bold mb-4">List of Hobbies</h2>
-      {hobbies.map(hobby => (
-        <div key={hobby.refId} className="mb-4">
-          <div 
-            className="bg-gray-100 p-2 rounded mb-2 flex justify-between items-center cursor-pointer border-b"
-            onClick={() => handleHobbyClick(hobby.refId)}
-          >
-            <span>{hobby.name}</span>
-            <span>{selectedHobby === hobby.refId ? '▲' : '▼'}</span> {/* Change arrow based on expansion */}
-          </div>
-          {selectedHobby === hobby.refId && <HobbyDetails hobby={hobby} />}
+    <h2 className="text-xl font-bold mb-4">List of Hobbies</h2>
+    {hobbies.length === 0 ? (
+        <div className="text-center my-6">
+            <p className="text-lg font-semibold">No hobbies added yet.</p>
+            <p>Start by adding a hobby to track and monitor your progress!</p>
         </div>
-      ))}
-    </div>
+    ) : (
+        hobbies.map(hobby => (
+            <div key={hobby.refId} className="mb-4">
+                <div 
+                    className="bg-gray-100 p-2 rounded mb-2 flex justify-between items-center cursor-pointer border-b"
+                    onClick={() => handleHobbyClick(hobby.refId)}
+                >
+                    <span>{hobby.name}</span>
+                    <span>{selectedHobby === hobby.refId ? '▲' : '▼'}</span> {/* Change arrow based on expansion */}
+                </div>
+                {selectedHobby === hobby.refId && <HobbyDetails hobby={hobby} />}
+            </div>
+        ))
+    )}
+</div>
       </div>
     </div>
   );

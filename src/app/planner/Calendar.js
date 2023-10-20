@@ -9,6 +9,7 @@ import DayComponent from "./DayComponent";
 import AddForm from "../../components/THE/AddForm";
 import Modal from '../../components/Modal';
 import useCheckAuth from "@/src/hooks/useCheckAuth";
+import { useSearchParams, useRouter, useParams, usePathname } from 'next/navigation'
 
 
 const Calendar = () => {
@@ -16,37 +17,30 @@ const Calendar = () => {
   const {hobbies} = useSelector(state => state.hobbies);
   const {events} = useSelector(state => state.events);
   const {tasks} = useSelector(state => state.tasks)
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathName = usePathname();
+  const showFormParam = searchParams.get('showForm');
+
+
   // test area //
   const user = useSelector((state) => state.user);
   const dispatch =useDispatch()
   
-//test area end //
- //error modal 
-//  const { error } = useSelector((state) => state.hobbies);
- 
-//    const [modalMessage, setModalMessage] = useState(null);
-//  const [isModalOpen, setModalOpen] = useState(false);
-//    const openModal = () => setModalOpen(true);
-//    const closeModal = () => setModalOpen(false);
-//    const handleClose = () => {
-//      closeModal();
-//      dispatch(clearError());
-//    };
-//    useEffect(() => {
-//      console.log(isModalOpen);
-//      if (error) {
-//        console.log(error);
-//        setModalMessage(error);
-//        openModal();
-//      }
-//  }, [hobbies, error, isModalOpen]); 
- 
  //error modal
   const [direction, setDirection] = useState(0);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevDate, setPrevDate] = useState();
   const [showForm, setShowForm] = useState(false)
 
+  useEffect(() => {
+    if (showFormParam === 'true') {
+      setShowForm(true);
+  
+      router.replace(pathName);
+    }
+  }, [showFormParam, router]);
+  
 
   // button opacity control for mobile scroll 
   //to be able to see dates covered by button

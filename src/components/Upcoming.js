@@ -9,7 +9,7 @@ function Upcoming() {
     tasks: state.tasks.tasks,
     hobbies: state.hobbies.hobbies
   }));
-const [testState, setTestState] = useState(false)
+
   const today = new Date();
   today.setHours(0, 0, 0, 0); 
 
@@ -78,6 +78,12 @@ const [testState, setTestState] = useState(false)
     <div className="mx-auto text-black dark:text-current max-w-xl h-full overflow-clip">
   <h2 className="text-2xl font-bold mb-4 text-center">Whats Coming Up </h2>
 <div className='overflow-scroll pb-12 h-full hide-scrollbar'>
+{combinedItems.length === 0 && hobbyPracticeMessages.length === 0 ? (
+        <div className="text-center mt-6 flex flex-col mt:10 md:mt-20 items-center justify-center">
+          <p className="text-lg font-semibold">Nothing is coming up!</p>
+          <p>Your schedule looks clear.</p>
+        </div>
+      ) : (
   <ul className="list-disc pl-6 sm:space-y-1 xl:text-left xl:list-disc xl:pl-6">
     {combinedItems.map(item => {
       if (item.date) {
@@ -101,6 +107,7 @@ const [testState, setTestState] = useState(false)
       <li key={index} className="text-base font-bold cursor-pointer transition-colors hover:text-green-600 dark:text-shadow-dk text-shadow-lt shadow-green-600 dark:hover:shadow-white hover:shadow-black dark:hover:font-bold hover:font-medium hover:text-shadow-hlt dark:hover:text-shadow-hdk">{message}</li>
     ))}
   </ul>
+      )}
   </div>
 </div>
   );

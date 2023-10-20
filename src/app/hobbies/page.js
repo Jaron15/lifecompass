@@ -58,7 +58,7 @@ const renderTabContent = () => {
 };
 
   return (
-    <div className="mx-auto w-screen-2xl bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10 h-screen sm:mb-8 text-black dark:text-current hide-scrollbar overflow-scroll ">
+    <div className="mx-auto w-screen-2xl bg-gradient-to-t from-slate-100 via-whiten to-white dark:bg-black dark:from-transparent dark:to-transparent dark:via-transparent p-4 md:p-6 2xl:p-10 h-screen sm:mb-8 text-black dark:text-current hide-scrollbar overflow-scroll pb-20 sm:pb-0">
       {showForm && <AddForm closeAddForm={() => setShowForm(false)}/>}
     {/* Header */} 
   <header className="flex justify-center items-center p-4 text-white ">

@@ -26,7 +26,7 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
     const [year, month, day] = dateStr.split('-').map(Number);
     const eventDate = new Date(year, month - 1, day);
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to midnight for an accurate comparison
+    today.setHours(0, 0, 0, 0);
     return eventDate < today;
 };
 

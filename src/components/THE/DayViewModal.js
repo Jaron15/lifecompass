@@ -8,9 +8,13 @@ import { deleteEvent } from "@/src/redux/events/eventsSlice";
 import { deleteHobby } from "@/src/redux/hobbies/hobbiesSlice";
 import EditItemModal from "./EditItemModal";
 import DayItem from "./DayItem";
+import AddForm from "./AddForm";
+import { useRouter } from "next/navigation";
 
 const DayViewModal = ({ isOpen, onClose, items, date, fromHomepage }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
+
     const { user } = useSelector((state) => state.user)
   //delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -19,6 +23,7 @@ const DayViewModal = ({ isOpen, onClose, items, date, fromHomepage }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 const [itemToEdit, setItemToEdit] = useState(null);
 const [expandedItem, setExpandedItem] = useState(null); 
+const [showForm, setShowForm]= useState(false);
 
 //delete
   const handleDeleteClick = (item) => {
@@ -84,9 +89,17 @@ const HomePageHeader = <div className="w-full flex mb-12">
 const homeClass1 = 'relative h-[27.5rem] xl:h-[30rem] col-span-12 rounded border border-stroke bg-white px-5 pt-7.5 pb-5 shadow drop-shadow-2xl dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-7 z-50  hide-scrollbar';
 const homeClass2 = 'h-full w-full overflow-clip pb-12';
 
-
+const handleAddToCalendar = () => {
+  if (fromHomepage) {
+    router.push("/planner?showForm=true");
+  }
+  else {
+    setShowForm(true)
+  }
+}
   return (
     <div className={`${fromHomepage ? homeClass1 : 'fixed inset-0 cursor-default flex items-center justify-center z-50 w-full lg:w-768px mx-auto '}`}>
+      {showForm && <AddForm closeAddForm={() => setShowForm(false)}/>}
        <DeleteModal 
         isOpen={showDeleteModal} 
         type={itemToDelete?.category.toLowerCase()} 
@@ -112,26 +125,31 @@ const homeClass2 = 'h-full w-full overflow-clip pb-12';
             <ImCancelCircle size={24} />
         </div>
         </div> : HomePageHeader}
-          <div className="overflow-scroll hide-scrollbar h-full pb-14"> 
-        {items.map((item, index) => {
-     
-
-          return (
-              <DayItem
-              key={index}
-              item={item}
-              index={index}
-              isEditModalOpen={isEditModalOpen}
-            handleDeleteClick={handleDeleteClick} 
-            handleEditClick={handleEditClick}
-            date={date}
-            fromHomepage={fromHomepage} 
-            expandedItem={expandedItem}
+        <div className="overflow-scroll hide-scrollbar h-full pb-14">
+  {items.length === 0 ? (
+    <div onClick={handleAddToCalendar} className="flex flex-col items-center justify-center h-full pb-14 cursor-pointer">
+      <p className="mb-4 text-center text-xl">
+        It seems your schedule is open today. Why not add something?
+      </p>
+      <span className="text-4xl ">+</span>
+    </div>
+  ) : (
+    items.map((item, index) => (
+      <DayItem
+        key={index}
+        item={item}
+        index={index}
+        isEditModalOpen={isEditModalOpen}
+        handleDeleteClick={handleDeleteClick}
+        handleEditClick={handleEditClick}
+        date={date}
+        fromHomepage={fromHomepage}
+        expandedItem={expandedItem}
         toggleDetails={toggleDetails}
-
-            />
-        )})}
-        </div>
+      />
+    ))
+  )}
+</div>
         {
         isEditModalOpen && (
           <EditItemModal
