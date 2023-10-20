@@ -149,7 +149,6 @@ const Calendar = () => {
 
     const [currentYearD, currentMonthD, currentDayD] = currentDateStr.split('-').map(Number);
     const currentDayDate = new Date(currentYearD, currentMonthD - 1, currentDayD); // month is 0-indexed
-
         if (hobby.daysOfWeek.includes(currentDayName) && hobbyDate <= currentDayDate) {
           hobbyEvents.push({
             ...hobby,

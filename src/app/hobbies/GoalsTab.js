@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { FaPencilAlt } from 'react-icons/fa';
 import EditGoalModal from '@/src/components/THE/hobbyComponents/notebook/goals/EditGoalModal';
+import { render } from 'react-dom';
  
 
 export function RadioButton({ options, value, onChange }) {
@@ -57,6 +58,38 @@ function GoalsTab({ hobby }) {
     
   const hobbyId = hobby.refId
   const [mobileSort, setMobileSort] = useState('both')
+  const longTermGoals = hobby.goals ? hobby.goals.filter(goal => goal.type === 'long') : [];
+  const shortTermGoals = hobby.goals ? hobby.goals.filter(goal => goal.type === 'short') : [];
+  const renderGoalListContent = () => {
+    if (!hobby.goals || hobby.goals.length === 0) {
+      let message = "";
+      switch (mobileSort) {
+        case "both":
+          message = "No goals added yet. Start setting goals to track your progress!";
+          break;
+        case "short":
+          message = "No short-term goals. Set some to achieve quick wins!";
+          break;
+        case "long":
+          message = "Outline your future goals and track your progress over time!";
+          break;
+      }
+  
+      return (
+        <div className="flex h-full items-center justify-center text-center pb-32">
+          <p>{message}</p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="h-[22rem] overflow-auto hide-scrollbar">
+          <GoalList hobbyId={hobbyId} term={mobileSort} view="uncompleted" />
+        </div>
+      );
+    }
+  };
+  
+
   return (
     <div className="grid grid-cols-2 gap-4  pb-4 ">
         {isModalOpen && <EditGoalModal closeModal={() => setIsModalOpen(false)} term={modalTerm} hobbyId={hobbyId} />}
@@ -74,8 +107,13 @@ function GoalsTab({ hobby }) {
     <h2 className="text-xl mb-2 text-center sticky top-0 bg-white dark:bg-boxdark z-10 pb-2">Short-term Goals</h2>
     <div className='flex justify-center'>
     <div className="h-[22rem] w-full overflow-auto hide-scrollbar xl:w-3/4 2xl:w-3/5">
-        <GoalList hobbyId={hobbyId} term={'short'} view="uncompleted"
-        />
+    {shortTermGoals.length === 0 ? (
+      <div className='h-full w-full flex items-center justify-center'>
+        <p className="text-center my-4">Add some short-term goals to track your progress!</p>
+        </div>
+      ) : (
+        <GoalList hobbyId={hobbyId} term={'short'} view="uncompleted" />
+      )}
     </div>
     </div>
 </div>
@@ -88,8 +126,13 @@ function GoalsTab({ hobby }) {
     <h2 className="text-xl mb-2 text-center sticky top-0 bg-white dark:bg-boxdark z-10 pb-2">Long-term Goals</h2>
     <div className='flex justify-center'>
     <div className="h-[22rem] w-full overflow-auto hide-scrollbar xl:w-3/4 2xl:w-3/5">
-        <GoalList hobbyId={hobbyId} term={'long'} view="uncompleted"
-        />
+    {longTermGoals.length === 0 ? (
+      <div className='h-full w-full flex items-center justify-center'>
+        <p className="text-center my-4">Outline your future goals and track your progress over time!</p>
+        </div>
+      ) : (
+        <GoalList hobbyId={hobbyId} term={'long'} view="uncompleted" />
+      )}
     </div>
     </div>
 </div>
@@ -111,9 +154,7 @@ function GoalsTab({ hobby }) {
           />
           </div>
         </div>
-        <div className="h-[22rem] overflow-auto hide-scrollbar">
-          <GoalList hobbyId={hobbyId} term={mobileSort} view="uncompleted" />
-        </div>
+        {renderGoalListContent()}
       </div>
     </div>
   );

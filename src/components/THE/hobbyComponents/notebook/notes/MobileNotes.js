@@ -185,7 +185,7 @@ function MobileNotes({ hobby }) {
             </div>
           ) : (
             <>
-            <div className='overflow-y-scroll  h-[95%]'>
+            <div className='overflow-y-scroll hide-scrollbar h-[95%]'>
               <h3 className="text-3xl font-bold">{viewNote.header}</h3>
               <p className="mt-4">{viewNote.body}</p>
               </div>

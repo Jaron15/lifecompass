@@ -101,16 +101,25 @@ function ProgressTab({hobby}) {
               </div>
               <div className="flex h-[85%] items-center justify-center w-full">
                 <div className=" w-full 2xl:w-5/6 overflow-y-scroll hide-scrollbar max-h-full py-4">
-                  <GoalList
-                    hobbyId={hobbyId}
-                    term={goalSort}
-                    view="completed"
-                  />
+                  {hobby.goals &&
+                  hobby.goals.some(
+                    (goal) => goal.type === goalSort && goal.isCompleted
+                  ) ? (
+                    <GoalList
+                      hobbyId={hobbyId}
+                      term={goalSort}
+                      view="completed"
+                    />
+                  ) : (
+                    <div className="text-center text-gray-600">
+                      {goalSort === "long"
+                        ? "Complete some long term goals to see them here!"
+                        : "Complete some short term goals to see them here!"}
+                    </div>
+                  )}
                 </div>
               </div>
-             
             </div>
-
             {/* Practice Time Goal Achievements Box */}
             <div className="sm:col-span-1 xl:col-span-1 xl:row-span-2 bg-gray-200 p-4 rounded-md border border-stroke bg-white p-3 dark:border-strokedark dark:bg-boxdark shadow shadow-2xl">
               <div className="w-full text-center text-lg font-semibold">

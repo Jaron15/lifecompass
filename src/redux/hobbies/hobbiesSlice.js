@@ -19,7 +19,7 @@ import { demoSlice, toggleDemoMode } from '../demo/demoSlice';
 import {DUMMY_HOBBIES} from '../../utils/demoData';
 import {generateDynamicHobby} from '../../utils/demoData'
 import { calculateDailyProductivityForHobby } from "../productivity/prodSlice";
-import {  format,  parseISO, formatISO, isToday, isYesterday} from 'date-fns';
+import {  format,  parseISO, formatISO, isToday, isYesterday, subDays} from 'date-fns';
 
 //----------hobby core------------
 export const addHobby = createAsyncThunk(
@@ -27,11 +27,14 @@ export const addHobby = createAsyncThunk(
   async ({ user, hobby }, thunkAPI) => {
     const state = thunkAPI.getState();
     if (state.hobbies.demo) {
+      const currentDateLocal = format(new Date(), 'yyyy-MM-dd');
+
       const mockRefId = 'demo_' + Date.now();
       const newHobby = { ...hobby, refId: mockRefId };
       const hobbyWithCreatedDate = {
         ...newHobby,
-        createdDate: new Date().toISOString().split('T')[0] 
+        createdDate: currentDateLocal, 
+        lastUpdatedDate: format(subDays(new Date(), 1), 'yyyy-MM-dd')
       };
       return { newHobby: hobbyWithCreatedDate };
     } else {

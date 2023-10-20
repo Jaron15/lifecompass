@@ -1,5 +1,6 @@
 import { addDoc, getDocs, collection, deleteDoc, doc, updateDoc, getDoc, arrayUnion, setDoc } from "firebase/firestore";
 import {db} from './firebase'
+import { format, subDays } from "date-fns";
 //-----------hobbies firebase functions-----------
 export function getUserHobbiesCollection(user) {
     return collection(db, 'users', user.uid, 'hobbies');
@@ -31,9 +32,11 @@ export function getUserHobbiesCollection(user) {
     !Array.isArray(hobby.practiceLog) || typeof hobby.practiceTimeGoal !== 'number' || hobby.practiceTimeGoal < 0 || hobby.name === '') {
   throw new Error('Hobby validation failed');
 }
+const currentDateLocal = format(new Date(), 'yyyy-MM-dd');
 const hobbyWithCreatedDate = {
   ...hobby,
-  createdDate: new Date().toISOString().split('T')[0] 
+  createdDate: currentDateLocal,
+  lastUpdatedDate: format(subDays(new Date(), 1), 'yyyy-MM-dd')
 };
 
     try {
