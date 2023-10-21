@@ -35,8 +35,8 @@ const renderTabContent = () => {
         <h2 className="text-2xl font-bold mb-4">No Hobbies Found!!</h2>
         <p>Please add hobbies make use of this page.</p>
         <div onClick={() => setShowForm(true)} className="mt-6 cursor-pointer">
-          <div className="text-6xl mb-4">+</div>
-          <p className="text-lg font-semibold text-blue-600 cursor-pointer">Click to add hobby</p>
+          <div className="text-6xl mb-4 text-highlight">+</div>
+          <p className="text-lg font-semibold text-black dark:text-current cursor-pointer">Click to add hobby</p>
         </div>
       </div>
     );
@@ -72,7 +72,7 @@ const renderTabContent = () => {
         {["Overview", "Goals", "Progress", "Notes"].map((tabName) => (
           <span
             key={tabName}
-            className={`cursor-pointer px-4 py-2 mr-2 ${selectedTab === tabName ? "border-b-2 border-blue-600" : ""}`}
+            className={`cursor-pointer px-4 py-2 mr-2 ${selectedTab === tabName ? "border-b-2 border-highlight" : ""}`}
             onClick={() => setSelectedTab(tabName)}
           >
             {tabName}

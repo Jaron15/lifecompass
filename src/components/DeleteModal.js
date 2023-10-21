@@ -28,12 +28,12 @@ console.log(item);
   }
 
   return (
-    <div className="fixed top-0 left-0 w-full text-black z-50 h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-md shadow-lg w-96">
+    <div className="fixed top-0 left-0 w-full text-black z-50 h-full bg-black bg-opacity-50 flex items-center justify-center z-50 ">
+      <div className="p-8 rounded-md shadow-lg w-96 bg-white dark:bg-boxdark dark:text-white border dark:border-highlight">
         <p>{message}</p>
         <div className="mt-4 flex justify-end">
           <button className="mr-4 px-4 py-2 bg-gray-300 rounded-md" onClick={onCancel}>Cancel</button>
-          <button className="px-4 py-2 bg-red-500 text-white rounded-md" onClick={() => onDelete(item)}>Delete</button>
+          <button className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600" onClick={() => onDelete(item)}>Delete</button>
         </div>
       </div>
     </div>

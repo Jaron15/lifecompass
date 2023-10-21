@@ -124,10 +124,10 @@ function MobileNotes({ hobby }) {
             value={noteBody}
             onChange={(e) => setNoteBody(e.target.value)}
             placeholder="Body..."
-            className="w-full p-2 rounded mb-4 bg-transparent border-none outline-none resize-none"
+            className="w-full h-[40%] p-2 rounded mb-4 bg-transparent border-none outline-none resize-none"
           />
           <div className='w-full flex justify-center'>
-          <button className='bg-blue-500 rounded p-2' onClick={handleSaveNewNote}>
+          <button className='h-15 w-30 bg-highlight hover:bg-primary text-white rounded p-2' onClick={handleSaveNewNote}>
             Save
           </button>
         </div>
@@ -174,8 +174,8 @@ function MobileNotes({ hobby }) {
                 {viewNote.body}
               </div>
               </div>
-              <div className='flex w-full justify-center space-x-6 mt-6'>
-                <button className='bg-blue-500 rounded p-2' onClick={() => handleConfirmEdit(viewNote.id)}>
+              <div className='flex w-full justify-center space-x-6 mt-6 text-white'>
+                <button className='rounded p-2 bg-highlight hover:bg-primary' onClick={() => handleConfirmEdit(viewNote.id)}>
                   Confirm 
                 </button>
                 <button className='bg-red-500 rounded p-2' onClick={() => setEditing(false)}>
@@ -214,7 +214,7 @@ function MobileNotes({ hobby }) {
         )}
           <div className="fixed bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4 rounded-t flex justify-between items-center z-10">
             <div className="text-white">{allNotes.length} Notes</div>
-            <button onClick={handleCreateNew} className="bg-blue-500 text-white px-4 py-2 rounded">+</button>
+            <button onClick={handleCreateNew} className="bg-primary text-white px-4 py-2 rounded">+</button>
           </div>
           
         </>

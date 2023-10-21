@@ -147,11 +147,11 @@ console.log(allGoals);
             </div>
 
             {/* Save and Delete Buttons */}
-            <div className="flex flex-col space-y-4 w-5/6 ">
-                <button onClick={handleSave} className="bg-blue-500 text-white rounded p-2">
+            <div className="flex flex-col space-y-4 w-5/6 text-white ">
+                <button onClick={handleSave} className="bg-highlight hover:bg-primary text-white rounded p-2">
                     Save
                 </button>
-                <button onClick={handleDelete} className="bg-red-500 text-white rounded p-2">
+                <button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white rounded p-2">
                     Delete Goal
                 </button>
                 </div>
