@@ -14,10 +14,10 @@ function Page() {
         Dive deep into the intuitive calendar, a central hub where you can plan, track, and manage every event, task, or hobby. Beyond mere tracking, the application provides in-depth management tools, allowing you to engage with each item, understanding its nuances and making informed decisions.
       </p>
       <p className="text-lg mb-6">
-        At its core, this platform is about progress. Whether you're refining a hobby, ticking off tasks, or preparing for an upcoming event, this application presents smart metrics and feedback. Reflect on your journey through the dashboard, a dynamic space offering insightful summaries and illuminating your achievements.
+        At its core, this platform is about progress. Whether you&apos;re refining a hobby, ticking off tasks, or preparing for an upcoming event, this application presents smart metrics and feedback. Reflect on your journey through the dashboard, a dynamic space offering insightful summaries and illuminating your achievements.
       </p>
       <p className="text-lg mb-6">
-        In essence, this application is more than just a tool—it's your companion in weaving the narrative of your life, ensuring every chapter is organized, understood, and celebrated. Let's journey together, making every day count.
+        In essence, this application is more than just a tool—it&apos;s your companion in weaving the narrative of your life, ensuring every chapter is organized, understood, and celebrated. Let&apos;s journey together, making every day count.
       </p>
       </div>
       </div>

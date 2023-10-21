@@ -5,7 +5,7 @@ import { useState, useEffect} from 'react';
 import { useSelector } from 'react-redux';
 
 
-const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear, formattedMonth, fillerDay}) => {
+const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies = [], tasks = [], currentMonth, currentYear, formattedMonth, fillerDay, setIsDayModalOpen}) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
   const formattedDay = String(day).padStart(2, '0');
@@ -14,12 +14,13 @@ const DayComponent = ({ day, isWeekend, isDifferentMonth, events = [], hobbies =
     // const tasks = useSelector((state) => state.tasks.tasks);
 
   const handleClose = () => {
-    
     setModalOpen(false)
+    setIsDayModalOpen(false); 
   }
   const handleOpen = () => {
     if (!fillerDay) {
     setModalOpen(true)
+    setIsDayModalOpen(true);
   }
   }
   const isDateInPast = (dateStr) => {

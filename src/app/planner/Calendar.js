@@ -32,6 +32,7 @@ const Calendar = () => {
   const [isFirstRender, setIsFirstRender] = useState(true);
   const [prevDate, setPrevDate] = useState();
   const [showForm, setShowForm] = useState(false)
+  const [isDayModalOpen, setIsDayModalOpen] = useState(false);
 
   useEffect(() => {
     if (showFormParam === 'true') {
@@ -109,7 +110,7 @@ const Calendar = () => {
   const renderDaysOfMonth = () => {
     let days = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<DayComponent key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear}/>);
+      days.push(<DayComponent setIsDayModalOpen={setIsDayModalOpen} key={`prev${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear}/>);
     }
     for (let day = 1; day <= daysInMonth; day++) {
       // Get the name of the current day of the week
@@ -179,11 +180,11 @@ const Calendar = () => {
       
       //--------------tasks-------------------
         
-        days.push(<DayComponent key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} tasks={taskEvents} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear} />);
+        days.push(<DayComponent setIsDayModalOpen={setIsDayModalOpen} key={day} day={day} isWeekend={[0,6].includes((firstDayOfMonth + day - 1) % 7)} isDifferentMonth={false} events={dayEvents} hobbies={hobbyEvents} tasks={taskEvents} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear} />);
       }
     // fill the remaining days to make total 42
     for (let i = days.length; i < 42; i++) {
-      days.push(<DayComponent key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear} fillerDay={true} />);
+      days.push(<DayComponent setIsDayModalOpen={setIsDayModalOpen} key={`next${i}`} day="" isWeekend={false} isDifferentMonth={true} currentMonth={currentMonth} formattedMonth={formattedMonth} currentYear={currentYear} fillerDay={true} />);
     }
     return days;
 };
@@ -191,8 +192,12 @@ const Calendar = () => {
   
   //for changing month on mobile
   const handlers = useSwipeable({
-    onSwipedLeft: () => nextMonth(),
-    onSwipedRight: () => prevMonth(),
+    onSwipedLeft: () => {
+      if (!showForm && !isDayModalOpen) nextMonth();
+    },
+    onSwipedRight: () => {
+      if (!showForm && !isDayModalOpen) prevMonth();
+    },
     preventDefaultTouchmoveEvent: true,
     trackMouse: true
   });
@@ -226,7 +231,8 @@ const Calendar = () => {
 
   
   return (
-    <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-screen sm:h-full overflow-auto hide-scrollbar pb-10 sm:pb-0" {...handlers} > 
+    <div className="relative w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark h-screen sm:h-full overflow-auto hide-scrollbar pb-10 sm:pb-0" 
+    {...handlers} > 
     {/* {isModalOpen && (
       // <Modal
       //   isOpen={isModalOpen}
