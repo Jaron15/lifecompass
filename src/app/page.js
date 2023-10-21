@@ -38,7 +38,7 @@ const {user} = useSelector((state) => state.user)
 
   return (
     <div className="flex flex-col items-center sm:justify-center bg-[#F3F4F6]  min-h-screen w-screen bg-gradient-to-b from-transparent via-whiten to-white dark:bg-black dark:to-transparent dark:via-transparent ">
-      <div className='flex flex-col items-center justify-center w-10/12 lg:max-w-[1000px] sm:-mt-30'>
+      <div className='flex flex-col items-center justify-center w-10/12 lg:max-w-[1000px] sm:-mt-30 -mt-5 '>
 
       {form === null && (
           <div className="text-center dark:text-white text-black space-y-5 sm:space-y-6 p-8">
